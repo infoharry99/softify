@@ -37,7 +37,7 @@ class EmployeeSystemSeeder extends Seeder
             LeaveType::firstOrCreate(['slug' => $lt['slug']], $lt);
         }
 
-        // 2. Create Sample Employee 1: Rahul Sharma
+        // 2. Create Sample Employee 1: Rahul Sharma (Developer)
         $rahulUser = User::firstOrCreate(
             ['email' => 'rahul@example.com'],
             [
@@ -148,11 +148,10 @@ class EmployeeSystemSeeder extends Seeder
             [
                 'name' => 'Finance Executive',
                 'description' => 'Finance & Accounting Operations Executive',
-                'is_active' => true,
+                'status' => 'active',
             ]
         );
 
-        // Grant finance permissions to finance role
         $financePerms = Permission::where('module', 'Finance')->pluck('id');
         if ($financePerms->count() > 0) {
             $financeRole->permissions()->sync($financePerms);
@@ -208,7 +207,91 @@ class EmployeeSystemSeeder extends Seeder
 
         LeaveService::initializeBalances($vikramEmp);
 
-        // 5. Seed Sample Finance Requirements
+        // 5. Create BDA Employee: Arjun Kapoor
+        $bdaRole = Role::firstOrCreate(
+            ['slug' => 'bda'],
+            [
+                'name' => 'BDA',
+                'description' => 'Business Development Associate for sales and client acquisition',
+                'status' => 'active',
+            ]
+        );
+
+        $arjunUser = User::firstOrCreate(
+            ['email' => 'arjun@example.com'],
+            [
+                'name' => 'Arjun Kapoor',
+                'mobile' => '9811223344',
+                'department' => 'Business Development',
+                'designation' => 'Business Development Associate (BDA)',
+                'status' => 'active',
+                'password' => Hash::make('password'),
+            ]
+        );
+        $arjunUser->roles()->sync([$bdaRole->id]);
+        $arjunEmp = Employee::firstOrCreate(['user_id' => $arjunUser->id], ['employee_code' => 'EMP-1004']);
+        EmployeeProfile::firstOrCreate(['employee_id' => $arjunEmp->id], ['gender' => 'Male', 'city' => 'Delhi', 'state' => 'Delhi', 'country' => 'India']);
+        EmployeeJoiningDetail::firstOrCreate(['employee_id' => $arjunEmp->id], ['joining_date' => '2025-04-01', 'employment_type' => 'Full Time', 'employment_status' => 'Active', 'work_location' => 'Delhi Regional Office']);
+        SalaryStructure::firstOrCreate(['employee_id' => $arjunEmp->id], ['basic_salary' => 28000, 'hra' => 9000, 'allowances' => 4000, 'bonus' => 2000, 'pf_deduction' => 1600, 'other_deductions' => 400, 'gross_salary' => 43000, 'net_salary' => 41000, 'effective_date' => '2025-04-01']);
+        LeaveService::initializeBalances($arjunEmp);
+
+        // 6. Create Talent Acquisition Employee: Ananya Roy
+        $taRole = Role::firstOrCreate(
+            ['slug' => 'talent-acquisition'],
+            [
+                'name' => 'Talent Acquisition',
+                'description' => 'Talent Acquisition Specialist for recruitment pipeline',
+                'status' => 'active',
+            ]
+        );
+
+        $ananyaUser = User::firstOrCreate(
+            ['email' => 'ananya@example.com'],
+            [
+                'name' => 'Ananya Roy',
+                'mobile' => '9744556677',
+                'department' => 'Talent Acquisition & HR',
+                'designation' => 'Talent Acquisition Specialist',
+                'status' => 'active',
+                'password' => Hash::make('password'),
+            ]
+        );
+        $ananyaUser->roles()->sync([$taRole->id]);
+        $ananyaEmp = Employee::firstOrCreate(['user_id' => $ananyaUser->id], ['employee_code' => 'EMP-1005']);
+        EmployeeProfile::firstOrCreate(['employee_id' => $ananyaEmp->id], ['gender' => 'Female', 'city' => 'Kolkata', 'state' => 'West Bengal', 'country' => 'India']);
+        EmployeeJoiningDetail::firstOrCreate(['employee_id' => $ananyaEmp->id], ['joining_date' => '2025-03-15', 'employment_type' => 'Full Time', 'employment_status' => 'Active', 'work_location' => 'Kolkata Hub']);
+        SalaryStructure::firstOrCreate(['employee_id' => $ananyaEmp->id], ['basic_salary' => 30000, 'hra' => 9500, 'allowances' => 4200, 'bonus' => 1500, 'pf_deduction' => 1800, 'other_deductions' => 400, 'gross_salary' => 45200, 'net_salary' => 43000, 'effective_date' => '2025-03-15']);
+        LeaveService::initializeBalances($ananyaEmp);
+
+        // 7. Create Data Entry Employee: Suresh Kumar
+        $dataEntryRole = Role::firstOrCreate(
+            ['slug' => 'data-entry'],
+            [
+                'name' => 'Data Entry',
+                'description' => 'Data entry operator for records creation',
+                'status' => 'active',
+            ]
+        );
+
+        $sureshUser = User::firstOrCreate(
+            ['email' => 'suresh@example.com'],
+            [
+                'name' => 'Suresh Kumar',
+                'mobile' => '9633221100',
+                'department' => 'Operations',
+                'designation' => 'Data Entry Operator',
+                'status' => 'active',
+                'password' => Hash::make('password'),
+            ]
+        );
+        $sureshUser->roles()->sync([$dataEntryRole->id]);
+        $sureshEmp = Employee::firstOrCreate(['user_id' => $sureshUser->id], ['employee_code' => 'EMP-1006']);
+        EmployeeProfile::firstOrCreate(['employee_id' => $sureshEmp->id], ['gender' => 'Male', 'city' => 'Bangalore', 'state' => 'Karnataka', 'country' => 'India']);
+        EmployeeJoiningDetail::firstOrCreate(['employee_id' => $sureshEmp->id], ['joining_date' => '2025-05-01', 'employment_type' => 'Full Time', 'employment_status' => 'Active', 'work_location' => 'Bangalore Office']);
+        SalaryStructure::firstOrCreate(['employee_id' => $sureshEmp->id], ['basic_salary' => 22000, 'hra' => 7000, 'allowances' => 3000, 'bonus' => 1000, 'pf_deduction' => 1300, 'other_deductions' => 300, 'gross_salary' => 33000, 'net_salary' => 31400, 'effective_date' => '2025-05-01']);
+        LeaveService::initializeBalances($sureshEmp);
+
+        // 8. Seed Sample Finance Requirements
         $sampleFinance = [
             [
                 'created_by' => $vikramUser->id,

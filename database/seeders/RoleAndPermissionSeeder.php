@@ -96,7 +96,7 @@ class RoleAndPermissionSeeder extends Seeder
                 'slug' => 'super-admin',
                 'description' => 'Full access to all system modules and permissions',
                 'status' => 'active',
-                'permissions' => array_values($createdPermissions), // All permissions
+                'permissions' => array_values($createdPermissions),
             ],
             [
                 'name' => 'Admin',
@@ -117,6 +117,32 @@ class RoleAndPermissionSeeder extends Seeder
                     $createdPermissions['hr.edit'] ?? null,
                     $createdPermissions['hr.delete'] ?? null,
                     $createdPermissions['hr.export'] ?? null,
+                    $createdPermissions['reports.view'] ?? null,
+                ],
+            ],
+            [
+                'name' => 'Talent Acquisition',
+                'slug' => 'talent-acquisition',
+                'description' => 'Talent Acquisition Specialist for recruitment pipeline & candidate directory',
+                'status' => 'active',
+                'permissions' => [
+                    $createdPermissions['dashboard.view'] ?? null,
+                    $createdPermissions['hr.view'] ?? null,
+                    $createdPermissions['hr.create'] ?? null,
+                    $createdPermissions['hr.edit'] ?? null,
+                    $createdPermissions['reports.view'] ?? null,
+                ],
+            ],
+            [
+                'name' => 'BDA',
+                'slug' => 'bda',
+                'description' => 'Business Development Associate for sales, client acquisition & deals',
+                'status' => 'active',
+                'permissions' => [
+                    $createdPermissions['dashboard.view'] ?? null,
+                    $createdPermissions['sales.view'] ?? null,
+                    $createdPermissions['sales.create'] ?? null,
+                    $createdPermissions['sales.edit'] ?? null,
                     $createdPermissions['reports.view'] ?? null,
                 ],
             ],

@@ -28,8 +28,22 @@ use App\Http\Controllers\Employee\NotificationController;
 */
 
 Route::get('/', function () {
+    if (Auth::check()) {
+        return Auth::user()->hasRole('super-admin')
+            ? redirect()->route('admin.dashboard')
+            : redirect()->route('employee.dashboard');
+    }
     return redirect()->route('login');
 });
+
+Route::get('/home', function () {
+    if (Auth::check()) {
+        return Auth::user()->hasRole('super-admin')
+            ? redirect()->route('admin.dashboard')
+            : redirect()->route('employee.dashboard');
+    }
+    return redirect()->route('login');
+})->name('home');
 
 // Authentication Routes
 Route::middleware('guest')->group(function () {
