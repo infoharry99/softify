@@ -1,0 +1,124 @@
+@extends('layouts.employee')
+
+@section('title', 'My Salary & Slips')
+@section('page_title', 'My Salary & Monthly Payslips')
+
+@section('content')
+<div style="display: grid; grid-template-columns: 320px 1fr; gap: 25px;">
+    <!-- Salary Structure Overview -->
+    <div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">💵 Current Salary Breakdown</h3>
+            </div>
+            <div class="card-body">
+                @if($structure)
+                    <div style="text-align: center; background: #ecfdf5; padding: 15px; border-radius: var(--radius); margin-bottom: 20px; border: 1px solid #a7f3d0;">
+                        <div style="font-size: 0.8rem; color: #065f46; text-transform: uppercase; font-weight: 600;">Net Monthly Salary</div>
+                        <div style="font-size: 1.8rem; font-weight: 700; color: #047857;">₹{{ number_format($structure->net_salary, 2) }}</div>
+                    </div>
+
+                    <div style="font-size: 0.85rem; display: flex; flex-direction: column; gap: 10px;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Basic Salary:</span> <strong>₹{{ number_format($structure->basic_salary, 2) }}</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>HRA:</span> <strong>₹{{ number_format($structure->hra, 2) }}</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Allowances:</span> <strong>₹{{ number_format($structure->allowances, 2) }}</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--border-color); padding-top: 8px;">
+                            <span>Gross Salary:</span> <strong>₹{{ number_format($structure->gross_salary, 2) }}</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; color: var(--danger);">
+                            <span>PF Deduction:</span> <strong>- ₹{{ number_format($structure->pf_deduction, 2) }}</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; color: var(--danger);">
+                            <span>Other Deductions:</span> <strong>- ₹{{ number_format($structure->other_deductions, 2) }}</strong>
+                        </div>
+                    </div>
+                @else
+                    <div style="color: var(--text-muted); text-align: center;">Salary structure not set by Admin yet.</div>
+                @endif
+            </div>
+        </div>
+
+        <!-- Salary Revision History Timeline -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">📈 Salary Revision History</h3>
+            </div>
+            <div class="card-body">
+                @forelse($histories as $hist)
+                    <div style="border-left: 2px solid var(--primary); padding-left: 12px; margin-bottom: 15px;">
+                        <div style="font-size: 0.85rem; font-weight: 700;">
+                            ₹{{ number_format($hist->previous_net_salary, 2) }} ➔ ₹{{ number_format($hist->new_net_salary, 2) }}
+                        </div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">
+                            Effective: {{ $hist->effective_date->format('M d, Y') }}
+                        </div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">
+                            Reason: {{ $hist->reason ?? 'Annual Revision' }}
+                        </div>
+                    </div>
+                @empty
+                    <div style="color: var(--text-muted); font-size: 0.85rem; text-align: center;">No salary revisions recorded.</div>
+                @endforelse
+            </div>
+        </div>
+    </div>
+
+    <!-- Monthly Salary Slips List -->
+    <div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">📄 Monthly Salary Slips</h3>
+            </div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Month</th>
+                            <th>Gross Salary</th>
+                            <th>Deductions</th>
+                            <th>Net Paid</th>
+                            <th>Status</th>
+                            <th style="text-align: right;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($payrolls as $pay)
+                        <tr>
+                            <td><strong>{{ \Carbon\Carbon::parse($pay->month . '-01')->format('F Y') }}</strong></td>
+                            <td>₹{{ number_format($pay->gross_salary, 2) }}</td>
+                            <td style="color: var(--danger);">₹{{ number_format($pay->total_deductions, 2) }}</td>
+                            <td><strong style="color: var(--primary);">₹{{ number_format($pay->net_salary, 2) }}</strong></td>
+                            <td>
+                                <span class="badge badge-success">
+                                    Paid ({{ $pay->payment_date ? $pay->payment_date->format('M d') : 'Done' }})
+                                </span>
+                            </td>
+                            <td style="text-align: right;">
+                                <a href="{{ route('employee.salary.slip', $pay->id) }}" class="btn btn-secondary btn-sm" target="_blank">
+                                    🖨️ View Payslip
+                                </a>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 30px;">
+                                No payslips generated yet.
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+            <div style="padding: 15px 20px;">
+                {{ $payrolls->links() }}
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
