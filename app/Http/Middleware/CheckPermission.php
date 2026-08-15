@@ -33,6 +33,33 @@ class CheckPermission
             return $next($request);
         }
 
+        // HR role has access to all HR permissions
+        if ($user->hasRole('hr')) {
+            foreach ($permissions as $permission) {
+                if (str_starts_with($permission, 'hr.')) {
+                    return $next($request);
+                }
+            }
+        }
+
+        // Data Entry role has access to candidate view and create
+        if ($user->hasRole('data-entry')) {
+            foreach ($permissions as $permission) {
+                if (in_array($permission, ['hr.view', 'hr.create'])) {
+                    return $next($request);
+                }
+            }
+        }
+
+        // Talent Acquisition role has access to candidate view
+        if ($user->hasRole('talent-acquisition')) {
+            foreach ($permissions as $permission) {
+                if ($permission === 'hr.view') {
+                    return $next($request);
+                }
+            }
+        }
+
         foreach ($permissions as $permission) {
             if ($user->hasPermission($permission)) {
                 return $next($request);

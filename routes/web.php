@@ -149,7 +149,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/candidates', [CandidateController::class, 'store'])->name('candidates.store');
         });
 
-        Route::middleware('permission:hr.view')->group(function () {
+        Route::middleware('permission:hr.view,hr.create')->group(function () {
             Route::get('/candidates', [CandidateController::class, 'index'])->name('candidates.index');
             Route::get('/candidates/{candidate}', [CandidateController::class, 'show'])->name('candidates.show');
             Route::get('/candidates/{candidate}/resume', [CandidateController::class, 'downloadResume'])->name('candidates.resume');
