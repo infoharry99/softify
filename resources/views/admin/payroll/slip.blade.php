@@ -8,16 +8,15 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Helvetica Neue', Arial, sans-serif; }
         body { background: #f8fafc; padding: 40px; color: #1e293b; }
         .slip-box { max-width: 800px; margin: 0 auto; background: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
-        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #2563eb; padding-bottom: 20px; margin-bottom: 25px; }
-        .company-name { font-size: 1.6rem; font-weight: 700; color: #0f172a; }
-        .company-name span { color: #2563eb; }
-        .slip-title { font-size: 1.2rem; font-weight: 700; color: #64748b; text-transform: uppercase; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #00a884; padding-bottom: 20px; margin-bottom: 25px; }
+        .company-name { font-size: 1.6rem; font-weight: 800; color: #00a884; letter-spacing: -0.3px; }
+        .slip-title { font-size: 1.15rem; font-weight: 700; color: #64748b; text-transform: uppercase; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; font-size: 0.9rem; }
         .info-group div { margin-bottom: 6px; }
         .table { width: 100%; border-collapse: collapse; margin-bottom: 25px; font-size: 0.9rem; }
-        .table th { background: #f1f5f9; padding: 10px; border: 1px solid #cbd5e1; text-align: left; }
+        .table th { background: #f0faf7; padding: 10px; border: 1px solid #cbd5e1; text-align: left; color: #0f172a; }
         .table td { padding: 10px; border: 1px solid #cbd5e1; }
-        .total-row { background: #eff6ff; font-weight: 700; font-size: 1rem; }
+        .total-row { background: #e6f7f3; font-weight: 700; font-size: 1rem; color: #00a884; }
         .footer { margin-top: 40px; display: flex; justify-content: space-between; align-items: flex-end; font-size: 0.85rem; color: #64748b; }
         @media print {
             body { background: #ffffff; padding: 0; }
@@ -29,16 +28,19 @@
 <body>
 
     <div class="no-print" style="max-width: 800px; margin: 0 auto 20px auto; text-align: right;">
-        <button onclick="window.print()" style="padding: 10px 20px; background: #2563eb; color: #fff; border: none; border-radius: 6px; font-weight: 600; cursor: pointer;">
+        <button onclick="window.print()" style="padding: 10px 22px; background: #00a884; color: #fff; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 10px rgba(0,168,132,0.25);">
             🖨️ Print Payslip
         </button>
     </div>
 
     <div class="slip-box">
         <div class="header">
-            <div>
-                <div class="company-name">Sales<span>Taletity</span></div>
-                <div style="font-size: 0.85rem; color: #64748b;">Enterprise Employee Management System</div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="{{ asset('images/logo.png') }}" alt="Talentifyy" style="height: 42px; width: auto; object-fit: contain;">
+                <div>
+                    <div class="company-name">TALENTIFYY</div>
+                    <div style="font-size: 0.8rem; color: #64748b; font-weight: 500;">Enterprise Employee Management System</div>
+                </div>
             </div>
             <div class="slip-title">
                 Salary Slip: {{ \Carbon\Carbon::parse($payroll->month . '-01')->format('F Y') }}
@@ -103,9 +105,9 @@
             </tbody>
         </table>
 
-        <div style="background: #ecfdf5; border: 1px solid #a7f3d0; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 30px;">
-            <div style="font-size: 0.9rem; color: #065f46; font-weight: 600; text-transform: uppercase;">Net Payable Amount</div>
-            <div style="font-size: 2rem; font-weight: 700; color: #047857;">₹{{ number_format($payroll->net_salary, 2) }}</div>
+        <div style="background: #e6f7f3; border: 1px solid #9ee5d4; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 30px;">
+            <div style="font-size: 0.9rem; color: #00a884; font-weight: 700; text-transform: uppercase;">Net Payable Amount</div>
+            <div style="font-size: 2rem; font-weight: 800; color: #008f70;">₹{{ number_format($payroll->net_salary, 2) }}</div>
         </div>
 
         <div class="footer">

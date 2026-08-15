@@ -6,7 +6,7 @@
 @section('styles')
 <style>
     .welcome-banner {
-        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        background: linear-gradient(135deg, #00a884 0%, #008f70 100%);
         color: #ffffff;
         padding: 22px 28px;
         border-radius: var(--radius);
@@ -14,7 +14,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+        box-shadow: 0 4px 12px rgba(0, 168, 132, 0.25);
     }
     .welcome-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
     .welcome-subtitle { font-size: 0.875rem; color: #dbeafe; }

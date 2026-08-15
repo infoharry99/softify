@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Admin Panel') - SalesTaletity</title>
+    <title>@yield('title', 'Admin Panel') - Talentifyy</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -11,16 +13,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         :root {
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --primary-light: #eff6ff;
-            --primary-border: #bfdbfe;
+            --primary: #00a884;
+            --primary-hover: #008f70;
+            --primary-light: #e6f7f3;
+            --primary-border: #9ee5d4;
             --secondary: #64748b;
             --sidebar-bg: #ffffff;
             --sidebar-border: #f1f5f9;
             --sidebar-text: #64748b;
-            --sidebar-hover: #f8fafc;
-            --sidebar-active-bg: #2563eb;
+            --sidebar-hover: #f0faf7;
+            --sidebar-active-bg: #00a884;
             --sidebar-active-text: #ffffff;
             --body-bg: #f8fafc;
             --card-bg: #ffffff;
@@ -408,8 +410,93 @@
         .form-group { margin-bottom: 18px; }
         .form-label { display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 6px; color: #334155; }
         .form-control { width: 100%; padding: 10px 14px; font-size: 0.9rem; border: 1px solid var(--border-color); border-radius: 10px; outline: none; transition: all 0.15s ease; background: #ffffff; }
-        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12); }
+        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0, 168, 132, 0.12); }
         .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; }
+
+        /* Search Box & Filter Button */
+        .search-input-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .search-input-box i {
+            position: absolute;
+            left: 14px;
+            color: #94a3b8;
+            font-size: 0.95rem;
+            pointer-events: none;
+        }
+        .search-input-box input {
+            width: 100%;
+            padding: 10px 14px 10px 40px;
+            font-size: 0.9rem;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            outline: none;
+            transition: all 0.15s ease;
+            background: #ffffff;
+        }
+        .search-input-box input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 168, 132, 0.12);
+        }
+
+        .btn-vibrant-blue {
+            background-color: var(--primary);
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 0.85rem;
+            padding: 9px 18px;
+            border-radius: 10px;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.15s ease;
+            box-shadow: 0 4px 10px rgba(0, 168, 132, 0.2);
+        }
+        .btn-vibrant-blue:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        /* 360° Profile Sub-Tab Navigation Bar */
+        .tab-nav {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 8px 12px;
+            margin-bottom: 25px;
+            overflow-x: auto;
+            box-shadow: var(--shadow);
+        }
+        .tab-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 18px;
+            border-radius: 10px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #64748b;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        .tab-item:hover {
+            background-color: var(--primary-light);
+            color: var(--primary);
+        }
+        .tab-item.active {
+            background-color: var(--primary);
+            color: #ffffff !important;
+            box-shadow: 0 4px 12px rgba(0, 168, 132, 0.25);
+        }
 
         /* Tables matching Screenshot 2 & 3 */
         .table-responsive { width: 100%; overflow-x: auto; }
@@ -421,19 +508,19 @@
             width: 34px;
             height: 34px;
             border-radius: 50%;
-            background-color: #eff6ff;
-            color: #2563eb;
+            background-color: #e6f7f3;
+            color: #00a884;
             font-weight: 700;
             font-size: 0.82rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid #bfdbfe;
+            border: 1px solid #9ee5d4;
             flex-shrink: 0;
         }
 
         .btn-table-action {
-            background-color: #2563eb;
+            background-color: #00a884;
             color: #ffffff;
             font-weight: 600;
             font-size: 0.82rem;
@@ -447,7 +534,7 @@
             cursor: pointer;
             transition: background-color 0.15s ease;
         }
-        .btn-table-action:hover { background-color: #1d4ed8; }
+        .btn-table-action:hover { background-color: #008f70; }
 
         /* Permission Module Cards & Grid Layout */
         .permission-module-box {
@@ -569,114 +656,11 @@
     @yield('styles')
 </head>
 <body>
+    <!-- Global Logo Preloader -->
+    @include('layouts.partials.preloader')
 
-    <!-- Sidebar Navigation - Matching Screenshots 1, 2, 3 Layout -->
-    <aside class="sidebar">
-        <div class="sidebar-brand">
-            <div class="brand-title">Sales<span>Taletity</span></div>
-            <div class="brand-pill">Admin</div>
-        </div>
-
-        <ul class="sidebar-menu">
-            <li class="menu-item">
-                <a href="{{ route('admin.dashboard') }}" class="menu-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                    <i class="fa-solid fa-chart-pie"></i>
-                    <span>Admin Dashboard</span>
-                </a>
-            </li>
-
-            <li class="menu-section-title">HR & Recruitment</li>
-
-            <li class="menu-item">
-                <a href="{{ route('admin.candidates.index') }}" class="menu-link {{ request()->routeIs('admin.candidates.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-user-graduate"></i>
-                    <span>Candidates ATS</span>
-                </a>
-            </li>
-
-            <li class="menu-item">
-                <a href="{{ route('admin.finance.index') }}" class="menu-link {{ request()->routeIs('admin.finance.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-chart-line"></i>
-                    <span>Finance Management</span>
-                </a>
-            </li>
-
-            <li class="menu-item">
-                <a href="{{ route('admin.employees.index') }}" class="menu-link {{ request()->routeIs('admin.employees.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-users"></i>
-                    <span>Employees Directory</span>
-                </a>
-            </li>
-
-            <li class="menu-item">
-                <a href="{{ route('admin.attendance.index') }}" class="menu-link {{ request()->routeIs('admin.attendance.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-clock-rotate-left"></i>
-                    <span>Attendance & Breaks</span>
-                </a>
-            </li>
-
-            <li class="menu-item">
-                <a href="{{ route('admin.leave.index') }}" class="menu-link {{ request()->routeIs('admin.leave.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-calendar-minus"></i>
-                    <span>Leave Applications</span>
-                </a>
-            </li>
-
-            <li class="menu-item">
-                <a href="{{ route('admin.payroll.index') }}" class="menu-link {{ request()->routeIs('admin.payroll.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-file-invoice-dollar"></i>
-                    <span>Payroll & Payslips</span>
-                </a>
-            </li>
-
-            <li class="menu-item">
-                <a href="{{ route('admin.announcements.index') }}" class="menu-link {{ request()->routeIs('admin.announcements.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-bullhorn"></i>
-                    <span>Company Notices</span>
-                </a>
-            </li>
-
-            <li class="menu-section-title">User & Access Control</li>
-
-            <li class="menu-item">
-                <a href="{{ route('admin.users.index') }}" class="menu-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-user-gear"></i>
-                    <span>System Users</span>
-                </a>
-            </li>
-
-            <li class="menu-item">
-                <a href="{{ route('admin.roles.index') }}" class="menu-link {{ request()->routeIs('admin.roles.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-shield-halved"></i>
-                    <span>Roles & Permissions</span>
-                </a>
-            </li>
-
-            <li class="menu-item">
-                <a href="{{ route('admin.permissions.index') }}" class="menu-link {{ request()->routeIs('admin.permissions.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-key"></i>
-                    <span>Permissions Matrix</span>
-                </a>
-            </li>
-
-            <li class="menu-item">
-                <a href="{{ route('admin.activity_logs.index') }}" class="menu-link {{ request()->routeIs('admin.activity_logs.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-list-check"></i>
-                    <span>Audit Activity Logs</span>
-                </a>
-            </li>
-        </ul>
-
-        <div class="sidebar-footer">
-            <div class="user-avatar">
-                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-            </div>
-            <div class="user-info">
-                <div class="user-name">{{ auth()->user()->name }}</div>
-                <div class="user-role">{{ auth()->user()->roles->pluck('name')->first() ?? 'Administrator' }}</div>
-            </div>
-        </div>
-    </aside>
+    <!-- Sidebar Navigation -->
+    @include('layouts.partials.sidebar')
 
     <!-- Main Content Wrapper -->
     <div class="main-wrapper">

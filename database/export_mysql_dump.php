@@ -19,7 +19,7 @@ $tables = [
 ];
 
 $sql = "-- ========================================================\n";
-$sql .= "-- SalesTaletity Production MySQL Database Dump\n";
+$sql .= "-- Softify Production MySQL Database Dump\n";
 $sql .= "-- Generated: " . date('Y-m-d H:i:s') . "\n";
 $sql .= "-- Ready for Import on Live MySQL / phpMyAdmin Server\n";
 $sql .= "-- ========================================================\n\n";
@@ -118,6 +118,6 @@ foreach ($tables as $table) {
 
 $sql .= "SET FOREIGN_KEY_CHECKS=1;\nCOMMIT;\n";
 
-$targetPath = __DIR__ . '/salestaletity_live_database.sql';
+$targetPath = __DIR__ . '/softify_live_database.sql';
 file_put_contents($targetPath, $sql);
-echo "SUCCESS: Dynamically generated 100% column-matched MySQL dump at database/salestaletity_live_database.sql (" . strlen($sql) . " bytes)\n";
+echo "SUCCESS: Dynamically generated 100% column-matched MySQL dump at database/softify_live_database.sql (" . strlen($sql) . " bytes)\n";

@@ -13,15 +13,16 @@
     </div>
 
     <!-- Filters -->
-    <div style="padding: 15px 20px; background-color: #f8fafc; border-bottom: 1px solid var(--border-color);">
-        <form action="{{ route('admin.employees.index') }}" method="GET" style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center;">
-            <div style="flex: 1; min-width: 200px;">
-                <input type="text" name="search" class="form-control" placeholder="Search by Emp Code, Name, Email, Dept..." value="{{ request('search') }}">
+    <div style="padding: 16px 20px; background-color: #ffffff; border-bottom: 1px solid var(--border-color);">
+        <form action="{{ route('admin.employees.index') }}" method="GET" style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center;">
+            <div class="search-input-box" style="flex: 1; min-width: 240px;">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" name="search" placeholder="Search by Emp Code, Name, Email, Dept..." value="{{ request('search') }}">
             </div>
 
             <div style="width: 180px;">
-                <select name="status" class="form-control">
-                    <option value="">-- All Status --</option>
+                <select name="status" class="form-control" style="border-radius: 10px;">
+                    <option value="">All Status</option>
                     <option value="Active" {{ request('status') === 'Active' ? 'selected' : '' }}>Active</option>
                     <option value="Probation" {{ request('status') === 'Probation' ? 'selected' : '' }}>Probation</option>
                     <option value="Notice Period" {{ request('status') === 'Notice Period' ? 'selected' : '' }}>Notice Period</option>
@@ -30,9 +31,13 @@
                 </select>
             </div>
 
-            <button type="submit" class="btn btn-secondary btn-sm">Filter</button>
+            <button type="submit" class="btn-vibrant-blue">
+                <i class="fa-solid fa-filter"></i> Filter
+            </button>
             @if(request()->anyFilled(['search', 'status']))
-                <a href="{{ route('admin.employees.index') }}" class="btn btn-secondary btn-sm">Reset</a>
+                <a href="{{ route('admin.employees.index') }}" class="btn btn-secondary btn-sm" style="border-radius: 8px;">
+                    <i class="fa-solid fa-rotate-left"></i> Reset
+                </a>
             @endif
         </form>
     </div>

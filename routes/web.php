@@ -76,74 +76,76 @@ Route::middleware('auth')->group(function () {
         });
 
         // User Management (Static routes MUST come before wildcard {user})
-        Route::middleware('permission:users.create')->group(function () {
+        Route::middleware('permission:users.create,hr.create')->group(function () {
             Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
             Route::post('/users', [UserController::class, 'store'])->name('users.store');
         });
 
-        Route::middleware('permission:users.view')->group(function () {
+        Route::middleware('permission:users.view,hr.view')->group(function () {
             Route::get('/users', [UserController::class, 'index'])->name('users.index');
             Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
             Route::get('/users/{user}/permissions', [UserController::class, 'permissions'])->name('users.permissions');
         });
 
-        Route::middleware('permission:users.edit')->group(function () {
+        Route::middleware('permission:users.edit,hr.edit')->group(function () {
             Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
             Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
             Route::post('/users/{user}/permissions', [UserController::class, 'updatePermissions'])->name('users.permissions.update');
         });
 
-        Route::middleware('permission:users.activate')->group(function () {
+        Route::middleware('permission:users.activate,hr.edit')->group(function () {
             Route::post('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
         });
 
-        Route::middleware('permission:users.change_password')->group(function () {
+        Route::middleware('permission:users.change_password,hr.edit')->group(function () {
             Route::post('/users/{user}/reset-password', [UserController::class, 'resetPassword'])->name('users.reset-password');
         });
 
-        Route::middleware('permission:users.delete')->group(function () {
+        Route::middleware('permission:users.delete,hr.delete')->group(function () {
             Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
         });
 
         // Role Management (Static routes MUST come before wildcard {role})
-        Route::middleware('permission:roles.create')->group(function () {
+        Route::middleware('permission:roles.create,hr.create')->group(function () {
             Route::get('/roles/create', [RoleController::class, 'create'])->name('roles.create');
             Route::post('/roles', [RoleController::class, 'store'])->name('roles.store');
         });
 
-        Route::middleware('permission:roles.view')->group(function () {
+        Route::middleware('permission:roles.view,hr.view')->group(function () {
             Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
             Route::get('/roles/{role}', [RoleController::class, 'show'])->name('roles.show');
             Route::get('/roles/{role}/users', [RoleController::class, 'users'])->name('roles.users');
         });
 
-        Route::middleware('permission:roles.edit')->group(function () {
+        Route::middleware('permission:roles.edit,hr.edit')->group(function () {
             Route::get('/roles/{role}/edit', [RoleController::class, 'edit'])->name('roles.edit');
             Route::put('/roles/{role}', [RoleController::class, 'update'])->name('roles.update');
             Route::post('/roles/{role}/toggle-status', [RoleController::class, 'toggleStatus'])->name('roles.toggle-status');
         });
 
-        Route::middleware('permission:roles.delete')->group(function () {
+        Route::middleware('permission:roles.delete,hr.delete')->group(function () {
             Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
         });
 
         // Permission Management
-        Route::middleware('permission:permissions.view')->group(function () {
+        Route::middleware('permission:permissions.view,hr.view')->group(function () {
             Route::get('/permissions', [PermissionController::class, 'index'])->name('permissions.index');
         });
 
-        Route::middleware('permission:permissions.create')->group(function () {
+        Route::middleware('permission:permissions.create,hr.create')->group(function () {
             Route::post('/permissions', [PermissionController::class, 'store'])->name('permissions.store');
         });
 
         // Activity Logs
-        Route::middleware('permission:activity_logs.view')->group(function () {
+        Route::middleware('permission:activity_logs.view,hr.view')->group(function () {
             Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity_logs.index');
         });
 
         // Candidate Management (HR ATS) - Granular Permission Control
         Route::middleware('permission:hr.create')->group(function () {
             Route::get('/candidates/create', [CandidateController::class, 'create'])->name('candidates.create');
+            Route::get('/candidates/quick-create', [CandidateController::class, 'quickCreate'])->name('candidates.quick_create');
+            Route::post('/candidates/check-duplicate', [CandidateController::class, 'checkDuplicate'])->name('candidates.check_duplicate');
             Route::post('/candidates', [CandidateController::class, 'store'])->name('candidates.store');
         });
 
@@ -151,6 +153,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/candidates', [CandidateController::class, 'index'])->name('candidates.index');
             Route::get('/candidates/{candidate}', [CandidateController::class, 'show'])->name('candidates.show');
             Route::get('/candidates/{candidate}/resume', [CandidateController::class, 'downloadResume'])->name('candidates.resume');
+            Route::get('/candidates/{candidate}/resume-preview', [CandidateController::class, 'previewResume'])->name('candidates.resume_preview');
         });
 
         Route::middleware('permission:hr.edit')->group(function () {
@@ -211,8 +214,8 @@ Route::middleware('auth')->group(function () {
             Route::post('/leave/{application}/reject', [AdminLeaveController::class, 'reject'])->name('leave.reject');
         });
 
-        // Payroll Management (Admin)
-        Route::middleware('permission:finance.view')->group(function () {
+        // Payroll Management (Admin & HR)
+        Route::middleware('permission:finance.view,hr.view')->group(function () {
             Route::get('/payroll', [AdminPayrollController::class, 'index'])->name('payroll.index');
             Route::post('/payroll/process/{employee}', [AdminPayrollController::class, 'process'])->name('payroll.process');
             Route::post('/payroll/structure/{employee}', [AdminPayrollController::class, 'updateStructure'])->name('payroll.structure');

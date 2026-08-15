@@ -39,25 +39,25 @@
 <!-- 360° Sub-Tab Navigation Bar -->
 <div class="tab-nav">
     <a href="{{ route('admin.employees.show', [$employee->id, 'tab' => 'overview']) }}" class="tab-item {{ $activeTab === 'overview' ? 'active' : '' }}">
-        📊 Overview
+        <i class="fa-solid fa-chart-pie"></i> Overview
     </a>
     <a href="{{ route('admin.employees.show', [$employee->id, 'tab' => 'joining']) }}" class="tab-item {{ $activeTab === 'joining' ? 'active' : '' }}">
-        💼 Joining & Profile
+        <i class="fa-solid fa-id-card"></i> Joining & Profile
     </a>
     <a href="{{ route('admin.employees.show', [$employee->id, 'tab' => 'attendance']) }}" class="tab-item {{ $activeTab === 'attendance' ? 'active' : '' }}">
-        ⏱️ Attendance
+        <i class="fa-solid fa-clock-rotate-left"></i> Attendance
     </a>
     <a href="{{ route('admin.employees.show', [$employee->id, 'tab' => 'leave']) }}" class="tab-item {{ $activeTab === 'leave' ? 'active' : '' }}">
-        🏖️ Leave
+        <i class="fa-solid fa-plane-departure"></i> Leave
     </a>
     <a href="{{ route('admin.employees.show', [$employee->id, 'tab' => 'salary']) }}" class="tab-item {{ $activeTab === 'salary' ? 'active' : '' }}">
-        💵 Salary & Revision History
+        <i class="fa-solid fa-wallet"></i> Salary & Revision History
     </a>
     <a href="{{ route('admin.employees.show', [$employee->id, 'tab' => 'payroll']) }}" class="tab-item {{ $activeTab === 'payroll' ? 'active' : '' }}">
-        🧾 Monthly Payroll Slips
+        <i class="fa-solid fa-file-invoice-dollar"></i> Monthly Payroll Slips
     </a>
     <a href="{{ route('admin.employees.show', [$employee->id, 'tab' => 'documents']) }}" class="tab-item {{ $activeTab === 'documents' ? 'active' : '' }}">
-        📁 Documents
+        <i class="fa-solid fa-folder-open"></i> Documents
     </a>
 </div>
 

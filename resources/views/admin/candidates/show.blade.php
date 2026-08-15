@@ -1,4 +1,4 @@
-@extends(auth()->user()->hasRole('super-admin') ? 'layouts.admin' : 'layouts.employee')
+@extends('layouts.employee')
 
 @section('title', 'Candidate Profile - ' . $candidate->name)
 @section('page_title', 'Candidate Recruitment Profile: ' . $candidate->name)
@@ -18,7 +18,7 @@
                     </div>
                 </div>
                 <div>
-                    @if(auth()->user()->hasPermission('hr.edit') || auth()->user()->hasRole('super-admin'))
+                    @if((auth()->user()->hasPermission('hr.edit') || auth()->user()->hasRole('super-admin')) && !auth()->user()->hasRole('talent-acquisition'))
                     <a href="{{ route('admin.candidates.edit', $candidate->id) }}" class="btn btn-secondary btn-sm">✏️ Edit Profile</a>
                     @endif
                     <a href="{{ route('admin.candidates.index') }}" class="btn btn-secondary btn-sm">⬅️ Back to Directory</a>

@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Employee Panel') - SalesTaletity</title>
+    <title>@yield('title', 'Employee Panel') - Talentifyy</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -11,16 +13,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         :root {
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --primary-light: #eff6ff;
-            --primary-border: #bfdbfe;
+            --primary: #00a884;
+            --primary-hover: #008f70;
+            --primary-light: #e6f7f3;
+            --primary-border: #9ee5d4;
             --secondary: #64748b;
             --sidebar-bg: #ffffff;
             --sidebar-border: #f1f5f9;
             --sidebar-text: #64748b;
-            --sidebar-hover: #f8fafc;
-            --sidebar-active-bg: #2563eb;
+            --sidebar-hover: #f0faf7;
+            --sidebar-active-bg: #00a884;
             --sidebar-active-text: #ffffff;
             --body-bg: #f8fafc;
             --card-bg: #ffffff;
@@ -442,88 +444,11 @@
     @yield('styles')
 </head>
 <body>
+    <!-- Global Logo Preloader -->
+    @include('layouts.partials.preloader')
 
     <!-- Sidebar Navigation for Employee Panel -->
-    <aside class="sidebar">
-        <div class="sidebar-brand">
-            <div class="brand-title">Sales<span>Taletity</span></div>
-            <div class="brand-pill">Employee</div>
-        </div>
-
-        <ul class="sidebar-menu">
-            <li class="menu-item">
-                <a href="{{ route('employee.dashboard') }}" class="menu-link {{ request()->routeIs('employee.dashboard') ? 'active' : '' }}">
-                    <i class="fa-solid fa-house-laptop"></i>
-                    <span>My Dashboard & Clock-In</span>
-                </a>
-            </li>
-
-            <li class="menu-item">
-                <a href="{{ route('employee.attendance') }}" class="menu-link {{ request()->routeIs('employee.attendance') ? 'active' : '' }}">
-                    <i class="fa-solid fa-user-clock"></i>
-                    <span>My Attendance Logbook</span>
-                </a>
-            </li>
-
-            <li class="menu-item">
-                <a href="{{ route('employee.leave.index') }}" class="menu-link {{ request()->routeIs('employee.leave.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-plane-departure"></i>
-                    <span>My Leave & Balances</span>
-                </a>
-            </li>
-
-            <li class="menu-item">
-                <a href="{{ route('employee.salary') }}" class="menu-link {{ request()->routeIs('employee.salary*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-money-check-dollar"></i>
-                    <span>My Salary & Payslips</span>
-                </a>
-            </li>
-
-            <li class="menu-item">
-                <a href="{{ route('employee.documents') }}" class="menu-link {{ request()->routeIs('employee.documents*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-folder-open"></i>
-                    <span>My Official Documents</span>
-                </a>
-            </li>
-
-            <li class="menu-item">
-                <a href="{{ route('notifications.index') }}" class="menu-link {{ request()->routeIs('notifications.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-bell"></i>
-                    <span>Notifications</span>
-                </a>
-            </li>
-
-            @if(auth()->user()->hasPermission('hr.view') || auth()->user()->hasPermission('finance.view') || auth()->user()->hasRole('hr') || auth()->user()->hasRole('finance') || auth()->user()->hasRole('super-admin'))
-            <li class="menu-section-title">Granted Admin Modules</li>
-            @if(auth()->user()->hasPermission('hr.view') || auth()->user()->hasRole('hr') || auth()->user()->hasRole('super-admin'))
-            <li class="menu-item">
-                <a href="{{ route('admin.candidates.index') }}" class="menu-link {{ request()->routeIs('admin.candidates.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-user-graduate"></i>
-                    <span>Candidate Recruitment (ATS)</span>
-                </a>
-            </li>
-            @endif
-            @if(auth()->user()->hasPermission('finance.view') || auth()->user()->hasRole('finance') || auth()->user()->hasRole('super-admin'))
-            <li class="menu-item">
-                <a href="{{ route('admin.finance.index') }}" class="menu-link {{ request()->routeIs('admin.finance.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-chart-line"></i>
-                    <span>Finance Management</span>
-                </a>
-            </li>
-            @endif
-            @endif
-        </ul>
-
-        <div class="sidebar-footer">
-            <div class="user-avatar">
-                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-            </div>
-            <div class="user-info">
-                <div class="user-name">{{ auth()->user()->name }}</div>
-                <div class="user-role">{{ auth()->user()->designation ?? 'Employee' }}</div>
-            </div>
-        </div>
-    </aside>
+    @include('layouts.partials.sidebar')
 
     <!-- Main Content Wrapper -->
     <div class="main-wrapper">

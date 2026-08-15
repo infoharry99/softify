@@ -4,14 +4,14 @@
 @section('page_title', 'My Work Dashboard')
 
 @section('content')
-<!-- Welcome Banner -->
-<div class="card" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: #ffffff;">
+<!-- Welcome Banner (Talentifyy Emerald Mint Teal Theme) -->
+<div class="card" style="background: linear-gradient(135deg, #00a884 0%, #008f70 100%); color: #ffffff;">
     <div class="card-body" style="padding: 26px 30px; display: flex; align-items: center; justify-content: space-between;">
         <div>
             <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 5px; display: flex; align-items: center; gap: 10px;">
                 <i class="fa-solid fa-hand-wave"></i> Welcome back, {{ $user->name }}!
             </h2>
-            <div style="font-size: 0.9rem; color: #e0f2fe;">
+            <div style="font-size: 0.9rem; color: #e6f7f3;">
                 Employee Code: <strong>{{ $employee->employee_code }}</strong> | Department: <strong>{{ $user->department ?? 'General' }}</strong>
             </div>
         </div>
@@ -29,7 +29,7 @@
                     <i class="fa-solid fa-flag-checkered"></i> Status: Shift Completed / Paused
                 </span>
             @else
-                <span class="badge badge-secondary" style="font-size: 0.88rem; padding: 8px 16px; background-color: #64748b; color: #ffffff;">
+                <span class="badge badge-secondary" style="font-size: 0.88rem; padding: 8px 16px; background-color: rgba(255,255,255,0.2); color: #ffffff; border: 1px solid rgba(255,255,255,0.3);">
                     <i class="fa-solid fa-circle-stop"></i> Status: Logged Out
                 </span>
             @endif
@@ -44,12 +44,12 @@
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title" style="display: flex; align-items: center; gap: 8px;">
-                    <i class="fa-solid fa-clock-rotate-left" style="color: #0284c7;"></i> Today's Attendance & Work Session
+                    <i class="fa-solid fa-clock-rotate-left" style="color: #00a884;"></i> Today's Attendance & Work Session
                 </h3>
                 <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">
                     <span>{{ \Carbon\Carbon::now('Asia/Kolkata')->format('l, d M Y') }}</span>
                     <span style="margin: 0 6px;">|</span>
-                    <strong style="color: #0284c7;">
+                    <strong style="color: #00a884;">
                         <i class="fa-regular fa-clock"></i> Current Time: <span id="current_live_time">--:--:-- --</span> (IST)
                     </strong>
                 </div>
@@ -58,7 +58,7 @@
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-bottom: 25px; text-align: center;">
                     <div style="background: #f8fafc; padding: 15px; border-radius: var(--radius); border: 1px solid var(--border-color);">
                         <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Clock In</div>
-                        <div style="font-size: 1.1rem; font-weight: 700; color: #059669; margin-top: 4px;">
+                        <div style="font-size: 1.1rem; font-weight: 700; color: #00a884; margin-top: 4px;">
                             {{ $attendance && $attendance->first_login_at ? \Carbon\Carbon::parse($attendance->first_login_at)->timezone('Asia/Kolkata')->format('h:i A') : '--:--' }}
                         </div>
                     </div>
@@ -70,7 +70,7 @@
                     </div>
                     <div style="background: #f8fafc; padding: 15px; border-radius: var(--radius); border: 1px solid var(--border-color);">
                         <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Total Working</div>
-                        <div id="live_total_working" style="font-size: 1.15rem; font-weight: 700; color: var(--primary); margin-top: 4px;">
+                        <div id="live_total_working" style="font-size: 1.15rem; font-weight: 700; color: #00a884; margin-top: 4px;">
                             {{ $attendance ? floor($attendance->effective_working_minutes / 60) . 'h ' . ($attendance->effective_working_minutes % 60) . 'm' : '0h 0m' }}
                         </div>
                     </div>
@@ -113,7 +113,7 @@
                     @else
                         <form action="{{ route('employee.clock_in') }}" method="POST">
                             @csrf
-                            <button type="submit" class="btn btn-primary" style="padding: 12px 28px; font-size: 1rem;">
+                            <button type="submit" class="btn btn-primary" style="padding: 12px 28px; font-size: 1rem; background-color: #00a884; border-color: #00a884;">
                                 <i class="fa-solid fa-rocket"></i> {{ $attendance && $attendance->first_login_at ? 'Resume Work Session (Clock In)' : 'Start Work Session (Clock In)' }}
                             </button>
                         </form>
@@ -126,7 +126,7 @@
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title" style="display: flex; align-items: center; gap: 8px;">
-                    <i class="fa-solid fa-plane-departure" style="color: #0284c7;"></i> My Leave Balances
+                    <i class="fa-solid fa-plane-departure" style="color: #00a884;"></i> My Leave Balances
                 </h3>
                 <a href="{{ route('employee.leave.index') }}" class="btn btn-secondary btn-sm">
                     <i class="fa-solid fa-plus"></i> Apply Leave
@@ -137,7 +137,7 @@
                     @forelse($leaveBalances as $lb)
                     <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 15px; text-align: center;">
                         <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">{{ $lb->leaveType->name }}</div>
-                        <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary); margin-top: 4px;">{{ $lb->remaining_days }}</div>
+                        <div style="font-size: 1.5rem; font-weight: 700; color: #00a884; margin-top: 4px;">{{ $lb->remaining_days }}</div>
                         <div style="font-size: 0.72rem; color: var(--text-muted);">of {{ $lb->allowed_days }} allowed</div>
                     </div>
                     @empty
@@ -154,7 +154,7 @@
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title" style="display: flex; align-items: center; gap: 8px;">
-                    <i class="fa-solid fa-bullhorn" style="color: #0284c7;"></i> Company Announcements
+                    <i class="fa-solid fa-bullhorn" style="color: #00a884;"></i> Company Announcements
                 </h3>
             </div>
             <div class="card-body">
@@ -174,7 +174,7 @@
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title" style="display: flex; align-items: center; gap: 8px;">
-                    <i class="fa-solid fa-bell" style="color: #0284c7;"></i> Recent Notifications
+                    <i class="fa-solid fa-bell" style="color: #00a884;"></i> Recent Notifications
                 </h3>
                 <a href="{{ route('notifications.index') }}" class="btn btn-secondary btn-sm">View All</a>
             </div>
