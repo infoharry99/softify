@@ -22,6 +22,14 @@ class AdminLeaveController extends Controller
 
         $query = LeaveApplication::with(['employee.user', 'leaveType', 'approver']);
 
+        if (!auth()->user()->hasRole('super-admin')) {
+            $query->whereHas('employee.user', function ($q) {
+                $q->whereDoesntHave('roles', function ($rq) {
+                    $rq->where('slug', 'super-admin');
+                });
+            });
+        }
+
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
@@ -66,5 +74,38 @@ class AdminLeaveController extends Controller
         ActivityLogger::log('Leave Rejected', "Rejected leave application #{$application->id} for {$application->employee->user->name}", LeaveApplication::class, $application->id);
 
         return back()->with('success', 'Leave application rejected.');
+    }
+
+    /**
+     * Update employee leave balance quotas.
+     */
+    public function updateBalances(Request $request, \App\Models\Employee $employee)
+    {
+        $validated = $request->validate([
+            'balances' => 'required|array',
+        ]);
+
+        foreach ($request->input('balances', []) as $leaveTypeId => $balData) {
+            $allowed = (int) ($balData['allowed_days'] ?? 0);
+            $used = (int) ($balData['used_days'] ?? 0);
+            $remaining = max(0, $allowed - $used);
+
+            \App\Models\LeaveBalance::updateOrCreate(
+                [
+                    'employee_id' => $employee->id,
+                    'leave_type_id' => $leaveTypeId,
+                    'year' => date('Y'),
+                ],
+                [
+                    'allowed_days' => $allowed,
+                    'used_days' => $used,
+                    'remaining_days' => $remaining,
+                ]
+            );
+        }
+
+        ActivityLogger::log('Leave Balances Modified', "Updated leave quotas for {$employee->user->name}", \App\Models\Employee::class, $employee->id);
+
+        return back()->with('success', "Leave balances for {$employee->user->name} updated successfully.");
     }
 }

@@ -89,13 +89,13 @@
                             <div style="display: inline-flex; gap: 5px;">
                                 <form action="{{ route('admin.leave.approve', $app->id) }}" method="POST" style="display:inline;">
                                     @csrf
-                                    <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Approve leave application?')">
+                                    <button type="submit" class="btn btn-success btn-sm" onclick="return confirmSwalDelete(event, this.form, 'Approve Leave Application?', 'Are you sure you want to approve this employee leave request?')">
                                         ✅ Approve
                                     </button>
                                 </form>
                                 <form action="{{ route('admin.leave.reject', $app->id) }}" method="POST" style="display:inline;">
                                     @csrf
-                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Reject leave application?')">
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirmSwalDelete(event, this.form, 'Reject Leave Application?', 'Are you sure you want to reject this employee leave request?')">
                                         ❌ Reject
                                     </button>
                                 </form>

@@ -70,7 +70,7 @@
                             @if(auth()->user()->hasPermission('roles.edit') && $role->slug !== 'super-admin')
                                 <form action="{{ route('admin.roles.toggle-status', $role->id) }}" method="POST" style="display:inline;">
                                     @csrf
-                                    <button type="submit" class="btn btn-secondary btn-sm" onclick="return confirm('Toggle status for this role?')">
+                                    <button type="submit" class="btn btn-secondary btn-sm" onclick="return confirmSwalDelete(event, this.form, 'Toggle Role Status?', 'Are you sure you want to toggle status for this role?')">
                                         {{ $role->status === 'active' ? '🚫' : '✅' }}
                                     </button>
                                 </form>
@@ -80,7 +80,7 @@
                                 <form action="{{ route('admin.roles.destroy', $role->id) }}" method="POST" style="display:inline;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this role?')">
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirmSwalDelete(event, this.form, 'Delete System Role?', 'Are you sure you want to delete this system role?')">
                                         🗑️
                                     </button>
                                 </form>

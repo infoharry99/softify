@@ -145,7 +145,7 @@
                                 <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" style="display:inline;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this user?')" title="Delete User">
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirmSwalDelete(event, this.form, 'Delete User Account?', 'Are you sure you want to delete this system user account?')" title="Delete User">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </form>

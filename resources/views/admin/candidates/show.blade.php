@@ -132,21 +132,72 @@
             </div>
         </div>
 
-        <!-- Resume File Card -->
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">📄 Candidate Resume</h3>
+        <!-- Dual Resume System Card -->
+        <!-- 1. Original Resume (Read-Only) -->
+        <div class="card" style="margin-bottom: 20px;">
+            <div class="card-header" style="background: #f8fafc;">
+                <h3 class="card-title" style="font-size: 0.95rem; font-weight: 700; color: #334155; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-lock" style="color: #64748b;"></i> 1. Original Candidate Resume
+                </h3>
             </div>
-            <div class="card-body" style="text-align: center;">
+            <div class="card-body" style="text-align: center; padding: 18px;">
                 @if($candidate->resume)
-                    <div style="font-size: 2.5rem; color: #0d9488; margin-bottom: 10px;">📄</div>
-                    <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Resume Document Uploaded</div>
-                    <a href="{{ route('admin.candidates.resume', $candidate->id) }}" class="btn btn-primary" style="width: 100%; background-color: #0d9488; border-color: #0d9488;">
-                        📥 Download Resume
-                    </a>
+                    <div style="font-size: 2rem; color: #ef4444; margin-bottom: 6px;"><i class="fa-solid fa-file-pdf"></i></div>
+                    <div style="font-size: 0.78rem; color: #64748b; font-weight: 600; margin-bottom: 12px;">Original Read-Only Copy</div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <a href="{{ route('admin.candidates.resume_preview', ['candidate' => $candidate->id, 'type' => 'original']) }}" target="_blank" class="btn btn-secondary btn-sm" style="width: 100%; border-radius: 8px; font-weight: 600; color: #00a884;">
+                            <i class="fa-solid fa-eye"></i> Preview Original
+                        </a>
+                        <a href="{{ route('admin.candidates.resume', ['candidate' => $candidate->id, 'type' => 'original']) }}" class="btn btn-primary btn-sm" style="width: 100%; border-radius: 8px; font-weight: 700; background-color: #00a884; border-color: #00a884;">
+                            <i class="fa-solid fa-download"></i> Download Original
+                        </a>
+                    </div>
                 @else
-                    <div style="color: var(--text-muted); font-size: 0.85rem; padding: 15px;">No resume file attached.</div>
+                    <div style="color: #94a3b8; font-size: 0.82rem; padding: 10px;">No original resume attached.</div>
                 @endif
+            </div>
+        </div>
+
+        <!-- 2. Editable Copy Resume (Customized Version) -->
+        <div class="card">
+            <div class="card-header" style="background: #f0f9ff; border-bottom: 1px solid #bae6fd;">
+                <h3 class="card-title" style="font-size: 0.95rem; font-weight: 800; color: #0369a1; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-pen-to-square"></i> 2. Editable Copy Resume
+                </h3>
+            </div>
+            <div class="card-body" style="padding: 18px;">
+                @if($candidate->edited_resume)
+                    <div style="text-align: center; margin-bottom: 15px;">
+                        <div style="font-size: 2rem; color: #0284c7; margin-bottom: 6px;"><i class="fa-solid fa-file-circle-check"></i></div>
+                        <div style="font-size: 0.78rem; color: #0369a1; font-weight: 700;">Customized / Edited Version Active</div>
+                        <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+                            <a href="{{ route('admin.candidates.resume_preview', ['candidate' => $candidate->id, 'type' => 'edited']) }}" target="_blank" class="btn btn-secondary btn-sm" style="width: 100%; border-radius: 8px; font-weight: 600; color: #0284c7;">
+                                <i class="fa-solid fa-eye"></i> Preview Edited Copy
+                            </a>
+                            <a href="{{ route('admin.candidates.resume', ['candidate' => $candidate->id, 'type' => 'edited']) }}" class="btn btn-primary btn-sm" style="width: 100%; border-radius: 8px; font-weight: 700; background-color: #0284c7; border-color: #0284c7;">
+                                <i class="fa-solid fa-download"></i> Download Edited Copy
+                            </a>
+                        </div>
+                    </div>
+                @else
+                    <div style="color: #64748b; font-size: 0.82rem; margin-bottom: 12px; font-style: italic;">
+                        No edited copy uploaded yet. You can upload a customized/formatted resume for client sharing below.
+                    </div>
+                @endif
+
+                <!-- Upload / Update Form for Copy Resume -->
+                <form action="{{ route('admin.candidates.edited_resume', $candidate->id) }}" method="POST" enctype="multipart/form-data" style="margin-top: 15px; border-top: 1px dashed #cbd5e1; padding-top: 14px;">
+                    @csrf
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <label class="form-label" style="font-size: 0.78rem; font-weight: 700; color: #334155;">
+                            {{ $candidate->edited_resume ? 'Replace Edited Copy' : 'Upload Edited Copy Resume' }} (PDF/DOC)
+                        </label>
+                        <input type="file" name="edited_resume_file" class="form-control" accept=".pdf,.doc,.docx" required style="font-size: 0.8rem; padding: 6px;">
+                    </div>
+                    <button type="submit" class="btn btn-secondary btn-sm" style="width: 100%; border-radius: 8px; font-weight: 700; color: #0284c7; border-color: #38bdf8;">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> {{ $candidate->edited_resume ? 'Update Copy Resume' : 'Save Copy Resume' }}
+                    </button>
+                </form>
             </div>
         </div>
 

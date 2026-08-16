@@ -54,18 +54,46 @@
             </a>
         </li>
 
-        <!-- 2. HR & Candidate Recruitment Section -->
-        @if(auth()->user()->hasPermission('hr.view') || auth()->user()->hasRole('hr') || auth()->user()->hasRole('talent-acquisition') || auth()->user()->hasRole('data-entry') || auth()->user()->hasRole('super-admin'))
-        <li class="menu-section-title">HR & Recruitment</li>
+        @if(auth()->user()->hasRole('bda-team-lead') || auth()->user()->hasRole('bda') || auth()->user()->hasRole('super-admin') || auth()->user()->hasRole('admin') || auth()->user()->department === 'BDA')
+        <li class="menu-item">
+            <a href="{{ route('bda.work.index') }}" class="menu-link {{ request()->routeIs('bda.work.*') ? 'active' : '' }}">
+                <i class="fa-solid fa-list-check" style="color: #00a884;"></i>
+                <span>BDA Daily Targets</span>
+            </a>
+        </li>
+        @endif
 
+        @if(auth()->user()->hasRole('ta-team-lead') || auth()->user()->hasRole('talent-acquisition') || auth()->user()->hasRole('super-admin') || auth()->user()->hasRole('admin') || auth()->user()->department === 'Talent')
+        <li class="menu-item">
+            <a href="{{ route('ta.work.index') }}" class="menu-link {{ request()->routeIs('ta.work.*') ? 'active' : '' }}">
+                <i class="fa-solid fa-briefcase" style="color: #00a884;"></i>
+                <span>TA Job Requisitions</span>
+            </a>
+        </li>
+        @endif
+
+        <li class="menu-item">
+            <a href="{{ route('admin.announcements.index') }}" class="menu-link {{ request()->routeIs('admin.announcements.*') ? 'active' : '' }}">
+                <i class="fa-solid fa-bullhorn"></i>
+                <span>Company Notices</span>
+            </a>
+        </li>
+
+        <!-- 2. HR & Candidate Recruitment Section -->
+        @if(auth()->user()->hasPermission('candidates.view') || auth()->user()->hasRole('talent-acquisition') || auth()->user()->hasRole('ta-team-lead') || auth()->user()->hasRole('data-entry') || auth()->user()->hasRole('data-entry-team-lead') || auth()->user()->hasRole('super-admin') || auth()->user()->hasRole('hr'))
+        
+        @if(auth()->user()->hasRole('talent-acquisition') || auth()->user()->hasRole('ta-team-lead') || auth()->user()->hasRole('data-entry') || auth()->user()->hasRole('data-entry-team-lead') || auth()->user()->hasRole('super-admin') || auth()->user()->hasRole('admin'))
         <li class="menu-item">
             <a href="{{ route('admin.candidates.index') }}" class="menu-link {{ request()->routeIs('admin.candidates.*') ? 'active' : '' }}">
                 <i class="fa-solid fa-user-graduate"></i>
                 <span>Candidates ATS</span>
             </a>
         </li>
+        @endif
 
-        @if(!auth()->user()->hasRole('talent-acquisition') && !auth()->user()->hasRole('data-entry'))
+        @if(auth()->user()->hasRole('hr') || auth()->user()->hasRole('super-admin') || auth()->user()->hasRole('admin'))
+        <li class="menu-section-title">HR Management</li>
+
         <li class="menu-item">
             <a href="{{ route('admin.employees.index') }}" class="menu-link {{ request()->routeIs('admin.employees.*') ? 'active' : '' }}">
                 <i class="fa-solid fa-users"></i>
@@ -93,19 +121,12 @@
                 <span>Payroll & Payslips</span>
             </a>
         </li>
-
-        <li class="menu-item">
-            <a href="{{ route('admin.announcements.index') }}" class="menu-link {{ request()->routeIs('admin.announcements.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-bullhorn"></i>
-                <span>Company Notices</span>
-            </a>
-        </li>
         @endif
         @endif
 
-        <!-- 3. Finance Management Section -->
-        @if((auth()->user()->hasPermission('finance.view') || auth()->user()->hasRole('finance') || auth()->user()->hasRole('super-admin')) && !auth()->user()->hasRole('talent-acquisition') && !auth()->user()->hasRole('data-entry'))
-        <li class="menu-section-title">Finance Management</li>
+        <!-- 3. Finance & Leads Section -->
+        @if(auth()->user()->hasRole('finance') || auth()->user()->hasRole('super-admin') || auth()->user()->hasRole('admin'))
+        <li class="menu-section-title">Finance & Sales</li>
 
         <li class="menu-item">
             <a href="{{ route('admin.finance.index') }}" class="menu-link {{ request()->routeIs('admin.finance.*') ? 'active' : '' }}">
@@ -116,45 +137,45 @@
         @endif
 
         <!-- 4. System & Access Control Section (HR / Admin only) -->
-        @if((auth()->user()->hasPermission('users.view') || auth()->user()->hasRole('hr') || auth()->user()->hasRole('super-admin')) && !auth()->user()->hasRole('talent-acquisition') && !auth()->user()->hasRole('data-entry'))
-        <li class="menu-section-title">User & Access Control</li>
+        @if(auth()->user()->hasRole('hr') || auth()->user()->hasRole('super-admin') || auth()->user()->hasRole('admin'))
+            <li class="menu-section-title">User & Access Control</li>
 
-        <li class="menu-item">
-            <a href="{{ route('admin.users.index') }}" class="menu-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-user-gear"></i>
-                <span>System Users</span>
-            </a>
-        </li>
+            <li class="menu-item">
+                <a href="{{ route('admin.users.index') }}" class="menu-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-user-gear"></i>
+                    <span>System Users</span>
+                </a>
+            </li>
 
-        <li class="menu-item">
-            <a href="{{ route('admin.roles.index') }}" class="menu-link {{ request()->routeIs('admin.roles.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-shield-halved"></i>
-                <span>Roles & Permissions</span>
-            </a>
-        </li>
+            <!-- <li class="menu-item">
+                <a href="{{ route('admin.roles.index') }}" class="menu-link {{ request()->routeIs('admin.roles.*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>Roles & Permissions</span>
+                </a>
+            </li>
 
-        <li class="menu-item">
-            <a href="{{ route('admin.permissions.index') }}" class="menu-link {{ request()->routeIs('admin.permissions.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-key"></i>
-                <span>Permissions Matrix</span>
-            </a>
-        </li>
+            <li class="menu-item">
+                <a href="{{ route('admin.permissions.index') }}" class="menu-link {{ request()->routeIs('admin.permissions.*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-key"></i>
+                    <span>Permissions Matrix</span>
+                </a>
+            </li>
 
-        <li class="menu-item">
-            <a href="{{ route('admin.activity_logs.index') }}" class="menu-link {{ request()->routeIs('admin.activity_logs.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-list-check"></i>
-                <span>Audit Activity Logs</span>
-            </a>
-        </li>
+            <li class="menu-item">
+                <a href="{{ route('admin.activity_logs.index') }}" class="menu-link {{ request()->routeIs('admin.activity_logs.*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-list-check"></i>
+                    <span>Audit Activity Logs</span>
+                </a>
+            </li> -->
         @endif
 
         @if(auth()->user()->hasRole('super-admin'))
-        <li class="menu-item">
-            <a href="{{ route('admin.dashboard') }}" class="menu-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                <i class="fa-solid fa-chart-pie"></i>
-                <span>Admin Dashboard Overview</span>
-            </a>
-        </li>
+            <li class="menu-item">
+                <a href="{{ route('admin.dashboard') }}" class="menu-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Admin Dashboard Overview</span>
+                </a>
+            </li>
         @endif
     </ul>
 

@@ -50,4 +50,9 @@ class User extends Authenticatable
         'last_login_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function employee()
+    {
+        return $this->hasOne(Employee::class);
+    }
 }

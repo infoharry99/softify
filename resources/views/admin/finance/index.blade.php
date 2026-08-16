@@ -216,7 +216,7 @@
                             </a>
                             @endif
                             @if(auth()->user()->hasPermission('finance.delete') || auth()->user()->hasRole('super-admin'))
-                            <form action="{{ route('admin.finance.destroy', $req->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Delete this finance requirement?');">
+                            <form action="{{ route('admin.finance.destroy', $req->id) }}" method="POST" style="display: inline;" onsubmit="return confirmSwalDelete(event, this, 'Delete Finance Record?', 'Are you sure you want to delete this finance requirement?');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-sm" title="Delete Record">

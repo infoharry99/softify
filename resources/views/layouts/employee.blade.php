@@ -501,6 +501,64 @@
         </main>
     </div>
 
+    <!-- SweetAlert2 Library -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function swalConfirm(title, text, confirmText, confirmColor, callback) {
+            Swal.fire({
+                title: title || 'Are you sure?',
+                text: text || '',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: confirmColor || '#00a884',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: confirmText || 'Yes, proceed',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed && typeof callback === 'function') {
+                    callback();
+                }
+            });
+        }
+
+        function confirmSwalDelete(arg1, arg2, arg3, arg4) {
+            var formElement = null;
+            var titleText = 'Confirm Deletion';
+            var messageText = 'This action cannot be undone!';
+
+            if (arg1 && typeof arg1.preventDefault === 'function') {
+                arg1.preventDefault();
+                formElement = arg2;
+                titleText = arg3 || titleText;
+                messageText = arg4 || messageText;
+            } else {
+                formElement = arg1;
+                titleText = arg2 || titleText;
+                messageText = arg3 || messageText;
+            }
+
+            if (typeof formElement === 'string') {
+                formElement = document.getElementById(formElement);
+            }
+
+            Swal.fire({
+                title: titleText,
+                text: messageText,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: '<i class="fa-solid fa-trash"></i> Yes, Delete',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed && formElement) {
+                    formElement.submit();
+                }
+            });
+            return false;
+        }
+    </script>
+
     @yield('scripts')
 </body>
 </html>

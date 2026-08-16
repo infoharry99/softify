@@ -30,6 +30,14 @@ class AdminAttendanceController extends Controller
         $query = Attendance::with(['employee.user', 'sessions', 'breaks'])
             ->where('date', $date);
 
+        if (!auth()->user()->hasRole('super-admin')) {
+            $query->whereHas('employee.user', function ($q) {
+                $q->whereDoesntHave('roles', function ($rq) {
+                    $rq->where('slug', 'super-admin');
+                });
+            });
+        }
+
         if ($request->filled('search')) {
             $search = $request->search;
             $query->whereHas('employee.user', function ($q) use ($search) {

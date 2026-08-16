@@ -44,12 +44,22 @@
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">Mobile Number</label>
-                    <input type="text" name="mobile" class="form-control" value="{{ old('mobile', $employee->user->mobile) }}">
+                    <input type="tel" name="mobile" class="form-control" value="{{ old('mobile', $employee->user->mobile) }}" placeholder="e.g. 9876543210" pattern="^(\+91[\-\s]?)?[6789]\d{9}$" maxlength="13" title="Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9 (e.g. 9876543210 or +919876543210)">
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Department *</label>
-                    <input type="text" name="department" class="form-control" value="{{ old('department', $employee->user->department) }}" required>
+                    <select name="department" class="form-control" required>
+                        <option value="">-- Select Department --</option>
+                        <option value="Human Resources" {{ old('department', $employee->user->department) == 'Human Resources' ? 'selected' : '' }}>Human Resources (HR)</option>
+                        <option value="Sales" {{ old('department', $employee->user->department) == 'Sales' ? 'selected' : '' }}>Sales</option>
+                        <option value="Finance" {{ old('department', $employee->user->department) == 'Finance' ? 'selected' : '' }}>Finance</option>
+                        <option value="Business Development" {{ old('department', $employee->user->department) == 'Business Development' ? 'selected' : '' }}>Business Development (BDA)</option>
+                        <option value="Talent Acquisition" {{ old('department', $employee->user->department) == 'Talent Acquisition' ? 'selected' : '' }}>Talent Acquisition</option>
+                        <option value="Data Entry" {{ old('department', $employee->user->department) == 'Data Entry' ? 'selected' : '' }}>Data Entry</option>
+                        <option value="Management" {{ old('department', $employee->user->department) == 'Management' ? 'selected' : '' }}>Management</option>
+                        <option value="IT & Software" {{ old('department', $employee->user->department) == 'IT & Software' ? 'selected' : '' }}>IT & Software</option>
+                    </select>
                 </div>
 
                 <div class="form-group">

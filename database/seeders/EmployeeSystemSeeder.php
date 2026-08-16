@@ -337,5 +337,67 @@ class EmployeeSystemSeeder extends Seeder
                 $sf
             );
         }
+
+        // 9. Seed 3 Team Lead Users
+        $bdaLeadRole = Role::where('slug', 'bda-team-lead')->first();
+        $taLeadRole = Role::where('slug', 'ta-team-lead')->first();
+        $dataLeadRole = Role::where('slug', 'data-entry-team-lead')->first();
+
+        // Team Lead 1: Amit Sharma (BDA Team Lead)
+        $amitUser = User::firstOrCreate(
+            ['email' => 'bdalead@talentifyy.com'],
+            [
+                'name' => 'Amit Sharma',
+                'mobile' => '9811122334',
+                'department' => 'BDA',
+                'designation' => 'BDA Team Lead',
+                'status' => 'active',
+                'password' => Hash::make('password123'),
+            ]
+        );
+        if ($bdaLeadRole) $amitUser->roles()->sync([$bdaLeadRole->id]);
+        $amitEmp = Employee::firstOrCreate(['user_id' => $amitUser->id], ['employee_code' => 'EMP-8001']);
+        EmployeeProfile::firstOrCreate(['employee_id' => $amitEmp->id], ['gender' => 'Male', 'city' => 'Delhi', 'state' => 'Delhi', 'country' => 'India']);
+        EmployeeJoiningDetail::firstOrCreate(['employee_id' => $amitEmp->id], ['joining_date' => '2025-02-01', 'employment_type' => 'Full Time', 'employment_status' => 'Active', 'work_location' => 'Delhi Office']);
+        SalaryStructure::firstOrCreate(['employee_id' => $amitEmp->id], ['basic_salary' => 30000, 'hra' => 10000, 'allowances' => 5000, 'bonus' => 3000, 'pf_deduction' => 0, 'other_deductions' => 500, 'gross_salary' => 45000, 'net_salary' => 47500, 'effective_date' => '2025-02-01']);
+        LeaveService::initializeBalances($amitEmp);
+
+        // Team Lead 2: Neha Verma (Talent Acquisition Team Lead)
+        $nehaUser = User::firstOrCreate(
+            ['email' => 'talead@talentifyy.com'],
+            [
+                'name' => 'Neha Verma',
+                'mobile' => '9822233445',
+                'department' => 'Talent',
+                'designation' => 'Talent Acquisition Team Lead',
+                'status' => 'active',
+                'password' => Hash::make('password123'),
+            ]
+        );
+        if ($taLeadRole) $nehaUser->roles()->sync([$taLeadRole->id]);
+        $nehaEmp = Employee::firstOrCreate(['user_id' => $nehaUser->id], ['employee_code' => 'EMP-8002']);
+        EmployeeProfile::firstOrCreate(['employee_id' => $nehaEmp->id], ['gender' => 'Female', 'city' => 'Pune', 'state' => 'Maharashtra', 'country' => 'India']);
+        EmployeeJoiningDetail::firstOrCreate(['employee_id' => $nehaEmp->id], ['joining_date' => '2025-02-15', 'employment_type' => 'Full Time', 'employment_status' => 'Active', 'work_location' => 'Pune Office']);
+        SalaryStructure::firstOrCreate(['employee_id' => $nehaEmp->id], ['basic_salary' => 28000, 'hra' => 9000, 'allowances' => 4000, 'bonus' => 2000, 'pf_deduction' => 0, 'other_deductions' => 400, 'gross_salary' => 41000, 'net_salary' => 42600, 'effective_date' => '2025-02-15']);
+        LeaveService::initializeBalances($nehaEmp);
+
+        // Team Lead 3: Rohan Mehta (Data Entry Team Lead)
+        $rohanUser = User::firstOrCreate(
+            ['email' => 'datalead@talentifyy.com'],
+            [
+                'name' => 'Rohan Mehta',
+                'mobile' => '9833344556',
+                'department' => 'Data Entry',
+                'designation' => 'Data Entry Team Lead',
+                'status' => 'active',
+                'password' => Hash::make('password123'),
+            ]
+        );
+        if ($dataLeadRole) $rohanUser->roles()->sync([$dataLeadRole->id]);
+        $rohanEmp = Employee::firstOrCreate(['user_id' => $rohanUser->id], ['employee_code' => 'EMP-8003']);
+        EmployeeProfile::firstOrCreate(['employee_id' => $rohanEmp->id], ['gender' => 'Male', 'city' => 'Mumbai', 'state' => 'Maharashtra', 'country' => 'India']);
+        EmployeeJoiningDetail::firstOrCreate(['employee_id' => $rohanEmp->id], ['joining_date' => '2025-03-01', 'employment_type' => 'Full Time', 'employment_status' => 'Active', 'work_location' => 'Mumbai HQ']);
+        SalaryStructure::firstOrCreate(['employee_id' => $rohanEmp->id], ['basic_salary' => 26000, 'hra' => 8000, 'allowances' => 4000, 'bonus' => 1500, 'pf_deduction' => 0, 'other_deductions' => 300, 'gross_salary' => 38000, 'net_salary' => 39200, 'effective_date' => '2025-03-01']);
+        LeaveService::initializeBalances($rohanEmp);
     }
 }

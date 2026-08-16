@@ -41,4 +41,40 @@ class AdminAnnouncementController extends Controller
 
         return back()->with('success', 'Company announcement published successfully.');
     }
+
+    /**
+     * Update existing announcement.
+     */
+    public function update(Request $request, Announcement $announcement)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'message' => 'required|string',
+            'audience' => 'required|in:All Employees,Department,Role,Selected Employees',
+        ]);
+
+        $announcement->update([
+            'title' => $validated['title'],
+            'message' => $validated['message'],
+            'audience' => $validated['audience'],
+        ]);
+
+        ActivityLogger::log('Announcement Updated', "Updated company announcement '{$announcement->title}'", Announcement::class, $announcement->id);
+
+        return back()->with('success', 'Company announcement updated successfully.');
+    }
+
+    /**
+     * Delete announcement.
+     */
+    public function destroy(Announcement $announcement)
+    {
+        $title = $announcement->title;
+        $id = $announcement->id;
+        $announcement->delete();
+
+        ActivityLogger::log('Announcement Deleted', "Deleted company announcement '{$title}'", Announcement::class, $id);
+
+        return back()->with('success', 'Company announcement deleted successfully.');
+    }
 }

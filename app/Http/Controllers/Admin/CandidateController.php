@@ -18,7 +18,7 @@ class CandidateController extends Controller
     {
         $query = Candidate::with(['hr', 'updatedBy']);
 
-        // 1. Text Search (Name, Email, Phone, Location, Company Name)
+        // 1. Text Search (Name, Email, Phone, Location, Job Title, Company Name)
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -26,21 +26,22 @@ class CandidateController extends Controller
                   ->orWhere('email', 'like', "%{$search}%")
                   ->orWhere('phone', 'like', "%{$search}%")
                   ->orWhere('location', 'like', "%{$search}%")
+                  ->orWhere('job_title', 'like', "%{$search}%")
                   ->orWhere('company_name', 'like', "%{$search}%");
             });
         }
 
-        // 2. Filter by Skills
-        if ($request->filled('skill')) {
-            $query->where('skills', 'like', "%{$request->skill}%");
+        // 2. Filter by Job Title
+        if ($request->filled('job_title')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('job_title', 'like', "%{$request->job_title}%")
+                  ->orWhere('skills', 'like', "%{$request->job_title}%");
+            });
         }
 
-        // 3. Filter by Experience Range
-        if ($request->filled('min_exp')) {
-            $query->where('experience', '>=', (float) $request->min_exp);
-        }
-        if ($request->filled('max_exp')) {
-            $query->where('experience', '<=', (float) $request->max_exp);
+        // 3. Filter by Skills
+        if ($request->filled('skill')) {
+            $query->where('skills', 'like', "%{$request->skill}%");
         }
 
         // 4. Filter by Job Type
@@ -53,19 +54,9 @@ class CandidateController extends Controller
             $query->where('notice_period', $request->notice_period);
         }
 
-        // 6. Filter by Status / Pipeline Stage
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        // 7. Filter by Hiring Company
-        if ($request->filled('company_name')) {
-            $query->where('company_name', 'like', "%{$request->company_name}%");
-        }
-
-        // 8. Filter by Expected CTC Max
-        if ($request->filled('max_expected_ctc')) {
-            $query->where('expected_ctc', '<=', (float) $request->max_expected_ctc);
+        // 6. Filter by Expected CTC
+        if ($request->filled('expected_ctc')) {
+            $query->where('expected_ctc', '<=', (float) $request->expected_ctc);
         }
 
         $candidates = $query->latest()->paginate(10)->withQueryString();
@@ -146,9 +137,10 @@ class CandidateController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|min:2|max:255',
             'email' => 'required|email|max:255|unique:candidates,email',
-            'phone' => 'required|string|min:7|max:20|regex:/^[0-9+\s\-()]{7,20}$/',
+            'phone' => ['required', 'string', 'regex:/^(\+91[\-\s]?)?[6789]\d{9}$/'],
             'location' => 'required|string|max:255',
             'company_name' => 'required|string|max:255',
+            'job_title' => 'nullable|string|max:255',
             'skills' => 'required|string|min:2',
             'experience' => 'required|numeric|min:0|max:50',
             'job_type' => 'required|in:Full Time,Part Time,Contract,Remote,Hybrid',
@@ -210,9 +202,10 @@ class CandidateController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|min:2|max:255',
             'email' => ['required', 'email', 'max:255', Rule::unique('candidates')->ignore($candidate->id)],
-            'phone' => 'required|string|min:7|max:20|regex:/^[0-9+\s\-()]{7,20}$/',
+            'phone' => ['required', 'string', 'regex:/^(\+91[\-\s]?)?[6789]\d{9}$/'],
             'location' => 'required|string|max:255',
             'company_name' => 'required|string|max:255',
+            'job_title' => 'nullable|string|max:255',
             'skills' => 'required|string|min:2',
             'experience' => 'required|numeric|min:0|max:50',
             'job_type' => 'required|in:Full Time,Part Time,Contract,Remote,Hybrid',
@@ -261,33 +254,64 @@ class CandidateController extends Controller
     }
 
     /**
-     * Download candidate resume.
+     * Download original or edited copy resume.
      */
-    public function downloadResume(Candidate $candidate)
+    public function downloadResume(Candidate $candidate, Request $request)
     {
-        if (!$candidate->resume || !Storage::disk('public')->exists($candidate->resume)) {
-            return back()->with('error', 'Resume file not found on server.');
+        $type = $request->get('type', 'original');
+        $fileKey = ($type === 'edited' && $candidate->edited_resume) ? $candidate->edited_resume : $candidate->resume;
+
+        if (!$fileKey || !Storage::disk('public')->exists($fileKey)) {
+            return back()->with('error', 'Requested resume file not found on server.');
         }
 
-        return Storage::disk('public')->download($candidate->resume, "Resume_{$candidate->name}.pdf");
+        $suffix = ($type === 'edited') ? '_Edited_Copy' : '_Original';
+        return Storage::disk('public')->download($fileKey, "Resume_{$candidate->name}{$suffix}.pdf");
     }
 
     /**
-     * Preview candidate resume in browser.
+     * Preview candidate original or edited resume in browser.
      */
-    public function previewResume(Candidate $candidate)
+    public function previewResume(Candidate $candidate, Request $request)
     {
-        if (!$candidate->resume || !Storage::disk('public')->exists($candidate->resume)) {
-            return back()->with('error', 'Resume file not found on server.');
+        $type = $request->get('type', 'original');
+        $fileKey = ($type === 'edited' && $candidate->edited_resume) ? $candidate->edited_resume : $candidate->resume;
+
+        if (!$fileKey || !Storage::disk('public')->exists($fileKey)) {
+            return back()->with('error', 'Requested resume file not found on server.');
         }
 
-        $filePath = Storage::disk('public')->path($candidate->resume);
-        $mimeType = Storage::disk('public')->mimeType($candidate->resume) ?? 'application/pdf';
+        $filePath = Storage::disk('public')->path($fileKey);
+        $mimeType = Storage::disk('public')->mimeType($fileKey) ?? 'application/pdf';
 
         return response()->file($filePath, [
             'Content-Type' => $mimeType,
-            'Content-Disposition' => 'inline; filename="Resume_' . $candidate->name . '.pdf"',
+            'Content-Disposition' => 'inline; filename="Resume_' . $candidate->name . '_' . $type . '.pdf"',
         ]);
+    }
+
+    /**
+     * Upload or update edited copy resume (Original resume remains 100% untouched!).
+     */
+    public function uploadEditedResume(Request $request, Candidate $candidate)
+    {
+        $request->validate([
+            'edited_resume_file' => 'required|file|mimes:pdf,doc,docx|max:5120',
+        ]);
+
+        if ($candidate->edited_resume && Storage::disk('public')->exists($candidate->edited_resume)) {
+            Storage::disk('public')->delete($candidate->edited_resume);
+        }
+
+        $path = $request->file('edited_resume_file')->store('candidate_edited_resumes', 'public');
+        $candidate->update([
+            'edited_resume' => $path,
+            'last_updated_by' => auth()->id(),
+        ]);
+
+        ActivityLogger::log('Candidate Edited Resume Uploaded', "Uploaded edited copy resume for candidate '{$candidate->name}'", Candidate::class, $candidate->id);
+
+        return back()->with('success', "Edited copy resume updated successfully for {$candidate->name}. Original resume remains safe and untouched.");
     }
 
     /**
@@ -320,7 +344,7 @@ class CandidateController extends Controller
             'email.email' => 'Please enter a valid email address (e.g. candidate@example.com).',
             'email.unique' => 'A candidate with this email address already exists in the ATS system.',
             'phone.required' => 'Contact phone number is required.',
-            'phone.regex' => 'Please enter a valid phone number (digits, +, -, and spaces allowed).',
+            'phone.regex' => 'Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9 (e.g. 9876543210 or +919876543210).',
             'location.required' => 'Candidate location / city is required.',
             'company_name.required' => 'Client hiring company name is required.',
             'skills.required' => 'Please specify key candidate skills (comma separated).',

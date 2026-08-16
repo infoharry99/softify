@@ -162,7 +162,7 @@
 
             <div class="form-group">
                 <label class="form-label">Phone Number *</label>
-                <input type="text" name="phone" class="form-control @error('phone') is-invalid-input @enderror" value="{{ old('phone') }}" required pattern="^[0-9+\s\-()]{7,20}$" placeholder="e.g. +91 9876543210">
+                <input type="tel" name="phone" class="form-control @error('phone') is-invalid-input @enderror" value="{{ old('phone') }}" required pattern="^(\+91[\-\s]?)?[6789]\d{9}$" maxlength="13" title="Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9 (e.g. 9876543210 or +919876543210)" placeholder="e.g. 9876543210">
                 @error('phone')
                     <span class="field-error-msg"><i class="fa-solid fa-circle-exclamation"></i> {{ $message }}</span>
                 @enderror
@@ -193,6 +193,11 @@
         </div>
 
         <div class="form-grid-3">
+            <div class="form-group">
+                <label class="form-label">Job Title / Designation</label>
+                <input type="text" name="job_title" class="form-control @error('job_title') is-invalid-input @enderror" value="{{ old('job_title') }}" placeholder="e.g. Senior Python Developer">
+            </div>
+
             <div class="form-group">
                 <label class="form-label">Key Skills *</label>
                 <input type="text" name="skills" class="form-control @error('skills') is-invalid-input @enderror" value="{{ old('skills') }}" required minlength="2" placeholder="e.g. PHP, React, Laravel, MySQL">

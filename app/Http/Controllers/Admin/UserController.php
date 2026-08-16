@@ -20,6 +20,12 @@ class UserController extends Controller
     {
         $query = User::with('roles');
 
+        if (!auth()->user()->hasRole('super-admin')) {
+            $query->whereDoesntHave('roles', function ($q) {
+                $q->where('slug', 'super-admin');
+            });
+        }
+
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -66,7 +72,7 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email',
-            'mobile' => 'nullable|string|max:50',
+            'mobile' => ['nullable', 'string', 'regex:/^(\+91[\-\s]?)?[6789]\d{9}$/'],
             'department' => 'nullable|string|max:100',
             'designation' => 'nullable|string|max:100',
             'status' => 'required|in:active,inactive',
@@ -76,6 +82,8 @@ class UserController extends Controller
             'permissions' => 'array',
             'permissions.*' => 'exists:permissions,id',
             'profile_photo' => 'nullable|image|max:2048',
+        ], [
+            'mobile.regex' => 'Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9 (e.g. 9876543210 or +919876543210).',
         ]);
 
         if ($request->hasFile('profile_photo')) {
@@ -105,6 +113,10 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
+        if ($user->hasRole('super-admin') && !auth()->user()->hasRole('super-admin')) {
+            abort(403, 'Only Super Admin can view or edit Super Admin accounts.');
+        }
+
         $user->load(['roles.permissions', 'permissions']);
         $directPermissions = $user->permissions;
         $rolePermissions = Permission::whereHas('roles', function ($q) use ($user) {
@@ -119,6 +131,10 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
+        if ($user->hasRole('super-admin') && !auth()->user()->hasRole('super-admin')) {
+            abort(403, 'Only Super Admin can view or edit Super Admin accounts.');
+        }
+
         $user->load(['roles', 'permissions']);
         $roles = Role::get();
         $permissionsByModule = Permission::all()->groupBy('module');
@@ -131,10 +147,14 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
+        if ($user->hasRole('super-admin') && !auth()->user()->hasRole('super-admin')) {
+            abort(403, 'Only Super Admin can view or edit Super Admin accounts.');
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'mobile' => 'nullable|string|max:50',
+            'mobile' => ['nullable', 'string', 'regex:/^(\+91[\-\s]?)?[6789]\d{9}$/'],
             'department' => 'nullable|string|max:100',
             'designation' => 'nullable|string|max:100',
             'status' => 'required|in:active,inactive',

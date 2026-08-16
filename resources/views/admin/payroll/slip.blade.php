@@ -58,6 +58,7 @@
                 <div><strong>Joining Date:</strong> {{ $payroll->employee->joiningDetail ? $payroll->employee->joiningDetail->joining_date->format('M d, Y') : '-' }}</div>
                 <div><strong>Working Days:</strong> {{ $payroll->working_days }} Days</div>
                 <div><strong>Present Days:</strong> {{ $payroll->present_days }} Days</div>
+                <div><strong>Total Leaves Taken:</strong> {{ $payroll->paid_leave_days + $payroll->unpaid_leave_days }} Days ({{ $payroll->paid_leave_days }} Paid, {{ $payroll->unpaid_leave_days }} LOP)</div>
                 <div><strong>Payment Status:</strong> <span style="color: #10b981; font-weight: 700;">{{ $payroll->payment_status }}</span></div>
             </div>
         </div>
@@ -75,20 +76,20 @@
                 <tr>
                     <td>Basic Salary</td>
                     <td>₹{{ number_format($salary ? $salary->basic_salary : 0, 2) }}</td>
-                    <td>Provident Fund (PF)</td>
-                    <td>₹{{ number_format($salary ? $salary->pf_deduction : 0, 2) }}</td>
+                    <td>Unpaid Leave (LOP Deductions)</td>
+                    <td>₹{{ number_format($payroll->leave_deductions, 2) }}</td>
                 </tr>
                 <tr>
                     <td>House Rent Allowance (HRA)</td>
                     <td>₹{{ number_format($salary ? $salary->hra : 0, 2) }}</td>
-                    <td>Unpaid Leave Deductions</td>
-                    <td>₹{{ number_format($payroll->leave_deductions, 2) }}</td>
+                    <td>Other Deductions</td>
+                    <td>₹{{ number_format($salary ? $salary->other_deductions : 0, 2) }}</td>
                 </tr>
                 <tr>
                     <td>Conveyance & Allowances</td>
                     <td>₹{{ number_format($salary ? $salary->allowances : 0, 2) }}</td>
-                    <td>Other Deductions</td>
-                    <td>₹{{ number_format($salary ? $salary->other_deductions : 0, 2) }}</td>
+                    <td>-</td>
+                    <td>-</td>
                 </tr>
                 <tr>
                     <td>Bonus / Incentives</td>
@@ -121,7 +122,14 @@
                 </div>
             </div>
         </div>
-    </div>
-
+    @if(isset($autoPrint) || request()->has('download'))
+    <script>
+        window.onload = function() {
+            setTimeout(function() {
+                window.print();
+            }, 300);
+        };
+    </script>
+    @endif
 </body>
 </html>

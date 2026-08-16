@@ -23,6 +23,14 @@ class AdminEmployeeController extends Controller
     {
         $query = Employee::with(['user.roles', 'joiningDetail', 'profile']);
 
+        if (!auth()->user()->hasRole('super-admin')) {
+            $query->whereHas('user', function ($q) {
+                $q->whereDoesntHave('roles', function ($rq) {
+                    $rq->where('slug', 'super-admin');
+                });
+            });
+        }
+
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -59,7 +67,7 @@ class AdminEmployeeController extends Controller
     public function create()
     {
         $managers = Employee::with('user')->get();
-        $roles = Role::where('status', 'active')->get();
+        $roles = Role::where('status', 'active')->whereNotIn('slug', ['super-admin', 'admin'])->get();
 
         return view('admin.employees.create', compact('managers', 'roles'));
     }
@@ -72,7 +80,7 @@ class AdminEmployeeController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email',
-            'mobile' => 'nullable|string|max:50',
+            'mobile' => ['nullable', 'string', 'regex:/^(\+91[\-\s]?)?[6789]\d{9}$/'],
             'password' => 'required|string|min:8|confirmed',
             'employee_code' => 'required|string|max:50|unique:employees,employee_code',
             'department' => 'required|string|max:100',
@@ -83,6 +91,8 @@ class AdminEmployeeController extends Controller
             'employment_status' => 'required|in:Active,Probation,Notice Period,Resigned,Terminated,Inactive',
             'work_location' => 'nullable|string|max:150',
             'role_id' => 'required|exists:roles,id',
+        ], [
+            'mobile.regex' => 'Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9 (e.g. 9876543210 or +919876543210).',
         ]);
 
         // Create User account
@@ -130,6 +140,10 @@ class AdminEmployeeController extends Controller
      */
     public function show(Employee $employee, Request $request)
     {
+        if ($employee->user && $employee->user->hasRole('super-admin') && !auth()->user()->hasRole('super-admin')) {
+            abort(403, 'You do not have permission to view or edit Super Admin details.');
+        }
+
         $employee->load([
             'user.roles',
             'profile',
@@ -154,9 +168,13 @@ class AdminEmployeeController extends Controller
      */
     public function edit(Employee $employee)
     {
+        if ($employee->user && $employee->user->hasRole('super-admin') && !auth()->user()->hasRole('super-admin')) {
+            abort(403, 'You do not have permission to view or edit Super Admin details.');
+        }
+
         $employee->load(['user.roles', 'profile', 'joiningDetail']);
         $managers = Employee::where('id', '!=', $employee->id)->with('user')->get();
-        $roles = Role::where('status', 'active')->get();
+        $roles = Role::where('status', 'active')->whereNotIn('slug', ['super-admin', 'admin'])->get();
 
         return view('admin.employees.edit', compact('employee', 'managers', 'roles'));
     }
@@ -166,10 +184,14 @@ class AdminEmployeeController extends Controller
      */
     public function update(Request $request, Employee $employee)
     {
+        if ($employee->user && $employee->user->hasRole('super-admin') && !auth()->user()->hasRole('super-admin')) {
+            abort(403, 'You do not have permission to view or edit Super Admin details.');
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($employee->user_id)],
-            'mobile' => 'nullable|string|max:50',
+            'mobile' => ['nullable', 'string', 'regex:/^(\+91[\-\s]?)?[6789]\d{9}$/'],
             'department' => 'required|string|max:100',
             'designation' => 'required|string|max:100',
             'reporting_manager_id' => 'nullable|exists:employees,id',

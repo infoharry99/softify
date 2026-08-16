@@ -47,15 +47,23 @@
                     <div>Exp: <strong style="color: #00a884;">₹{{ number_format($cand->expected_ctc ?? 0) }}</strong></div>
                 </td>
                 <td>
-                    @if($cand->resume)
-                        <button type="button" class="btn btn-secondary btn-sm" onclick="openResumeModal('{{ route('admin.candidates.resume_preview', $cand->id) }}', '{{ route('admin.candidates.resume', $cand->id) }}', '{{ addslashes($cand->name) }}')" style="font-size: 0.78rem; border-radius: 8px; color: #00a884; font-weight: 600; display: inline-flex; align-items: center; gap: 5px;">
-                            <i class="fa-solid fa-file-pdf" style="color: #ef4444;"></i> Preview Resume
-                        </button>
-                    @else
-                        <span style="font-size: 0.75rem; color: #94a3b8; font-weight: 500;">
-                            <i class="fa-solid fa-file-circle-xmark"></i> No Resume
-                        </span>
-                    @endif
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        @if($cand->resume)
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="openResumeModal('{{ route('admin.candidates.resume_preview', ['candidate' => $cand->id, 'type' => 'original']) }}', '{{ route('admin.candidates.resume', ['candidate' => $cand->id, 'type' => 'original']) }}', '{{ addslashes($cand->name) }} (Original)')" style="font-size: 0.75rem; padding: 4px 8px; border-radius: 6px; color: #00a884; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+                                <i class="fa-solid fa-file-pdf" style="color: #ef4444;"></i> Original Resume
+                            </button>
+                        @endif
+
+                        @if($cand->edited_resume)
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="openResumeModal('{{ route('admin.candidates.resume_preview', ['candidate' => $cand->id, 'type' => 'edited']) }}', '{{ route('admin.candidates.resume', ['candidate' => $cand->id, 'type' => 'edited']) }}', '{{ addslashes($cand->name) }} (Edited Copy)')" style="font-size: 0.75rem; padding: 4px 8px; border-radius: 6px; color: #0284c7; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+                                <i class="fa-solid fa-file-pen" style="color: #0284c7;"></i> Edited Copy
+                            </button>
+                        @else
+                            <a href="{{ route('admin.candidates.show', $cand->id) }}" style="font-size: 0.72rem; color: #64748b; font-weight: 600; text-decoration: none;">
+                                <i class="fa-solid fa-plus-circle"></i> Add Edited Copy
+                            </a>
+                        @endif
+                    </div>
                 </td>
                 <td>
                     @php

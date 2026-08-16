@@ -1,6 +1,6 @@
 -- ========================================================
 -- Softify Production MySQL Database Dump
--- Generated: 2026-08-15 12:33:30
+-- Generated: 2026-08-16 17:50:54
 -- Ready for Import on Live MySQL / phpMyAdmin Server
 -- ========================================================
 
@@ -29,13 +29,16 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Data for table `users`
-INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`, `mobile`, `department`, `designation`, `status`, `profile_photo`, `last_login_at`) VALUES ('1', 'Super Admin', 'admin@admin.com', NULL, '$2y$10$zEsi9nRWZ9PszNN35gwK8Os7rmbl4d18Sv8A.EKaTS8r1pocaKqx2', NULL, '2026-08-14 21:47:22', '2026-08-15 11:33:21', '9999999999', 'Executive', 'System Administrator', 'active', NULL, '2026-08-15 11:33:21');
+INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`, `mobile`, `department`, `designation`, `status`, `profile_photo`, `last_login_at`) VALUES ('1', 'Super Admin', 'admin@admin.com', NULL, '$2y$10$zEsi9nRWZ9PszNN35gwK8Os7rmbl4d18Sv8A.EKaTS8r1pocaKqx2', NULL, '2026-08-14 21:47:22', '2026-08-16 17:36:26', '9999999999', 'Executive', 'System Administrator', 'active', NULL, '2026-08-16 17:36:26');
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`, `mobile`, `department`, `designation`, `status`, `profile_photo`, `last_login_at`) VALUES ('2', 'Rahul Sharma', 'rahul@example.com', NULL, '$2y$10$26X6dqxWcR2WayBgzyhtyedKnH2j67qYzeR6LbWk8mdUxpwvByZGC', NULL, '2026-08-14 21:47:22', '2026-08-14 21:47:22', '9876543210', 'Software Development', 'Senior Developer', 'active', NULL, NULL);
-INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`, `mobile`, `department`, `designation`, `status`, `profile_photo`, `last_login_at`) VALUES ('3', 'Priya Patel', 'priya@example.com', NULL, '$2y$10$mc1YNIBYCRjRi4wzUfFBau9w8/djUc5zw5IZXGLDKPEBWMtx91kqi', NULL, '2026-08-14 21:47:22', '2026-08-15 12:18:15', '9876543211', 'Human Resources', 'HR Executive', 'active', NULL, '2026-08-15 12:18:15');
+INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`, `mobile`, `department`, `designation`, `status`, `profile_photo`, `last_login_at`) VALUES ('3', 'Priya Patel', 'priya@example.com', NULL, '$2y$10$mc1YNIBYCRjRi4wzUfFBau9w8/djUc5zw5IZXGLDKPEBWMtx91kqi', NULL, '2026-08-14 21:47:22', '2026-08-16 17:36:11', '9876543211', 'Human Resources', 'HR Executive', 'active', NULL, '2026-08-16 17:36:11');
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`, `mobile`, `department`, `designation`, `status`, `profile_photo`, `last_login_at`) VALUES ('4', 'Vikram Malhotra', 'vikram@example.com', NULL, '$2y$10$WiehVWdJq5Jub.30U1n46OnlvlOYYFaw5BF7u.SKdA6AMmVh6fPUm', NULL, '2026-08-14 21:47:22', '2026-08-14 21:47:22', '9898776655', 'Finance & Accounts', 'Finance Executive', 'active', NULL, NULL);
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`, `mobile`, `department`, `designation`, `status`, `profile_photo`, `last_login_at`) VALUES ('5', 'Arjun Kapoor', 'arjun@example.com', NULL, '$2y$10$856u9zAV7r/Rzsb4bLuobefKyyvgh0lDwVqgygc8Ma2UB2tVniR.a', NULL, '2026-08-14 21:47:22', '2026-08-14 21:47:22', '9811223344', 'Business Development', 'Business Development Associate (BDA)', 'active', NULL, NULL);
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`, `mobile`, `department`, `designation`, `status`, `profile_photo`, `last_login_at`) VALUES ('6', 'Ananya Roy', 'ananya@example.com', NULL, '$2y$10$3K7U4noWLTvKMlltjNY74eGsAOtIPoasdMfVmvHQZm5v9TGzh9zh6', NULL, '2026-08-14 21:47:23', '2026-08-15 12:04:04', '9744556677', 'Talent Acquisition & HR', 'Talent Acquisition Specialist', 'active', NULL, '2026-08-15 12:04:04');
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`, `mobile`, `department`, `designation`, `status`, `profile_photo`, `last_login_at`) VALUES ('7', 'Suresh Kumar', 'suresh@example.com', NULL, '$2y$10$odzRtxBUx//p3nYJwYHaHuVdIZGa40jbJpAbou8nialf3QgOK6Awe', NULL, '2026-08-14 21:47:23', '2026-08-15 12:20:29', '9633221100', 'Operations', 'Data Entry Operator', 'active', NULL, '2026-08-15 12:20:29');
+INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`, `mobile`, `department`, `designation`, `status`, `profile_photo`, `last_login_at`) VALUES ('8', 'Amit Sharma', 'bdalead@talentifyy.com', NULL, '$2y$10$SzWrCSAfm9O.hPllVLgjp.FUw0iw6u4l4Yjg4UUYgmIdzlx8F1Xf2', NULL, '2026-08-16 17:10:10', '2026-08-16 17:30:49', '9811122334', 'BDA', 'BDA Team Lead', 'active', NULL, '2026-08-16 17:30:49');
+INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`, `mobile`, `department`, `designation`, `status`, `profile_photo`, `last_login_at`) VALUES ('9', 'Neha Verma', 'talead@talentifyy.com', NULL, '$2y$10$QchuosBQNZbru5B4URiyUe5jec/29/Jq5QrXx9Cceef3sHZY2MfCe', NULL, '2026-08-16 17:10:10', '2026-08-16 17:32:42', '9822233445', 'Talent', 'Talent Acquisition Team Lead', 'active', NULL, '2026-08-16 17:32:42');
+INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`, `mobile`, `department`, `designation`, `status`, `profile_photo`, `last_login_at`) VALUES ('10', 'Rohan Mehta', 'datalead@talentifyy.com', NULL, '$2y$10$sKlsBlJeskqNF372QDzCQO8EDbM.Y1f2NnPau..v9c3qoMUpCg.qS', NULL, '2026-08-16 17:10:10', '2026-08-16 17:18:19', '9833344556', 'Data Entry', 'Data Entry Team Lead', 'active', NULL, '2026-08-16 17:18:19');
 
 DROP TABLE IF EXISTS `password_reset_tokens`;
 CREATE TABLE `password_reset_tokens` (
@@ -96,6 +99,9 @@ INSERT INTO `roles` (`id`, `name`, `slug`, `description`, `status`, `created_at`
 INSERT INTO `roles` (`id`, `name`, `slug`, `description`, `status`, `created_at`, `updated_at`) VALUES ('9', 'Data Entry', 'data-entry', 'Data entry operator for records creation', 'active', '2026-08-14 21:47:22', '2026-08-14 21:47:22');
 INSERT INTO `roles` (`id`, `name`, `slug`, `description`, `status`, `created_at`, `updated_at`) VALUES ('10', 'Accountant', 'accountant', 'Accounting and finance reporting', 'active', '2026-08-14 21:47:22', '2026-08-14 21:47:22');
 INSERT INTO `roles` (`id`, `name`, `slug`, `description`, `status`, `created_at`, `updated_at`) VALUES ('11', 'Support', 'support', 'Customer and user support', 'active', '2026-08-14 21:47:22', '2026-08-14 21:47:22');
+INSERT INTO `roles` (`id`, `name`, `slug`, `description`, `status`, `created_at`, `updated_at`) VALUES ('12', 'BDA Team Lead', 'bda-team-lead', 'Team Lead for Business Development Associates (BDA) department', 'active', '2026-08-16 17:04:37', '2026-08-16 17:04:37');
+INSERT INTO `roles` (`id`, `name`, `slug`, `description`, `status`, `created_at`, `updated_at`) VALUES ('13', 'Talent Acquisition Team Lead', 'ta-team-lead', 'Team Lead for Talent Acquisition & Recruitment department', 'active', '2026-08-16 17:04:37', '2026-08-16 17:04:37');
+INSERT INTO `roles` (`id`, `name`, `slug`, `description`, `status`, `created_at`, `updated_at`) VALUES ('14', 'Data Entry Team Lead', 'data-entry-team-lead', 'Team Lead for Data Entry & Operations department', 'active', '2026-08-16 17:04:37', '2026-08-16 17:04:37');
 
 DROP TABLE IF EXISTS `permissions`;
 CREATE TABLE `permissions` (
@@ -145,6 +151,10 @@ INSERT INTO `permissions` (`id`, `name`, `slug`, `module`, `description`, `creat
 INSERT INTO `permissions` (`id`, `name`, `slug`, `module`, `description`, `created_at`, `updated_at`) VALUES ('33', 'Create Reports', 'reports.create', 'Reports', 'Generate custom reports', '2026-08-14 21:47:21', '2026-08-14 21:47:21');
 INSERT INTO `permissions` (`id`, `name`, `slug`, `module`, `description`, `created_at`, `updated_at`) VALUES ('34', 'Export Reports', 'reports.export', 'Reports', 'Export report data', '2026-08-14 21:47:21', '2026-08-14 21:47:21');
 INSERT INTO `permissions` (`id`, `name`, `slug`, `module`, `description`, `created_at`, `updated_at`) VALUES ('35', 'View Activity Logs', 'activity_logs.view', 'Activity Logs', 'View admin audit activity trail', '2026-08-14 21:47:21', '2026-08-14 21:47:21');
+INSERT INTO `permissions` (`id`, `name`, `slug`, `module`, `description`, `created_at`, `updated_at`) VALUES ('36', 'View Candidates ATS', 'candidates.view', 'Candidates ATS', 'View candidate directory & filter matrix', '2026-08-16 17:04:37', '2026-08-16 17:04:37');
+INSERT INTO `permissions` (`id`, `name`, `slug`, `module`, `description`, `created_at`, `updated_at`) VALUES ('37', 'Create Candidates ATS', 'candidates.create', 'Candidates ATS', 'Add new candidates & quick candidate entry', '2026-08-16 17:04:37', '2026-08-16 17:04:37');
+INSERT INTO `permissions` (`id`, `name`, `slug`, `module`, `description`, `created_at`, `updated_at`) VALUES ('38', 'Edit Candidates ATS', 'candidates.edit', 'Candidates ATS', 'Edit candidate records and upload resumes', '2026-08-16 17:04:37', '2026-08-16 17:04:37');
+INSERT INTO `permissions` (`id`, `name`, `slug`, `module`, `description`, `created_at`, `updated_at`) VALUES ('39', 'Delete Candidates ATS', 'candidates.delete', 'Candidates ATS', 'Remove candidate records', '2026-08-16 17:04:37', '2026-08-16 17:04:37');
 
 DROP TABLE IF EXISTS `role_user`;
 CREATE TABLE `role_user` (
@@ -161,6 +171,9 @@ INSERT INTO `role_user` (`user_id`, `role_id`) VALUES ('4', '7');
 INSERT INTO `role_user` (`user_id`, `role_id`) VALUES ('5', '5');
 INSERT INTO `role_user` (`user_id`, `role_id`) VALUES ('6', '4');
 INSERT INTO `role_user` (`user_id`, `role_id`) VALUES ('7', '9');
+INSERT INTO `role_user` (`user_id`, `role_id`) VALUES ('8', '12');
+INSERT INTO `role_user` (`user_id`, `role_id`) VALUES ('9', '13');
+INSERT INTO `role_user` (`user_id`, `role_id`) VALUES ('10', '14');
 
 DROP TABLE IF EXISTS `permission_role`;
 CREATE TABLE `permission_role` (
@@ -241,14 +254,8 @@ INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('33', '2');
 INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('34', '2');
 INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('35', '2');
 INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('1', '3');
-INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('16', '3');
-INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('17', '3');
-INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('18', '3');
-INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('19', '3');
-INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('20', '3');
 INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('32', '3');
 INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('1', '4');
-INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('16', '4');
 INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('32', '4');
 INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('1', '5');
 INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('21', '5');
@@ -274,7 +281,6 @@ INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('32', '8');
 INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('33', '8');
 INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('34', '8');
 INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('1', '9');
-INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('17', '9');
 INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('22', '9');
 INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('27', '9');
 INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('1', '10');
@@ -289,9 +295,47 @@ INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('4', '3');
 INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('8', '3');
 INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('13', '3');
 INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('35', '3');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('36', '1');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('37', '1');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('38', '1');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('39', '1');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('36', '2');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('37', '2');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('38', '2');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('39', '2');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('16', '3');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('17', '3');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('18', '3');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('19', '3');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('20', '3');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('36', '4');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('36', '9');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('37', '9');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('1', '12');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('21', '12');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('22', '12');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('23', '12');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('24', '12');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('25', '12');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('32', '12');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('33', '12');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('1', '13');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('36', '13');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('37', '13');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('38', '13');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('39', '13');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('32', '13');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('33', '13');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('1', '14');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('36', '14');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('37', '14');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('38', '14');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('39', '14');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('22', '14');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('27', '14');
+INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('32', '14');
 INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('1', '7');
 INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('32', '7');
-INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES ('16', '9');
 
 DROP TABLE IF EXISTS `permission_user`;
 CREATE TABLE `permission_user` (
@@ -327,6 +371,9 @@ INSERT INTO `employees` (`id`, `user_id`, `employee_code`, `reporting_manager_id
 INSERT INTO `employees` (`id`, `user_id`, `employee_code`, `reporting_manager_id`, `created_at`, `updated_at`) VALUES ('5', '6', 'EMP-1005', NULL, '2026-08-14 21:47:23', '2026-08-14 21:47:23');
 INSERT INTO `employees` (`id`, `user_id`, `employee_code`, `reporting_manager_id`, `created_at`, `updated_at`) VALUES ('6', '7', 'EMP-1006', NULL, '2026-08-14 21:47:23', '2026-08-14 21:47:23');
 INSERT INTO `employees` (`id`, `user_id`, `employee_code`, `reporting_manager_id`, `created_at`, `updated_at`) VALUES ('7', '1', 'EMP-0001', NULL, '2026-08-15 11:33:22', '2026-08-15 11:33:22');
+INSERT INTO `employees` (`id`, `user_id`, `employee_code`, `reporting_manager_id`, `created_at`, `updated_at`) VALUES ('8', '8', 'EMP-8001', NULL, '2026-08-16 17:10:10', '2026-08-16 17:10:10');
+INSERT INTO `employees` (`id`, `user_id`, `employee_code`, `reporting_manager_id`, `created_at`, `updated_at`) VALUES ('9', '9', 'EMP-8002', NULL, '2026-08-16 17:10:10', '2026-08-16 17:10:10');
+INSERT INTO `employees` (`id`, `user_id`, `employee_code`, `reporting_manager_id`, `created_at`, `updated_at`) VALUES ('10', '10', 'EMP-8003', NULL, '2026-08-16 17:10:10', '2026-08-16 17:10:10');
 
 DROP TABLE IF EXISTS `employee_profiles`;
 CREATE TABLE `employee_profiles` (
@@ -352,6 +399,9 @@ INSERT INTO `employee_profiles` (`id`, `employee_id`, `dob`, `gender`, `address`
 INSERT INTO `employee_profiles` (`id`, `employee_id`, `dob`, `gender`, `address`, `city`, `state`, `country`, `emergency_contact_name`, `emergency_contact_phone`, `created_at`, `updated_at`) VALUES ('4', '4', NULL, 'Male', NULL, 'Delhi', 'Delhi', 'India', NULL, NULL, '2026-08-14 21:47:22', '2026-08-14 21:47:22');
 INSERT INTO `employee_profiles` (`id`, `employee_id`, `dob`, `gender`, `address`, `city`, `state`, `country`, `emergency_contact_name`, `emergency_contact_phone`, `created_at`, `updated_at`) VALUES ('5', '5', NULL, 'Female', NULL, 'Kolkata', 'West Bengal', 'India', NULL, NULL, '2026-08-14 21:47:23', '2026-08-14 21:47:23');
 INSERT INTO `employee_profiles` (`id`, `employee_id`, `dob`, `gender`, `address`, `city`, `state`, `country`, `emergency_contact_name`, `emergency_contact_phone`, `created_at`, `updated_at`) VALUES ('6', '6', NULL, 'Male', NULL, 'Bangalore', 'Karnataka', 'India', NULL, NULL, '2026-08-14 21:47:23', '2026-08-14 21:47:23');
+INSERT INTO `employee_profiles` (`id`, `employee_id`, `dob`, `gender`, `address`, `city`, `state`, `country`, `emergency_contact_name`, `emergency_contact_phone`, `created_at`, `updated_at`) VALUES ('7', '8', NULL, 'Male', NULL, 'Delhi', 'Delhi', 'India', NULL, NULL, '2026-08-16 17:10:10', '2026-08-16 17:10:10');
+INSERT INTO `employee_profiles` (`id`, `employee_id`, `dob`, `gender`, `address`, `city`, `state`, `country`, `emergency_contact_name`, `emergency_contact_phone`, `created_at`, `updated_at`) VALUES ('8', '9', NULL, 'Female', NULL, 'Pune', 'Maharashtra', 'India', NULL, NULL, '2026-08-16 17:10:10', '2026-08-16 17:10:10');
+INSERT INTO `employee_profiles` (`id`, `employee_id`, `dob`, `gender`, `address`, `city`, `state`, `country`, `emergency_contact_name`, `emergency_contact_phone`, `created_at`, `updated_at`) VALUES ('9', '10', NULL, 'Male', NULL, 'Mumbai', 'Maharashtra', 'India', NULL, NULL, '2026-08-16 17:10:10', '2026-08-16 17:10:10');
 
 DROP TABLE IF EXISTS `employee_joining_details`;
 CREATE TABLE `employee_joining_details` (
@@ -377,6 +427,9 @@ INSERT INTO `employee_joining_details` (`id`, `employee_id`, `joining_date`, `em
 INSERT INTO `employee_joining_details` (`id`, `employee_id`, `joining_date`, `employment_type`, `employment_status`, `probation_end_date`, `confirmation_date`, `notice_period_days`, `work_location`, `remarks`, `created_at`, `updated_at`) VALUES ('4', '4', '2025-04-01 00:00:00', 'Full Time', 'Active', NULL, NULL, '30', 'Delhi Regional Office', NULL, '2026-08-14 21:47:22', '2026-08-14 21:47:22');
 INSERT INTO `employee_joining_details` (`id`, `employee_id`, `joining_date`, `employment_type`, `employment_status`, `probation_end_date`, `confirmation_date`, `notice_period_days`, `work_location`, `remarks`, `created_at`, `updated_at`) VALUES ('5', '5', '2025-03-15 00:00:00', 'Full Time', 'Active', NULL, NULL, '30', 'Kolkata Hub', NULL, '2026-08-14 21:47:23', '2026-08-14 21:47:23');
 INSERT INTO `employee_joining_details` (`id`, `employee_id`, `joining_date`, `employment_type`, `employment_status`, `probation_end_date`, `confirmation_date`, `notice_period_days`, `work_location`, `remarks`, `created_at`, `updated_at`) VALUES ('6', '6', '2025-05-01 00:00:00', 'Full Time', 'Active', NULL, NULL, '30', 'Bangalore Office', NULL, '2026-08-14 21:47:23', '2026-08-14 21:47:23');
+INSERT INTO `employee_joining_details` (`id`, `employee_id`, `joining_date`, `employment_type`, `employment_status`, `probation_end_date`, `confirmation_date`, `notice_period_days`, `work_location`, `remarks`, `created_at`, `updated_at`) VALUES ('7', '8', '2025-02-01 00:00:00', 'Full Time', 'Active', NULL, NULL, '30', 'Delhi Office', NULL, '2026-08-16 17:10:10', '2026-08-16 17:10:10');
+INSERT INTO `employee_joining_details` (`id`, `employee_id`, `joining_date`, `employment_type`, `employment_status`, `probation_end_date`, `confirmation_date`, `notice_period_days`, `work_location`, `remarks`, `created_at`, `updated_at`) VALUES ('8', '9', '2025-02-15 00:00:00', 'Full Time', 'Active', NULL, NULL, '30', 'Pune Office', NULL, '2026-08-16 17:10:10', '2026-08-16 17:10:10');
+INSERT INTO `employee_joining_details` (`id`, `employee_id`, `joining_date`, `employment_type`, `employment_status`, `probation_end_date`, `confirmation_date`, `notice_period_days`, `work_location`, `remarks`, `created_at`, `updated_at`) VALUES ('9', '10', '2025-03-01 00:00:00', 'Full Time', 'Active', NULL, NULL, '30', 'Mumbai HQ', NULL, '2026-08-16 17:10:10', '2026-08-16 17:10:10');
 
 DROP TABLE IF EXISTS `leave_types`;
 CREATE TABLE `leave_types` (
@@ -433,6 +486,14 @@ CREATE TABLE `attendance_sessions` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Data for table `attendance_sessions`
+INSERT INTO `attendance_sessions` (`id`, `attendance_id`, `employee_id`, `login_at`, `logout_at`, `duration_minutes`, `status`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('1', '1', '2', '2026-08-16 15:41:24', '2026-08-16 15:41:30', '0', 'Logged Out', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-16 15:41:24', '2026-08-16 15:41:30');
+INSERT INTO `attendance_sessions` (`id`, `attendance_id`, `employee_id`, `login_at`, `logout_at`, `duration_minutes`, `status`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('2', '1', '2', '2026-08-16 15:41:42', '2026-08-16 15:41:49', '0', 'Logged Out', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-16 15:41:42', '2026-08-16 15:41:49');
+INSERT INTO `attendance_sessions` (`id`, `attendance_id`, `employee_id`, `login_at`, `logout_at`, `duration_minutes`, `status`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('3', '1', '2', '2026-08-16 15:45:41', '2026-08-16 15:45:54', '0', 'Auto Closed', '127.0.0.1', 'Symfony', '2026-08-16 15:45:41', '2026-08-16 15:45:54');
+INSERT INTO `attendance_sessions` (`id`, `attendance_id`, `employee_id`, `login_at`, `logout_at`, `duration_minutes`, `status`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('4', '1', '2', '2026-08-16 15:45:54', '2026-08-16 15:45:54', '0', 'Logged Out', '127.0.0.1', 'Symfony', '2026-08-16 15:45:54', '2026-08-16 15:45:54');
+INSERT INTO `attendance_sessions` (`id`, `attendance_id`, `employee_id`, `login_at`, `logout_at`, `duration_minutes`, `status`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('5', '1', '2', '2026-08-16 15:46:04', '2026-08-16 15:46:04', '0', 'Logged Out', '127.0.0.1', 'Symfony', '2026-08-16 15:46:04', '2026-08-16 15:46:04');
+INSERT INTO `attendance_sessions` (`id`, `attendance_id`, `employee_id`, `login_at`, `logout_at`, `duration_minutes`, `status`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('6', '1', '2', '2026-08-16 15:47:19', '2026-08-16 15:47:22', '0', 'Logged Out', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-16 15:47:19', '2026-08-16 15:47:22');
+
 DROP TABLE IF EXISTS `attendance_breaks`;
 CREATE TABLE `attendance_breaks` (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -473,12 +534,16 @@ CREATE TABLE `salary_structures` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Data for table `salary_structures`
-INSERT INTO `salary_structures` (`id`, `employee_id`, `basic_salary`, `hra`, `conveyance`, `allowances`, `bonus`, `incentives`, `pf_deduction`, `esi_deduction`, `pt_deduction`, `tds_deduction`, `other_deductions`, `gross_salary`, `net_salary`, `effective_date`, `created_at`, `updated_at`) VALUES ('1', '1', '35000', '12000', '0', '5000', '2000', '0', '2100', '0', '0', '0', '500', '54000', '51400', '2025-01-15 00:00:00', '2026-08-14 21:47:22', '2026-08-14 21:47:22');
-INSERT INTO `salary_structures` (`id`, `employee_id`, `basic_salary`, `hra`, `conveyance`, `allowances`, `bonus`, `incentives`, `pf_deduction`, `esi_deduction`, `pt_deduction`, `tds_deduction`, `other_deductions`, `gross_salary`, `net_salary`, `effective_date`, `created_at`, `updated_at`) VALUES ('2', '2', '25000', '8000', '0', '4000', '1000', '0', '1500', '0', '0', '0', '300', '38000', '36200', '2025-03-01 00:00:00', '2026-08-14 21:47:22', '2026-08-14 21:47:22');
-INSERT INTO `salary_structures` (`id`, `employee_id`, `basic_salary`, `hra`, `conveyance`, `allowances`, `bonus`, `incentives`, `pf_deduction`, `esi_deduction`, `pt_deduction`, `tds_deduction`, `other_deductions`, `gross_salary`, `net_salary`, `effective_date`, `created_at`, `updated_at`) VALUES ('3', '3', '32000', '10000', '0', '4500', '1500', '0', '1900', '0', '0', '0', '400', '48000', '45700', '2025-02-01 00:00:00', '2026-08-14 21:47:22', '2026-08-14 21:47:22');
-INSERT INTO `salary_structures` (`id`, `employee_id`, `basic_salary`, `hra`, `conveyance`, `allowances`, `bonus`, `incentives`, `pf_deduction`, `esi_deduction`, `pt_deduction`, `tds_deduction`, `other_deductions`, `gross_salary`, `net_salary`, `effective_date`, `created_at`, `updated_at`) VALUES ('4', '4', '28000', '9000', '0', '4000', '2000', '0', '1600', '0', '0', '0', '400', '43000', '41000', '2025-04-01 00:00:00', '2026-08-14 21:47:22', '2026-08-14 21:47:22');
-INSERT INTO `salary_structures` (`id`, `employee_id`, `basic_salary`, `hra`, `conveyance`, `allowances`, `bonus`, `incentives`, `pf_deduction`, `esi_deduction`, `pt_deduction`, `tds_deduction`, `other_deductions`, `gross_salary`, `net_salary`, `effective_date`, `created_at`, `updated_at`) VALUES ('5', '5', '30000', '9500', '0', '4200', '1500', '0', '1800', '0', '0', '0', '400', '45200', '43000', '2025-03-15 00:00:00', '2026-08-14 21:47:23', '2026-08-14 21:47:23');
-INSERT INTO `salary_structures` (`id`, `employee_id`, `basic_salary`, `hra`, `conveyance`, `allowances`, `bonus`, `incentives`, `pf_deduction`, `esi_deduction`, `pt_deduction`, `tds_deduction`, `other_deductions`, `gross_salary`, `net_salary`, `effective_date`, `created_at`, `updated_at`) VALUES ('6', '6', '22000', '7000', '0', '3000', '1000', '0', '1300', '0', '0', '0', '300', '33000', '31400', '2025-05-01 00:00:00', '2026-08-14 21:47:23', '2026-08-14 21:47:23');
+INSERT INTO `salary_structures` (`id`, `employee_id`, `basic_salary`, `hra`, `conveyance`, `allowances`, `bonus`, `incentives`, `pf_deduction`, `esi_deduction`, `pt_deduction`, `tds_deduction`, `other_deductions`, `gross_salary`, `net_salary`, `effective_date`, `created_at`, `updated_at`) VALUES ('1', '1', '35000', '12000', '0', '5000', '2000', '0', '0', '0', '0', '0', '500', '54000', '51400', '2025-01-15 00:00:00', '2026-08-14 21:47:22', '2026-08-16 16:30:30');
+INSERT INTO `salary_structures` (`id`, `employee_id`, `basic_salary`, `hra`, `conveyance`, `allowances`, `bonus`, `incentives`, `pf_deduction`, `esi_deduction`, `pt_deduction`, `tds_deduction`, `other_deductions`, `gross_salary`, `net_salary`, `effective_date`, `created_at`, `updated_at`) VALUES ('2', '2', '25000', '8000', '0', '4000', '1000', '0', '0', '0', '0', '0', '300', '38000', '36200', '2025-03-01 00:00:00', '2026-08-14 21:47:22', '2026-08-16 16:30:30');
+INSERT INTO `salary_structures` (`id`, `employee_id`, `basic_salary`, `hra`, `conveyance`, `allowances`, `bonus`, `incentives`, `pf_deduction`, `esi_deduction`, `pt_deduction`, `tds_deduction`, `other_deductions`, `gross_salary`, `net_salary`, `effective_date`, `created_at`, `updated_at`) VALUES ('3', '3', '32000', '10000', '0', '4500', '1500', '0', '0', '0', '0', '0', '400', '48000', '45700', '2025-02-01 00:00:00', '2026-08-14 21:47:22', '2026-08-16 16:30:30');
+INSERT INTO `salary_structures` (`id`, `employee_id`, `basic_salary`, `hra`, `conveyance`, `allowances`, `bonus`, `incentives`, `pf_deduction`, `esi_deduction`, `pt_deduction`, `tds_deduction`, `other_deductions`, `gross_salary`, `net_salary`, `effective_date`, `created_at`, `updated_at`) VALUES ('4', '4', '28000', '9000', '0', '4000', '2000', '0', '0', '0', '0', '0', '400', '43000', '41000', '2025-04-01 00:00:00', '2026-08-14 21:47:22', '2026-08-16 16:30:30');
+INSERT INTO `salary_structures` (`id`, `employee_id`, `basic_salary`, `hra`, `conveyance`, `allowances`, `bonus`, `incentives`, `pf_deduction`, `esi_deduction`, `pt_deduction`, `tds_deduction`, `other_deductions`, `gross_salary`, `net_salary`, `effective_date`, `created_at`, `updated_at`) VALUES ('5', '5', '30000', '9500', '0', '4200', '1500', '0', '0', '0', '0', '0', '400', '45200', '43000', '2025-03-15 00:00:00', '2026-08-14 21:47:23', '2026-08-16 16:30:30');
+INSERT INTO `salary_structures` (`id`, `employee_id`, `basic_salary`, `hra`, `conveyance`, `allowances`, `bonus`, `incentives`, `pf_deduction`, `esi_deduction`, `pt_deduction`, `tds_deduction`, `other_deductions`, `gross_salary`, `net_salary`, `effective_date`, `created_at`, `updated_at`) VALUES ('6', '6', '22000', '7000', '0', '3000', '1000', '0', '0', '0', '0', '0', '300', '33000', '31400', '2025-05-01 00:00:00', '2026-08-14 21:47:23', '2026-08-16 16:30:30');
+INSERT INTO `salary_structures` (`id`, `employee_id`, `basic_salary`, `hra`, `conveyance`, `allowances`, `bonus`, `incentives`, `pf_deduction`, `esi_deduction`, `pt_deduction`, `tds_deduction`, `other_deductions`, `gross_salary`, `net_salary`, `effective_date`, `created_at`, `updated_at`) VALUES ('7', '7', '20000', '5000', '0', '3000', '0', '0', '0', '0', '0', '0', '0', '28000', '28000', '2026-08-16 16:30:30', '2026-08-16 16:30:30', '2026-08-16 16:30:30');
+INSERT INTO `salary_structures` (`id`, `employee_id`, `basic_salary`, `hra`, `conveyance`, `allowances`, `bonus`, `incentives`, `pf_deduction`, `esi_deduction`, `pt_deduction`, `tds_deduction`, `other_deductions`, `gross_salary`, `net_salary`, `effective_date`, `created_at`, `updated_at`) VALUES ('8', '8', '30000', '10000', '0', '5000', '3000', '0', '0', '0', '0', '0', '500', '45000', '47500', '2025-02-01 00:00:00', '2026-08-16 17:10:10', '2026-08-16 17:10:10');
+INSERT INTO `salary_structures` (`id`, `employee_id`, `basic_salary`, `hra`, `conveyance`, `allowances`, `bonus`, `incentives`, `pf_deduction`, `esi_deduction`, `pt_deduction`, `tds_deduction`, `other_deductions`, `gross_salary`, `net_salary`, `effective_date`, `created_at`, `updated_at`) VALUES ('9', '9', '28000', '9000', '0', '4000', '2000', '0', '0', '0', '0', '0', '400', '41000', '42600', '2025-02-15 00:00:00', '2026-08-16 17:10:10', '2026-08-16 17:10:10');
+INSERT INTO `salary_structures` (`id`, `employee_id`, `basic_salary`, `hra`, `conveyance`, `allowances`, `bonus`, `incentives`, `pf_deduction`, `esi_deduction`, `pt_deduction`, `tds_deduction`, `other_deductions`, `gross_salary`, `net_salary`, `effective_date`, `created_at`, `updated_at`) VALUES ('10', '10', '26000', '8000', '0', '4000', '1500', '0', '0', '0', '0', '0', '300', '38000', '39200', '2025-03-01 00:00:00', '2026-08-16 17:10:10', '2026-08-16 17:10:10');
 
 DROP TABLE IF EXISTS `candidates`;
 CREATE TABLE `candidates` (
@@ -502,8 +567,14 @@ CREATE TABLE `candidates` (
   `is_highlighted` tinyint(1) NOT NULL DEFAULT '0',
   `created_at` timestamp DEFAULT NULL,
   `updated_at` timestamp DEFAULT NULL,
+  `job_title` varchar(255) DEFAULT NULL,
+  `edited_resume` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Data for table `candidates`
+INSERT INTO `candidates` (`id`, `hr_id`, `company_name`, `name`, `email`, `phone`, `location`, `skills`, `experience`, `job_type`, `notice_period`, `current_ctc`, `expected_ctc`, `status`, `resume`, `note`, `last_updated_by`, `is_highlighted`, `created_at`, `updated_at`, `job_title`, `edited_resume`) VALUES ('1', NULL, NULL, 'Rahul Sharma', 'rahul@example.com', '9876543210', 'Hyderabad', 'Python, Django, AI', '4.5', 'Full Time', '15 Days', '900000', '1200000', 'Applied', NULL, NULL, NULL, '0', '2026-08-16 17:42:02', '2026-08-16 17:42:02', 'Senior Python Developer', NULL);
+INSERT INTO `candidates` (`id`, `hr_id`, `company_name`, `name`, `email`, `phone`, `location`, `skills`, `experience`, `job_type`, `notice_period`, `current_ctc`, `expected_ctc`, `status`, `resume`, `note`, `last_updated_by`, `is_highlighted`, `created_at`, `updated_at`, `job_title`, `edited_resume`) VALUES ('2', NULL, NULL, 'Amit Test Candidate', 'amittest@example.com', '9876543211', 'Bangalore', 'Java, Spring Boot, Microservices', '5', 'Full Time', '30 Days', NULL, NULL, 'Screening', 'candidate_resumes/original_resume_raw.pdf', NULL, '1', '0', '2026-08-16 17:50:45', '2026-08-16 17:50:45', 'Senior Java Developer', 'candidate_edited_resumes/BUkx9ry3yPvGXTp4Ef8Gg1tcHpE9UKegSCtSDMPj.pdf');
 
 DROP TABLE IF EXISTS `finance_requirements`;
 CREATE TABLE `finance_requirements` (
@@ -558,6 +629,16 @@ CREATE TABLE `notifications` (
 
 -- Data for table `notifications`
 INSERT INTO `notifications` (`id`, `user_id`, `type`, `title`, `message`, `is_read`, `data`, `created_at`, `updated_at`) VALUES ('1', '2', 'payroll_generated', 'Salary Slip Generated', 'Your salary slip for 2026-08 has been finalized. Net Amount: ₹0.00', '0', NULL, '2026-08-15 11:44:24', '2026-08-15 11:44:24');
+INSERT INTO `notifications` (`id`, `user_id`, `type`, `title`, `message`, `is_read`, `data`, `created_at`, `updated_at`) VALUES ('2', '2', 'payroll_generated', 'Salary Slip Generated', 'Your salary slip for 2026-08 has been finalized. Net Amount: ₹55,500.00', '0', NULL, '2026-08-16 16:30:30', '2026-08-16 16:30:30');
+INSERT INTO `notifications` (`id`, `user_id`, `type`, `title`, `message`, `is_read`, `data`, `created_at`, `updated_at`) VALUES ('3', '3', 'payroll_generated', 'Salary Slip Generated', 'Your salary slip for 2026-08 has been finalized. Net Amount: ₹1,925.81', '0', NULL, '2026-08-16 16:30:30', '2026-08-16 16:30:30');
+INSERT INTO `notifications` (`id`, `user_id`, `type`, `title`, `message`, `is_read`, `data`, `created_at`, `updated_at`) VALUES ('4', '4', 'payroll_generated', 'Salary Slip Generated', 'Your salary slip for 2026-08 has been finalized. Net Amount: ₹49,100.00', '0', NULL, '2026-08-16 16:30:30', '2026-08-16 16:30:30');
+INSERT INTO `notifications` (`id`, `user_id`, `type`, `title`, `message`, `is_read`, `data`, `created_at`, `updated_at`) VALUES ('5', '5', 'payroll_generated', 'Salary Slip Generated', 'Your salary slip for 2026-08 has been finalized. Net Amount: ₹44,600.00', '0', NULL, '2026-08-16 16:30:30', '2026-08-16 16:30:30');
+INSERT INTO `notifications` (`id`, `user_id`, `type`, `title`, `message`, `is_read`, `data`, `created_at`, `updated_at`) VALUES ('6', '6', 'payroll_generated', 'Salary Slip Generated', 'Your salary slip for 2026-08 has been finalized. Net Amount: ₹46,300.00', '0', NULL, '2026-08-16 16:30:30', '2026-08-16 16:30:30');
+INSERT INTO `notifications` (`id`, `user_id`, `type`, `title`, `message`, `is_read`, `data`, `created_at`, `updated_at`) VALUES ('7', '7', 'payroll_generated', 'Salary Slip Generated', 'Your salary slip for 2026-08 has been finalized. Net Amount: ₹33,700.00', '0', NULL, '2026-08-16 16:30:30', '2026-08-16 16:30:30');
+INSERT INTO `notifications` (`id`, `user_id`, `type`, `title`, `message`, `is_read`, `data`, `created_at`, `updated_at`) VALUES ('8', '1', 'payroll_generated', 'Salary Slip Generated', 'Your salary slip for 2026-08 has been finalized. Net Amount: ₹28,000.00', '0', NULL, '2026-08-16 16:30:30', '2026-08-16 16:30:30');
+INSERT INTO `notifications` (`id`, `user_id`, `type`, `title`, `message`, `is_read`, `data`, `created_at`, `updated_at`) VALUES ('9', '6', 'payroll_generated', 'Salary Slip Generated', 'Your salary slip for 2026-08 has been finalized. Net Amount: ₹46,300.00', '0', NULL, '2026-08-16 16:36:22', '2026-08-16 16:36:22');
+INSERT INTO `notifications` (`id`, `user_id`, `type`, `title`, `message`, `is_read`, `data`, `created_at`, `updated_at`) VALUES ('10', '6', 'payroll_generated', 'Salary Slip Generated', 'Your salary slip for 2026-08 has been finalized. Net Amount: ₹46,300.00', '0', NULL, '2026-08-16 16:36:26', '2026-08-16 16:36:26');
+INSERT INTO `notifications` (`id`, `user_id`, `type`, `title`, `message`, `is_read`, `data`, `created_at`, `updated_at`) VALUES ('11', '2', 'payroll_generated', 'Salary Slip Generated', 'Your salary slip for 2026-08 has been finalized. Net Amount: ₹55,500.00', '0', NULL, '2026-08-16 16:53:14', '2026-08-16 16:53:14');
 
 DROP TABLE IF EXISTS `activity_logs`;
 CREATE TABLE `activity_logs` (
@@ -588,6 +669,42 @@ INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_i
 INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('11', '3', 'Login', NULL, NULL, 'User logged in successfully', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-15 12:18:15', '2026-08-15 12:18:15');
 INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('12', '3', 'Logout', NULL, NULL, 'User logged out', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-15 12:20:15', '2026-08-15 12:20:15');
 INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('13', '7', 'Login', NULL, NULL, 'User logged in successfully', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-15 12:20:29', '2026-08-15 12:20:29');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('14', '3', 'Login', NULL, NULL, 'User logged in successfully', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-16 15:37:50', '2026-08-16 15:37:50');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('15', '3', 'Logout', NULL, NULL, 'User logged out', '127.0.0.1', 'Symfony', '2026-08-16 15:45:54', '2026-08-16 15:45:54');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('16', '3', 'Logout', NULL, NULL, 'User logged out', '127.0.0.1', 'Symfony', '2026-08-16 15:46:04', '2026-08-16 15:46:04');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('17', '3', 'Logout', NULL, NULL, 'User logged out', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-16 15:47:22', '2026-08-16 15:47:22');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('18', '3', 'Login', NULL, NULL, 'User logged in successfully', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-16 15:47:25', '2026-08-16 15:47:25');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('19', '1', 'Login', NULL, NULL, 'User logged in successfully', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-16 16:27:58', '2026-08-16 16:27:58');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('20', '3', 'Payroll Processed', 'App\\Models\\Employee', '5', 'Processed payroll for Ananya Roy for month 2026-08', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-16 16:36:22', '2026-08-16 16:36:22');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('21', '3', 'Payroll Processed', 'App\\Models\\Employee', '5', 'Processed payroll for Ananya Roy for month 2026-08', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-16 16:36:26', '2026-08-16 16:36:26');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('22', '3', 'Leave Balances Modified', 'App\\Models\\Employee', '1', 'Updated leave quotas for Rahul Sharma', '127.0.0.1', 'Symfony', '2026-08-16 16:46:21', '2026-08-16 16:46:21');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('23', '1', 'Announcement Created', 'App\\Models\\Announcement', '1', 'Published company announcement \'📢 New Notice\'', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-16 16:49:42', '2026-08-16 16:49:42');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('24', '1', 'Announcement Updated', 'App\\Models\\Announcement', '2', 'Updated company announcement \'Updated Notice Title\'', '127.0.0.1', 'Symfony', '2026-08-16 16:50:45', '2026-08-16 16:50:45');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('25', '1', 'Announcement Deleted', 'App\\Models\\Announcement', '2', 'Deleted company announcement \'Updated Notice Title\'', '127.0.0.1', 'Symfony', '2026-08-16 16:50:45', '2026-08-16 16:50:45');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('26', '1', 'Announcement Deleted', 'App\\Models\\Announcement', '1', 'Deleted company announcement \'📢 New Notice\'', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-16 16:52:56', '2026-08-16 16:52:56');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('27', '1', 'Payroll Processed', 'App\\Models\\Employee', '1', 'Processed payroll for Rahul Sharma for month 2026-08', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-16 16:53:14', '2026-08-16 16:53:14');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('28', '1', 'Logout', NULL, NULL, 'User logged out', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-16 17:13:04', '2026-08-16 17:13:04');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('29', '8', 'Login', NULL, NULL, 'User logged in successfully', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-16 17:13:16', '2026-08-16 17:13:16');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('30', '8', 'Logout', NULL, NULL, 'User logged out', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-16 17:17:39', '2026-08-16 17:17:39');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('31', '9', 'Login', NULL, NULL, 'User logged in successfully', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-16 17:17:50', '2026-08-16 17:17:50');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('32', '9', 'Logout', NULL, NULL, 'User logged out', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-16 17:18:11', '2026-08-16 17:18:11');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('33', '10', 'Login', NULL, NULL, 'User logged in successfully', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-16 17:18:19', '2026-08-16 17:18:19');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('34', '10', 'Logout', NULL, NULL, 'User logged out', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-16 17:18:25', '2026-08-16 17:18:25');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('35', '8', 'BDA Work Assigned', 'App\\Models\\BdaWorkAssignment', '1', 'Assigned BDA daily target for Aug 16, 2026 to Vikram Malhotra', '127.0.0.1', 'Symfony', '2026-08-16 17:27:29', '2026-08-16 17:27:29');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('36', '4', 'BDA Work Updated by Employee', 'App\\Models\\BdaWorkAssignment', '1', 'Updated daily work status to In Progress for assignment #1', '127.0.0.1', 'Symfony', '2026-08-16 17:27:29', '2026-08-16 17:27:29');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('37', '8', 'BDA Work Reviewed by Lead', 'App\\Models\\BdaWorkAssignment', '1', 'Updated status to Done and added notes for assignment #1', '127.0.0.1', 'Symfony', '2026-08-16 17:27:29', '2026-08-16 17:27:29');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('38', '8', 'Login', NULL, NULL, 'User logged in successfully', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-16 17:30:34', '2026-08-16 17:30:34');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('39', '8', 'Login', NULL, NULL, 'User logged in successfully', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-16 17:30:49', '2026-08-16 17:30:49');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('40', '9', 'TA Job Requirement Assigned', 'App\\Models\\TaWorkAssignment', '1', 'Assigned job \'Senior Python Developer\' to TA Employee Priya Patel', '127.0.0.1', 'Symfony', '2026-08-16 17:31:59', '2026-08-16 17:31:59');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('41', '3', 'TA Work Updated by Employee', 'App\\Models\\TaWorkAssignment', '1', 'Updated status to In Progress & sourced 8 profiles for \'Senior Python Developer\'', '127.0.0.1', 'Symfony', '2026-08-16 17:31:59', '2026-08-16 17:31:59');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('42', '9', 'TA Work Reviewed by Lead', 'App\\Models\\TaWorkAssignment', '1', 'Updated status to Done and added notes for \'Senior Python Developer\'', '127.0.0.1', 'Symfony', '2026-08-16 17:31:59', '2026-08-16 17:31:59');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('43', '3', 'Logout', NULL, NULL, 'User logged out', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-16 17:32:33', '2026-08-16 17:32:33');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('44', '9', 'Login', NULL, NULL, 'User logged in successfully', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-16 17:32:42', '2026-08-16 17:32:42');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('45', '9', 'Logout', NULL, NULL, 'User logged out', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-16 17:34:12', '2026-08-16 17:34:12');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('46', '3', 'Login', NULL, NULL, 'User logged in successfully', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-16 17:36:11', '2026-08-16 17:36:11');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('47', '3', 'Logout', NULL, NULL, 'User logged out', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-16 17:36:18', '2026-08-16 17:36:18');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('48', '1', 'Login', NULL, NULL, 'User logged in successfully', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-16 17:36:26', '2026-08-16 17:36:26');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('49', '1', 'Candidate Edited Resume Uploaded', 'App\\Models\\Candidate', '2', 'Uploaded edited copy resume for candidate \'Amit Test Candidate\'', '127.0.0.1', 'Symfony', '2026-08-16 17:50:45', '2026-08-16 17:50:45');
 
 SET FOREIGN_KEY_CHECKS=1;
 COMMIT;

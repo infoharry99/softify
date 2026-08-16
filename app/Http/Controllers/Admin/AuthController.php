@@ -76,6 +76,12 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         if (Auth::check()) {
+            $user = Auth::user();
+            $employee = \App\Models\Employee::where('user_id', $user->id)->first();
+            if ($employee) {
+                \App\Services\AttendanceService::recordLogout($employee);
+            }
+
             ActivityLogger::log('Logout', 'User logged out');
             Auth::logout();
         }
@@ -104,10 +110,12 @@ class AuthController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'mobile' => 'nullable|string|max:50',
+            'mobile' => ['nullable', 'string', 'regex:/^(\+91[\-\s]?)?[6789]\d{9}$/'],
             'department' => 'nullable|string|max:100',
             'designation' => 'nullable|string|max:100',
             'profile_photo' => 'nullable|image|max:2048',
+        ], [
+            'mobile.regex' => 'Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9 (e.g. 9876543210 or +919876543210).',
         ]);
 
         if ($request->hasFile('profile_photo')) {

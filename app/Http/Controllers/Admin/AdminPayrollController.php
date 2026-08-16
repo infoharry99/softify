@@ -24,7 +24,15 @@ class AdminPayrollController extends Controller
             ->where('month', $month)
             ->get();
 
-        $employees = Employee::with(['user', 'salaryStructure'])->get();
+        $empQuery = Employee::with(['user', 'salaryStructure']);
+        if (!auth()->user()->hasRole('super-admin')) {
+            $empQuery->whereHas('user', function ($q) {
+                $q->whereDoesntHave('roles', function ($rq) {
+                    $rq->where('slug', 'super-admin');
+                });
+            });
+        }
+        $employees = $empQuery->get();
 
         $totalPayrollCost = $payrolls->sum('net_salary');
         $paidCount = $payrolls->where('payment_status', 'Paid')->count();
@@ -90,5 +98,40 @@ class AdminPayrollController extends Controller
         $salary = $payroll->employee->salaryStructure;
 
         return view('admin.payroll.slip', compact('payroll', 'salary'));
+    }
+
+    /**
+     * Update custom monthly payroll calculations.
+     */
+    public function updatePayroll(Request $request, MonthlyPayroll $payroll)
+    {
+        $validated = $request->validate([
+            'working_days' => 'required|integer|min:1|max:31',
+            'present_days' => 'required|integer|min:0|max:31',
+            'paid_leave_days' => 'required|integer|min:0|max:31',
+            'unpaid_leave_days' => 'required|integer|min:0|max:31',
+            'gross_salary' => 'required|numeric|min:0',
+            'bonus_amount' => 'nullable|numeric|min:0',
+            'other_deductions' => 'nullable|numeric|min:0',
+            'payment_status' => 'required|in:Paid,Pending,Processing',
+        ]);
+
+        PayrollService::updatePayroll($payroll, $validated, auth()->user());
+
+        ActivityLogger::log('Payroll Modified', "Updated salary calculation for {$payroll->employee->user->name} ({$payroll->month})", Employee::class, $payroll->employee_id);
+
+        return back()->with('success', "Payroll calculation for {$payroll->employee->user->name} ({$payroll->month}) updated successfully.");
+    }
+
+    /**
+     * Download printable salary slip (PDF Print Trigger).
+     */
+    public function download(MonthlyPayroll $payroll)
+    {
+        $payroll->load(['employee.user', 'employee.joiningDetail', 'processor']);
+        $salary = $payroll->employee->salaryStructure;
+        $autoPrint = true;
+
+        return view('admin.payroll.slip', compact('payroll', 'salary', 'autoPrint'));
     }
 }

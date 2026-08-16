@@ -93,7 +93,7 @@
                         </form>
                         <form action="{{ route('employee.clock_out') }}" method="POST">
                             @csrf
-                            <button type="submit" class="btn btn-danger" style="padding: 12px 24px; font-size: 1rem;" onclick="return confirm('End work session for today?')">
+                            <button type="submit" class="btn btn-danger" style="padding: 12px 24px; font-size: 1rem;" onclick="return confirmClockOut(event, this.form)">
                                 <i class="fa-solid fa-door-open"></i> End Session (Clock Out)
                             </button>
                         </form>
@@ -106,7 +106,7 @@
                         </form>
                         <form action="{{ route('employee.clock_out') }}" method="POST">
                             @csrf
-                            <button type="submit" class="btn btn-danger" style="padding: 12px 24px; font-size: 1rem;" onclick="return confirm('End work session for today?')">
+                            <button type="submit" class="btn btn-danger" style="padding: 12px 24px; font-size: 1rem;" onclick="return confirmClockOut(event, this.form)">
                                 <i class="fa-solid fa-door-open"></i> End Session (Clock Out)
                             </button>
                         </form>
@@ -259,5 +259,27 @@
 
     updateLiveCounters();
     setInterval(updateLiveCounters, 1000);
+
+    function confirmClockOut(event, form) {
+        event.preventDefault();
+        Swal.fire({
+            title: 'End Work Session?',
+            text: 'Are you sure you want to clock out and end your work session for today?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: '<i class="fa-solid fa-door-open"></i> Yes, Clock Out',
+            cancelButtonText: 'Cancel',
+            customClass: {
+                popup: 'swal-custom-popup'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+        return false;
+    }
 </script>
 @endsection

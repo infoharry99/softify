@@ -266,7 +266,7 @@
 
     @php
         $activeFilterCount = 0;
-        foreach(['search', 'skill', 'job_type', 'notice_period', 'status', 'company_name', 'min_exp', 'max_exp', 'max_expected_ctc'] as $key) {
+        foreach(['search', 'job_title', 'skill', 'job_type', 'notice_period', 'expected_ctc'] as $key) {
             if(request()->filled($key)) $activeFilterCount++;
         }
         $isFilterActive = $activeFilterCount > 0;
@@ -278,22 +278,10 @@
             <div class="ats-search-bar">
                 <div class="ats-search-input-box">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" id="searchInput" name="search" placeholder="Search by name, email, phone, location, skills..." value="{{ request('search') }}" autocomplete="off">
+                    <input type="text" id="searchInput" name="search" placeholder="Search by candidate name, email, phone, location, job title, skills..." value="{{ request('search') }}" autocomplete="off">
                 </div>
 
                 <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                    <div style="width: 150px;">
-                        <select name="status" id="statusSelect" class="form-control" style="padding: 9px 12px; font-size: 0.88rem; border-radius: 10px;">
-                            <option value="">All Stages</option>
-                            <option value="Applied" {{ request('status') === 'Applied' ? 'selected' : '' }}>Applied</option>
-                            <option value="Screening" {{ request('status') === 'Screening' ? 'selected' : '' }}>Screening</option>
-                            <option value="Interview Scheduled" {{ request('status') === 'Interview Scheduled' ? 'selected' : '' }}>Interview Scheduled</option>
-                            <option value="Offered" {{ request('status') === 'Offered' ? 'selected' : '' }}>Offered</option>
-                            <option value="Hired" {{ request('status') === 'Hired' ? 'selected' : '' }}>Hired</option>
-                            <option value="Rejected" {{ request('status') === 'Rejected' ? 'selected' : '' }}>Rejected</option>
-                        </select>
-                    </div>
-
                     <button type="button" class="filter-btn-toggle" onclick="toggleFilterPanel()">
                         <i class="fa-solid fa-sliders"></i>
                         <span>Advanced Filters</span>
@@ -314,7 +302,7 @@
             <div class="filter-panel-card" id="filterPanel" style="{{ $isFilterActive ? 'display: block;' : 'display: none;' }}">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; padding-bottom: 10px; border-bottom: 1.5px solid #e6f7f3;">
                     <div style="font-size: 0.98rem; font-weight: 700; color: #00a884; display: flex; align-items: center; gap: 8px;">
-                        <i class="fa-solid fa-cubes-stacked"></i> ATS Multi-Criteria Candidate Search Matrix
+                        <i class="fa-solid fa-cubes-stacked"></i> ATS Candidate Filter Matrix
                     </div>
                     <div>
                         <button type="button" onclick="resetATSFilters()" style="background: none; border: none; font-size: 0.8rem; color: #64748b; font-weight: 600; cursor: pointer;">
@@ -326,18 +314,18 @@
                 <!-- Row 1 -->
                 <div class="filter-grid-4">
                     <div class="filter-field-group">
-                        <label class="filter-field-label"><i class="fa-solid fa-code" style="color: #00a884;"></i> Skills & Tech Stack</label>
+                        <label class="filter-field-label"><i class="fa-solid fa-user-gear" style="color: #00a884;"></i> Job Title</label>
                         <div class="filter-field-input-wrap">
-                            <i class="fa-solid fa-code"></i>
-                            <input type="text" name="skill" placeholder="e.g. React, PHP, Laravel..." value="{{ request('skill') }}">
+                            <i class="fa-solid fa-user-gear"></i>
+                            <input type="text" name="job_title" placeholder="e.g. Senior Python Developer..." value="{{ request('job_title') }}">
                         </div>
                     </div>
 
                     <div class="filter-field-group">
-                        <label class="filter-field-label"><i class="fa-solid fa-building" style="color: #00a884;"></i> Client Hiring Company</label>
+                        <label class="filter-field-label"><i class="fa-solid fa-code" style="color: #00a884;"></i> Skills & Tech Stack</label>
                         <div class="filter-field-input-wrap">
-                            <i class="fa-solid fa-building"></i>
-                            <input type="text" name="company_name" placeholder="e.g. Nextecki, Infosys..." value="{{ request('company_name') }}">
+                            <i class="fa-solid fa-code"></i>
+                            <input type="text" name="skill" placeholder="e.g. React, PHP, Laravel..." value="{{ request('skill') }}">
                         </div>
                     </div>
 
@@ -373,28 +361,12 @@
                 </div>
 
                 <!-- Row 2 -->
-                <div class="filter-grid-4" style="margin-bottom: 0;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 0;">
                     <div class="filter-field-group">
-                        <label class="filter-field-label"><i class="fa-solid fa-award" style="color: #00a884;"></i> Min Experience (Years)</label>
-                        <div class="filter-field-input-wrap">
-                            <i class="fa-solid fa-award"></i>
-                            <input type="number" step="0.5" min="0" name="min_exp" placeholder="e.g. 2" value="{{ request('min_exp') }}">
-                        </div>
-                    </div>
-
-                    <div class="filter-field-group">
-                        <label class="filter-field-label"><i class="fa-solid fa-indian-rupee-sign" style="color: #00a884;"></i> Max Expected CTC (₹)</label>
+                        <label class="filter-field-label"><i class="fa-solid fa-indian-rupee-sign" style="color: #00a884;"></i> Expected CTC (₹)</label>
                         <div class="filter-field-input-wrap">
                             <i class="fa-solid fa-indian-rupee-sign"></i>
-                            <input type="number" step="50000" min="0" name="max_expected_ctc" placeholder="e.g. 800000" value="{{ request('max_expected_ctc') }}">
-                        </div>
-                    </div>
-
-                    <div class="filter-field-group">
-                        <label class="filter-field-label"><i class="fa-solid fa-arrows-up-to-line" style="color: #00a884;"></i> Max Experience Limit</label>
-                        <div class="filter-field-input-wrap">
-                            <i class="fa-solid fa-user-check"></i>
-                            <input type="number" step="0.5" min="0" name="max_exp" placeholder="e.g. 10" value="{{ request('max_exp') }}">
+                            <input type="number" step="50000" min="0" name="expected_ctc" placeholder="e.g. 800000" value="{{ request('expected_ctc') }}">
                         </div>
                     </div>
 
@@ -544,10 +516,13 @@
             }, 320);
         });
 
-        // Status Select Dropdown Instant Filter
-        document.getElementById('statusSelect').addEventListener('change', function() {
-            loadCandidatesAJAX();
-        });
+        // Status Select Dropdown Instant Filter (if present)
+        const statusSelect = document.getElementById('statusSelect');
+        if (statusSelect) {
+            statusSelect.addEventListener('change', function() {
+                loadCandidatesAJAX();
+            });
+        }
 
         // Bind initial pagination links
         bindPaginationClicks();

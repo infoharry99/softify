@@ -25,8 +25,8 @@
 
             <div class="form-row">
                 <div class="form-group">
-                    <label class="form-label">Employee Code *</label>
-                    <input type="text" name="employee_code" class="form-control" value="{{ old('employee_code', 'EMP-' . rand(1000, 9999)) }}" required>
+                    <label class="form-label">Employee Code (Auto Generated) *</label>
+                    <input type="text" name="employee_code" class="form-control" value="{{ old('employee_code', 'EMP-' . rand(1000, 9999)) }}" readonly style="background-color: #f1f5f9; font-weight: 700; color: #475569; cursor: not-allowed;">
                 </div>
 
                 <div class="form-group">
@@ -43,12 +43,22 @@
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">Mobile Number</label>
-                    <input type="text" name="mobile" class="form-control" value="{{ old('mobile') }}">
+                    <input type="tel" name="mobile" class="form-control" value="{{ old('mobile') }}" placeholder="e.g. 9876543210" pattern="^(\+91[\-\s]?)?[6789]\d{9}$" maxlength="13" title="Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9 (e.g. 9876543210 or +919876543210)">
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Department *</label>
-                    <input type="text" name="department" class="form-control" value="{{ old('department', 'Software Development') }}" required>
+                    <select name="department" class="form-control" required>
+                        <option value="">-- Select Department --</option>
+                        <option value="Human Resources" {{ old('department') == 'Human Resources' ? 'selected' : '' }}>Human Resources (HR)</option>
+                        <option value="Sales" {{ old('department') == 'Sales' ? 'selected' : '' }}>Sales</option>
+                        <option value="Finance" {{ old('department') == 'Finance' ? 'selected' : '' }}>Finance</option>
+                        <option value="Business Development" {{ old('department') == 'Business Development' ? 'selected' : '' }}>Business Development (BDA)</option>
+                        <option value="Talent Acquisition" {{ old('department') == 'Talent Acquisition' ? 'selected' : '' }}>Talent Acquisition</option>
+                        <option value="Data Entry" {{ old('department') == 'Data Entry' ? 'selected' : '' }}>Data Entry</option>
+                        <option value="Management" {{ old('department') == 'Management' ? 'selected' : '' }}>Management</option>
+                        <option value="IT & Software" {{ old('department') == 'IT & Software' ? 'selected' : '' }}>IT & Software</option>
+                    </select>
                 </div>
 
                 <div class="form-group">

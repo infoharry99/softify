@@ -12,6 +12,7 @@ class Candidate extends Model
     protected $fillable = [
         'hr_id',
         'company_name',
+        'job_title',
         'name',
         'email',
         'phone',
@@ -24,6 +25,7 @@ class Candidate extends Model
         'expected_ctc',
         'status',
         'resume',
+        'edited_resume',
         'note',
         'last_updated_by',
         'is_highlighted',

@@ -224,7 +224,7 @@
             <!-- Phone Number -->
             <div class="form-group-compact">
                 <label for="inputPhone">Phone Number <span class="required">*</span></label>
-                <input type="text" id="inputPhone" name="phone" tabindex="2" placeholder="e.g. 9876543210" required autocomplete="off">
+                <input type="tel" id="inputPhone" name="phone" tabindex="2" placeholder="e.g. 9876543210" pattern="^(\+91[\-\s]?)?[6789]\d{9}$" maxlength="13" title="Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9 (e.g. 9876543210 or +919876543210)" required autocomplete="off">
                 <div class="inline-error" id="error_phone"></div>
                 <div id="duplicatePhoneBanner" style="display: none;"></div>
             </div>

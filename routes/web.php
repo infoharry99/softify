@@ -20,6 +20,8 @@ use App\Http\Controllers\Employee\EmployeeLeaveController;
 use App\Http\Controllers\Employee\EmployeeSalaryController;
 use App\Http\Controllers\Employee\EmployeeDocumentController;
 use App\Http\Controllers\Employee\NotificationController;
+use App\Http\Controllers\BdaWorkController;
+use App\Http\Controllers\TaWorkController;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,6 +61,22 @@ Route::middleware('auth')->group(function () {
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{notification}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read_all');
+
+    // BDA Daily Work Assignment & KPI Management
+    Route::get('/bda/work', [BdaWorkController::class, 'index'])->name('bda.work.index');
+    Route::post('/bda/work', [BdaWorkController::class, 'store'])->name('bda.work.store');
+    Route::get('/bda/work/{task}', [BdaWorkController::class, 'show'])->name('bda.work.show');
+    Route::post('/bda/work/{task}/update-employee', [BdaWorkController::class, 'updateEmployee'])->name('bda.work.update_employee');
+    Route::post('/bda/work/{task}/update-lead', [BdaWorkController::class, 'updateLead'])->name('bda.work.update_lead');
+    Route::delete('/bda/work/{task}', [BdaWorkController::class, 'destroy'])->name('bda.work.destroy');
+
+    // Talent Acquisition (TA) Work Assignment Management
+    Route::get('/ta/work', [TaWorkController::class, 'index'])->name('ta.work.index');
+    Route::post('/ta/work', [TaWorkController::class, 'store'])->name('ta.work.store');
+    Route::get('/ta/work/{task}', [TaWorkController::class, 'show'])->name('ta.work.show');
+    Route::post('/ta/work/{task}/update-employee', [TaWorkController::class, 'updateEmployee'])->name('ta.work.update_employee');
+    Route::post('/ta/work/{task}/update-lead', [TaWorkController::class, 'updateLead'])->name('ta.work.update_lead');
+    Route::delete('/ta/work/{task}', [TaWorkController::class, 'destroy'])->name('ta.work.destroy');
 
     // ==========================================
     // ADMIN PANEL ROUTES
@@ -141,28 +159,29 @@ Route::middleware('auth')->group(function () {
             Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity_logs.index');
         });
 
-        // Candidate Management (HR ATS) - Granular Permission Control
-        Route::middleware('permission:hr.create')->group(function () {
+        // Candidate Management (ATS) - Granular Permission Control
+        Route::middleware('permission:candidates.create')->group(function () {
             Route::get('/candidates/create', [CandidateController::class, 'create'])->name('candidates.create');
             Route::get('/candidates/quick-create', [CandidateController::class, 'quickCreate'])->name('candidates.quick_create');
             Route::post('/candidates/check-duplicate', [CandidateController::class, 'checkDuplicate'])->name('candidates.check_duplicate');
             Route::post('/candidates', [CandidateController::class, 'store'])->name('candidates.store');
         });
 
-        Route::middleware('permission:hr.view,hr.create')->group(function () {
+        Route::middleware('permission:candidates.view,candidates.create')->group(function () {
             Route::get('/candidates', [CandidateController::class, 'index'])->name('candidates.index');
             Route::get('/candidates/{candidate}', [CandidateController::class, 'show'])->name('candidates.show');
             Route::get('/candidates/{candidate}/resume', [CandidateController::class, 'downloadResume'])->name('candidates.resume');
             Route::get('/candidates/{candidate}/resume-preview', [CandidateController::class, 'previewResume'])->name('candidates.resume_preview');
         });
 
-        Route::middleware('permission:hr.edit')->group(function () {
+        Route::middleware('permission:candidates.edit')->group(function () {
             Route::get('/candidates/{candidate}/edit', [CandidateController::class, 'edit'])->name('candidates.edit');
             Route::put('/candidates/{candidate}', [CandidateController::class, 'update'])->name('candidates.update');
             Route::post('/candidates/{candidate}/status', [CandidateController::class, 'updateStatus'])->name('candidates.status');
+            Route::post('/candidates/{candidate}/edited-resume', [CandidateController::class, 'uploadEditedResume'])->name('candidates.edited_resume');
         });
 
-        Route::middleware('permission:hr.delete')->group(function () {
+        Route::middleware('permission:candidates.delete')->group(function () {
             Route::delete('/candidates/{candidate}', [CandidateController::class, 'destroy'])->name('candidates.destroy');
         });
 
@@ -212,20 +231,25 @@ Route::middleware('auth')->group(function () {
             Route::get('/leave', [AdminLeaveController::class, 'index'])->name('leave.index');
             Route::post('/leave/{application}/approve', [AdminLeaveController::class, 'approve'])->name('leave.approve');
             Route::post('/leave/{application}/reject', [AdminLeaveController::class, 'reject'])->name('leave.reject');
+            Route::post('/leave/balances/{employee}', [AdminLeaveController::class, 'updateBalances'])->name('leave.balances.update');
         });
 
         // Payroll Management (Admin & HR)
         Route::middleware('permission:finance.view,hr.view')->group(function () {
             Route::get('/payroll', [AdminPayrollController::class, 'index'])->name('payroll.index');
             Route::post('/payroll/process/{employee}', [AdminPayrollController::class, 'process'])->name('payroll.process');
+            Route::put('/payroll/{payroll}', [AdminPayrollController::class, 'updatePayroll'])->name('payroll.update');
             Route::post('/payroll/structure/{employee}', [AdminPayrollController::class, 'updateStructure'])->name('payroll.structure');
             Route::get('/payroll/slip/{payroll}', [AdminPayrollController::class, 'slip'])->name('payroll.slip');
+            Route::get('/payroll/download/{payroll}', [AdminPayrollController::class, 'download'])->name('payroll.download');
         });
 
         // Company Announcements (Admin)
         Route::middleware('permission:dashboard.view')->group(function () {
             Route::get('/announcements', [AdminAnnouncementController::class, 'index'])->name('announcements.index');
             Route::post('/announcements', [AdminAnnouncementController::class, 'store'])->name('announcements.store');
+            Route::put('/announcements/{announcement}', [AdminAnnouncementController::class, 'update'])->name('announcements.update');
+            Route::delete('/announcements/{announcement}', [AdminAnnouncementController::class, 'destroy'])->name('announcements.destroy');
         });
     });
 
@@ -247,7 +271,27 @@ Route::middleware('auth')->group(function () {
         Route::post('/leave', [EmployeeLeaveController::class, 'store'])->name('leave.store');
         Route::get('/salary', [EmployeeSalaryController::class, 'index'])->name('salary');
         Route::get('/salary/slip/{payroll}', [EmployeeSalaryController::class, 'slip'])->name('salary.slip');
+        Route::get('/salary/download/{payroll}', [EmployeeSalaryController::class, 'download'])->name('salary.download');
         Route::get('/documents', [EmployeeDocumentController::class, 'index'])->name('documents');
         Route::get('/documents/{document}/download', [EmployeeDocumentController::class, 'download'])->name('documents.download');
     });
+});
+
+// Utility Web Route to Run Database Seeder & Clear Caching on Live Hosting Servers without Terminal Access
+Route::get('/run-seeder', function () {
+    try {
+        Artisan::call('db:seed', ['--class' => 'RoleAndPermissionSeeder', '--force' => true]);
+        Artisan::call('route:clear');
+        Artisan::call('cache:clear');
+        Artisan::call('view:clear');
+        Artisan::call('config:clear');
+        return '<div style="font-family: system-ui, sans-serif; padding: 40px; background: #e6f7f3; color: #00a884; font-size: 1.25rem; font-weight: 700; border-radius: 16px; border: 2px solid #9ee5d4; max-width: 600px; margin: 50px auto; text-align: center;">' .
+               '✓ Success! RoleAndPermissionSeeder executed & Caches cleared successfully.<br><br>' .
+               '<a href="/admin/candidates" style="background: #00a884; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 10px; font-size: 1rem; display: inline-block;">Go to Candidates ATS →</a>' .
+               '</div>';
+    } catch (\Exception $e) {
+        return '<div style="color: #ef4444; font-family: sans-serif; padding: 30px; background: #fef2f2; border: 1px solid #fca5a5; border-radius: 12px; max-width: 600px; margin: 50px auto;">' .
+               '<strong>Error executing seeder:</strong> ' . htmlspecialchars($e->getMessage()) .
+               '</div>';
+    }
 });

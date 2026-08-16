@@ -33,7 +33,7 @@ class EmployeeSalaryController extends Controller
     }
 
     /**
-     * Download or view printable salary slip.
+     * View printable salary slip.
      */
     public function slip(MonthlyPayroll $payroll)
     {
@@ -48,5 +48,24 @@ class EmployeeSalaryController extends Controller
         $salary = $payroll->employee->salaryStructure;
 
         return view('admin.payroll.slip', compact('payroll', 'salary'));
+    }
+
+    /**
+     * Download printable salary slip (PDF Print Trigger).
+     */
+    public function download(MonthlyPayroll $payroll)
+    {
+        $user = auth()->user();
+        $employee = Employee::where('user_id', $user->id)->firstOrFail();
+
+        if ($payroll->employee_id !== $employee->id) {
+            abort(403, 'Unauthorized access to salary slip.');
+        }
+
+        $payroll->load(['employee.user', 'employee.joiningDetail', 'processor']);
+        $salary = $payroll->employee->salaryStructure;
+        $autoPrint = true;
+
+        return view('admin.payroll.slip', compact('payroll', 'salary', 'autoPrint'));
     }
 }

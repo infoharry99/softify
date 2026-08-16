@@ -32,9 +32,6 @@
                             <span>Gross Salary:</span> <strong>₹{{ number_format($structure->gross_salary, 2) }}</strong>
                         </div>
                         <div style="display: flex; justify-content: space-between; color: var(--danger);">
-                            <span>PF Deduction:</span> <strong>- ₹{{ number_format($structure->pf_deduction, 2) }}</strong>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; color: var(--danger);">
                             <span>Other Deductions:</span> <strong>- ₹{{ number_format($structure->other_deductions, 2) }}</strong>
                         </div>
                     </div>
@@ -80,6 +77,8 @@
                     <thead>
                         <tr>
                             <th>Month</th>
+                            <th>Working / Present</th>
+                            <th>Leaves Taken</th>
                             <th>Gross Salary</th>
                             <th>Deductions</th>
                             <th>Net Paid</th>
@@ -90,24 +89,39 @@
                     <tbody>
                         @forelse($payrolls as $pay)
                         <tr>
-                            <td><strong>{{ \Carbon\Carbon::parse($pay->month . '-01')->format('F Y') }}</strong></td>
+                            <td>
+                                <strong>{{ \Carbon\Carbon::parse($pay->month . '-01')->format('F Y') }}</strong>
+                                <div style="font-size: 0.76rem; color: #00a884; font-weight: 600; margin-top: 2px;">
+                                    Processed: {{ $pay->payment_date ? $pay->payment_date->format('d M, Y') : $pay->updated_at->format('d M, Y') }}
+                                </div>
+                            </td>
+                            <td><span class="badge badge-secondary">{{ $pay->present_days }} / {{ $pay->working_days }} Days</span></td>
+                            <td>
+                                <span class="badge badge-warning" style="background: #fff7ed; color: #c2410c; border: 1px solid #ffedd5;">
+                                    {{ $pay->paid_leave_days + $pay->unpaid_leave_days }} Days
+                                    <small>({{ $pay->paid_leave_days }} Paid, {{ $pay->unpaid_leave_days }} LOP)</small>
+                                </span>
+                            </td>
                             <td>₹{{ number_format($pay->gross_salary, 2) }}</td>
-                            <td style="color: var(--danger);">₹{{ number_format($pay->total_deductions, 2) }}</td>
-                            <td><strong style="color: var(--primary);">₹{{ number_format($pay->net_salary, 2) }}</strong></td>
+                            <td style="color: var(--danger); font-weight: 600;">₹{{ number_format($pay->total_deductions, 2) }}</td>
+                            <td><strong style="color: #00a884; font-size: 1rem;">₹{{ number_format($pay->net_salary, 2) }}</strong></td>
                             <td>
                                 <span class="badge badge-success">
                                     Paid ({{ $pay->payment_date ? $pay->payment_date->format('M d') : 'Done' }})
                                 </span>
                             </td>
-                            <td style="text-align: right;">
-                                <a href="{{ route('employee.salary.slip', $pay->id) }}" class="btn btn-secondary btn-sm" target="_blank">
-                                    🖨️ View Payslip
+                            <td style="text-align: right; white-space: nowrap;">
+                                <a href="{{ route('employee.salary.slip', $pay->id) }}" class="btn btn-secondary btn-sm" target="_blank" style="padding: 6px 10px; border-radius: 6px; margin-right: 2px;" title="View Payslip">
+                                    <i class="fa-solid fa-eye"></i>
+                                </a>
+                                <a href="{{ route('employee.salary.download', $pay->id) }}" class="btn btn-primary btn-sm" target="_blank" style="padding: 6px 10px; border-radius: 6px;" title="Download PDF Payslip">
+                                    <i class="fa-solid fa-download"></i>
                                 </a>
                             </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 30px;">
+                            <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 30px;">
                                 No payslips generated yet.
                             </td>
                         </tr>

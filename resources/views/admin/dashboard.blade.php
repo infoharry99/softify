@@ -156,7 +156,7 @@
             </form>
             <form action="{{ route('employee.clock_out') }}" method="POST" style="display: inline;">
                 @csrf
-                <button type="submit" class="clock-btn-lg clock-out-btn" onclick="return confirm('End work session for today?');">
+                <button type="submit" class="clock-btn-lg clock-out-btn" onclick="return confirmClockOut(event, this.form);">
                     <i class="fa-solid fa-door-open"></i> End Session (Clock Out)
                 </button>
             </form>
@@ -169,7 +169,7 @@
             </form>
             <form action="{{ route('employee.clock_out') }}" method="POST" style="display: inline;">
                 @csrf
-                <button type="submit" class="clock-btn-lg clock-out-btn" onclick="return confirm('End work session for today?');">
+                <button type="submit" class="clock-btn-lg clock-out-btn" onclick="return confirmClockOut(event, this.form);">
                     <i class="fa-solid fa-door-open"></i> End Session (Clock Out)
                 </button>
             </form>
@@ -440,5 +440,24 @@
 
     updateAdminLiveCounters();
     setInterval(updateAdminLiveCounters, 1000);
+
+    function confirmClockOut(event, form) {
+        event.preventDefault();
+        Swal.fire({
+            title: 'End Work Session?',
+            text: 'Are you sure you want to clock out and end your work session for today?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: '<i class="fa-solid fa-door-open"></i> Yes, Clock Out',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+        return false;
+    }
 </script>
 @endsection
