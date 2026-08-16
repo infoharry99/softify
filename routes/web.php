@@ -277,21 +277,23 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-// Utility Web Route to Run Database Seeder & Clear Caching on Live Hosting Servers without Terminal Access
+// Utility Web Route to Run Database Migrations, Seeder & Clear Caching on Live Hosting Servers without Terminal Access
 Route::get('/run-seeder', function () {
     try {
+        Artisan::call('migrate', ['--force' => true]);
         Artisan::call('db:seed', ['--class' => 'RoleAndPermissionSeeder', '--force' => true]);
+        Artisan::call('db:seed', ['--class' => 'EmployeeSystemSeeder', '--force' => true]);
         Artisan::call('route:clear');
         Artisan::call('cache:clear');
         Artisan::call('view:clear');
         Artisan::call('config:clear');
         return '<div style="font-family: system-ui, sans-serif; padding: 40px; background: #e6f7f3; color: #00a884; font-size: 1.25rem; font-weight: 700; border-radius: 16px; border: 2px solid #9ee5d4; max-width: 600px; margin: 50px auto; text-align: center;">' .
-               '✓ Success! RoleAndPermissionSeeder executed & Caches cleared successfully.<br><br>' .
-               '<a href="/admin/candidates" style="background: #00a884; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 10px; font-size: 1rem; display: inline-block;">Go to Candidates ATS →</a>' .
+               '✓ Success! Database Migrations & Seeders executed successfully.<br><br>' .
+               '<a href="/admin/dashboard" style="background: #00a884; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 10px; font-size: 1rem; display: inline-block;">Go to Dashboard →</a>' .
                '</div>';
     } catch (\Exception $e) {
         return '<div style="color: #ef4444; font-family: sans-serif; padding: 30px; background: #fef2f2; border: 1px solid #fca5a5; border-radius: 12px; max-width: 600px; margin: 50px auto;">' .
-               '<strong>Error executing seeder:</strong> ' . htmlspecialchars($e->getMessage()) .
+               '<strong>Error executing migrations/seeder:</strong> ' . htmlspecialchars($e->getMessage()) .
                '</div>';
     }
 });
