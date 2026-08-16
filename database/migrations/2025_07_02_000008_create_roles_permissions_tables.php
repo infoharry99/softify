@@ -11,18 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Roles Table
-        Schema::create('roles', function (Blueprint $table) {
-            $table->id();
-            $table->string('name', 100);
-            $table->string('slug', 100)->unique();
-            $table->text('description')->nullable();
-            $table->enum('status', ['active', 'inactive'])->default('active');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('roles')) {
+            // Roles Table
+            Schema::create('roles', function (Blueprint $table) {
+                $table->id();
+                $table->string('name', 100);
+                $table->string('slug', 100)->unique();
+                $table->text('description')->nullable();
+                $table->enum('status', ['active', 'inactive'])->default('active');
+                $table->timestamps();
+            });
+        }
 
-        // Permissions Table
-        Schema::create('permissions', function (Blueprint $table) {
+        if (!Schema::hasTable('permissions')) {
+            // Permissions Table
+            Schema::create('permissions', function (Blueprint $table) {
             $table->id();
             $table->string('name', 100);
             $table->string('slug', 100)->unique();

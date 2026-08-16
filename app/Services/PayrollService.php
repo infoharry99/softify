@@ -65,12 +65,12 @@ class PayrollService
         } else {
             $unpaidLeaveDays = max(0, $daysInMonth - ($presentDays + $paidLeaveDays));
             $perDaySalary = $salary->gross_salary > 0 ? ($salary->gross_salary / $daysInMonth) : 0;
-            $unpaidLeaveDeduction = round($unpaidLeaveDays * $perDaySalary, 2);
+            $unpaidLeaveDeduction = round($unpaidLeaveDays * $perDaySalary);
         }
 
-        $gross = $salary->gross_salary + $salary->bonus + $salary->incentives;
-        $totalDeductions = ($salary->other_deductions ?? 0) + $unpaidLeaveDeduction;
-        $netSalary = max(0, round($gross - $totalDeductions, 2));
+        $gross = round($salary->gross_salary + $salary->bonus + $salary->incentives);
+        $totalDeductions = round(($salary->other_deductions ?? 0) + $unpaidLeaveDeduction);
+        $netSalary = max(0, round($gross - $totalDeductions));
 
         $payroll = MonthlyPayroll::updateOrCreate(
             ['employee_id' => $employee->id, 'month' => $month],
@@ -81,7 +81,7 @@ class PayrollService
                 'unpaid_leave_days' => $unpaidLeaveDays,
                 'absent_days' => $unpaidLeaveDays,
                 'leave_deductions' => $unpaidLeaveDeduction,
-                'bonus_amount' => $salary->bonus ?? 0,
+                'bonus_amount' => round($salary->bonus ?? 0),
                 'gross_salary' => $gross,
                 'total_deductions' => $totalDeductions,
                 'net_salary' => $netSalary,
@@ -96,7 +96,7 @@ class PayrollService
             'user_id' => $employee->user_id,
             'type' => 'payroll_generated',
             'title' => 'Salary Slip Generated',
-            'message' => "Your salary slip for {$month} has been finalized. Net Amount: ₹" . number_format($netSalary, 2),
+            'message' => "Your salary slip for {$month} has been finalized. Net Amount: ₹" . number_format($netSalary),
         ]);
 
         return $payroll;
@@ -111,14 +111,14 @@ class PayrollService
         $presentDays = (int) ($data['present_days'] ?? $payroll->present_days);
         $paidLeaveDays = (int) ($data['paid_leave_days'] ?? $payroll->paid_leave_days);
         $unpaidLeaveDays = (int) ($data['unpaid_leave_days'] ?? $payroll->unpaid_leave_days);
-        $grossSalary = (float) ($data['gross_salary'] ?? $payroll->gross_salary);
-        $bonusAmount = (float) ($data['bonus_amount'] ?? $payroll->bonus_amount);
-        $otherDeductions = (float) ($data['other_deductions'] ?? 0);
+        $grossSalary = round((float) ($data['gross_salary'] ?? $payroll->gross_salary));
+        $bonusAmount = round((float) ($data['bonus_amount'] ?? $payroll->bonus_amount));
+        $otherDeductions = round((float) ($data['other_deductions'] ?? 0));
 
         $perDay = $workingDays > 0 ? ($grossSalary / $workingDays) : 0;
-        $leaveDeductions = round($unpaidLeaveDays * $perDay, 2);
-        $totalDeductions = round($leaveDeductions + $otherDeductions, 2);
-        $netSalary = max(0, round(($grossSalary + $bonusAmount) - $totalDeductions, 2));
+        $leaveDeductions = round($unpaidLeaveDays * $perDay);
+        $totalDeductions = round($leaveDeductions + $otherDeductions);
+        $netSalary = max(0, round(($grossSalary + $bonusAmount) - $totalDeductions));
 
         $payroll->update([
             'working_days' => $workingDays,

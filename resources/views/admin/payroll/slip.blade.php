@@ -75,40 +75,40 @@
             <tbody>
                 <tr>
                     <td>Basic Salary</td>
-                    <td>₹{{ number_format($salary ? $salary->basic_salary : 0, 2) }}</td>
+                    <td>₹{{ number_format(round($salary ? $salary->basic_salary : 0)) }}</td>
                     <td>Unpaid Leave (LOP Deductions)</td>
-                    <td>₹{{ number_format($payroll->leave_deductions, 2) }}</td>
+                    <td>₹{{ number_format(round($payroll->leave_deductions)) }}</td>
                 </tr>
                 <tr>
                     <td>House Rent Allowance (HRA)</td>
-                    <td>₹{{ number_format($salary ? $salary->hra : 0, 2) }}</td>
+                    <td>₹{{ number_format(round($salary ? $salary->hra : 0)) }}</td>
                     <td>Other Deductions</td>
-                    <td>₹{{ number_format($salary ? $salary->other_deductions : 0, 2) }}</td>
+                    <td>₹{{ number_format(round($salary ? $salary->other_deductions : 0)) }}</td>
                 </tr>
                 <tr>
                     <td>Conveyance & Allowances</td>
-                    <td>₹{{ number_format($salary ? $salary->allowances : 0, 2) }}</td>
+                    <td>₹{{ number_format(round($salary ? $salary->allowances : 0)) }}</td>
                     <td>-</td>
                     <td>-</td>
                 </tr>
                 <tr>
                     <td>Bonus / Incentives</td>
-                    <td>₹{{ number_format($payroll->bonus_amount, 2) }}</td>
+                    <td>₹{{ number_format(round($payroll->bonus_amount)) }}</td>
                     <td>-</td>
                     <td>-</td>
                 </tr>
                 <tr class="total-row">
                     <td>Total Gross Earnings</td>
-                    <td>₹{{ number_format($payroll->gross_salary, 2) }}</td>
+                    <td>₹{{ number_format(round($payroll->gross_salary)) }}</td>
                     <td>Total Deductions</td>
-                    <td>₹{{ number_format($payroll->total_deductions, 2) }}</td>
+                    <td>₹{{ number_format(round($payroll->total_deductions)) }}</td>
                 </tr>
             </tbody>
         </table>
 
         <div style="background: #e6f7f3; border: 1px solid #9ee5d4; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 30px;">
             <div style="font-size: 0.9rem; color: #00a884; font-weight: 700; text-transform: uppercase;">Net Payable Amount</div>
-            <div style="font-size: 2rem; font-weight: 800; color: #008f70;">₹{{ number_format($payroll->net_salary, 2) }}</div>
+            <div style="font-size: 2rem; font-weight: 800; color: #008f70;">₹{{ number_format(round($payroll->net_salary)) }}</div>
         </div>
 
         <div class="footer">
