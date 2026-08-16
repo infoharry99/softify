@@ -1,6 +1,6 @@
 -- ========================================================
 -- Softify Production MySQL Database Dump
--- Generated: 2026-08-16 17:50:54
+-- Generated: 2026-08-16 18:00:33
 -- Ready for Import on Live MySQL / phpMyAdmin Server
 -- ========================================================
 
@@ -574,7 +574,7 @@ CREATE TABLE `candidates` (
 
 -- Data for table `candidates`
 INSERT INTO `candidates` (`id`, `hr_id`, `company_name`, `name`, `email`, `phone`, `location`, `skills`, `experience`, `job_type`, `notice_period`, `current_ctc`, `expected_ctc`, `status`, `resume`, `note`, `last_updated_by`, `is_highlighted`, `created_at`, `updated_at`, `job_title`, `edited_resume`) VALUES ('1', NULL, NULL, 'Rahul Sharma', 'rahul@example.com', '9876543210', 'Hyderabad', 'Python, Django, AI', '4.5', 'Full Time', '15 Days', '900000', '1200000', 'Applied', NULL, NULL, NULL, '0', '2026-08-16 17:42:02', '2026-08-16 17:42:02', 'Senior Python Developer', NULL);
-INSERT INTO `candidates` (`id`, `hr_id`, `company_name`, `name`, `email`, `phone`, `location`, `skills`, `experience`, `job_type`, `notice_period`, `current_ctc`, `expected_ctc`, `status`, `resume`, `note`, `last_updated_by`, `is_highlighted`, `created_at`, `updated_at`, `job_title`, `edited_resume`) VALUES ('2', NULL, NULL, 'Amit Test Candidate', 'amittest@example.com', '9876543211', 'Bangalore', 'Java, Spring Boot, Microservices', '5', 'Full Time', '30 Days', NULL, NULL, 'Screening', 'candidate_resumes/original_resume_raw.pdf', NULL, '1', '0', '2026-08-16 17:50:45', '2026-08-16 17:50:45', 'Senior Java Developer', 'candidate_edited_resumes/BUkx9ry3yPvGXTp4Ef8Gg1tcHpE9UKegSCtSDMPj.pdf');
+INSERT INTO `candidates` (`id`, `hr_id`, `company_name`, `name`, `email`, `phone`, `location`, `skills`, `experience`, `job_type`, `notice_period`, `current_ctc`, `expected_ctc`, `status`, `resume`, `note`, `last_updated_by`, `is_highlighted`, `created_at`, `updated_at`, `job_title`, `edited_resume`) VALUES ('2', NULL, NULL, 'Amit Test Candidate', 'amittest@example.com', '9876543211', 'Bangalore', 'Java, Spring Boot, Microservices', '5', 'Full Time', '30 Days', NULL, NULL, 'Screening', 'candidate_resumes/original_resume_raw.pdf', NULL, '1', '0', '2026-08-16 17:50:45', '2026-08-16 17:53:08', 'Senior Java Developer', 'candidate_edited_resumes/cOrHzdwgMvbf0wfLiBYpBzdIJi01z9Jjtmppxxlm.pdf');
 
 DROP TABLE IF EXISTS `finance_requirements`;
 CREATE TABLE `finance_requirements` (
@@ -705,6 +705,7 @@ INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_i
 INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('47', '3', 'Logout', NULL, NULL, 'User logged out', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-16 17:36:18', '2026-08-16 17:36:18');
 INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('48', '1', 'Login', NULL, NULL, 'User logged in successfully', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-16 17:36:26', '2026-08-16 17:36:26');
 INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('49', '1', 'Candidate Edited Resume Uploaded', 'App\\Models\\Candidate', '2', 'Uploaded edited copy resume for candidate \'Amit Test Candidate\'', '127.0.0.1', 'Symfony', '2026-08-16 17:50:45', '2026-08-16 17:50:45');
+INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `target_type`, `target_id`, `description`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES ('50', '1', 'Candidate Edited Resume Uploaded', 'App\\Models\\Candidate', '2', 'Uploaded edited copy resume for candidate \'Amit Test Candidate\'', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-16 17:53:08', '2026-08-16 17:53:08');
 
 SET FOREIGN_KEY_CHECKS=1;
 COMMIT;
