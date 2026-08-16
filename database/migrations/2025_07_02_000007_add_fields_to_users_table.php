@@ -11,14 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('mobile', 50)->nullable()->after('email');
-            $table->string('department', 100)->nullable()->after('mobile');
-            $table->string('designation', 100)->nullable()->after('department');
-            $table->enum('status', ['active', 'inactive'])->default('active')->after('designation');
-            $table->string('profile_photo', 255)->nullable()->after('status');
-            $table->timestamp('last_login_at')->nullable()->after('profile_photo');
-        });
+        if (!Schema::hasColumn('users', 'mobile')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->string('mobile', 50)->nullable()->after('email');
+                $table->string('department', 100)->nullable()->after('mobile');
+                $table->string('designation', 100)->nullable()->after('department');
+                $table->enum('status', ['active', 'inactive'])->default('active')->after('designation');
+                $table->string('profile_photo', 255)->nullable()->after('status');
+                $table->timestamp('last_login_at')->nullable()->after('profile_photo');
+            });
+        }
     }
 
     /**
