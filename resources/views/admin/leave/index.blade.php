@@ -134,68 +134,76 @@
     </div>
 </div>
 
-<!-- Comprehensive Leave Application Details Modal -->
-<div class="modal fade" id="leaveDetailsModal" tabindex="-1" aria-labelledby="leaveDetailsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" style="max-width: 620px;">
-        <div class="modal-content" style="border-radius: 14px; border: none; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);">
-            <div class="modal-header" style="background-color: #f8fafc; border-bottom: 1px solid #e2e8f0; padding: 18px 24px; border-top-left-radius: 14px; border-top-right-radius: 14px;">
-                <h5 class="modal-title" id="leaveDetailsModalLabel" style="font-weight: 700; color: #0f172a; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
-                    📋 Leave Application Details
-                </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="outline: none;">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+<!-- Standalone Custom Popup Modal (100% Hidden by default, ONLY opens on clicking View) -->
+<div id="leaveDetailsModal" onclick="closeLeaveModalOnOverlay(event)" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.65); z-index: 99999; backdrop-filter: blur(4px); align-items: center; justify-content: center; padding: 20px;">
+    <div style="background: #ffffff; width: 100%; max-width: 620px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); overflow: hidden; display: flex; flex-direction: column; max-height: 90vh; animation: fadeInModal 0.2s ease-out;">
+        <!-- Header -->
+        <div style="background-color: #f8fafc; border-bottom: 1px solid #e2e8f0; padding: 18px 24px; display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="font-weight: 700; color: #0f172a; font-size: 1.15rem; margin: 0; display: flex; align-items: center; gap: 8px;">
+                📋 Leave Application Details
+            </h3>
+            <button type="button" onclick="closeLeaveModal()" style="background: none; border: none; font-size: 1.5rem; color: #64748b; cursor: pointer; line-height: 1; outline: none; padding: 0 6px;">&times;</button>
+        </div>
+
+        <!-- Body -->
+        <div style="padding: 24px; overflow-y: auto;">
+            <!-- Employee Summary Header -->
+            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 15px 18px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <div style="font-size: 1.05rem; font-weight: 700; color: #166534;" id="detailEmpName">-</div>
+                    <div style="font-size: 0.8rem; color: #15803d;" id="detailEmpCode">-</div>
+                </div>
+                <div id="detailStatusBadge"></div>
             </div>
-            <div class="modal-body" style="padding: 24px;">
-                <!-- Employee Summary Header -->
-                <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 15px 18px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <div style="font-size: 1.05rem; font-weight: 700; color: #166534;" id="detailEmpName">-</div>
-                        <div style="font-size: 0.8rem; color: #15803d;" id="detailEmpCode">-</div>
-                    </div>
-                    <div id="detailStatusBadge"></div>
-                </div>
 
-                <!-- Key Metrics Grid -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 16px; border-radius: 8px;">
-                        <div style="font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Leave Type</div>
-                        <div style="font-size: 0.95rem; font-weight: 700; color: #0f172a; margin-top: 2px;" id="detailLeaveType">-</div>
-                    </div>
-                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 16px; border-radius: 8px;">
-                        <div style="font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Duration & Dates</div>
-                        <div style="font-size: 0.95rem; font-weight: 700; color: #00a884; margin-top: 2px;" id="detailDates">-</div>
-                    </div>
+            <!-- Key Metrics Grid -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 16px; border-radius: 8px;">
+                    <div style="font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Leave Type</div>
+                    <div style="font-size: 0.95rem; font-weight: 700; color: #0f172a; margin-top: 2px;" id="detailLeaveType">-</div>
                 </div>
-
-                <!-- Full Reason Box -->
-                <div style="margin-bottom: 20px;">
-                    <label style="font-size: 0.82rem; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">📝 Applied Reason / Details:</label>
-                    <div id="detailReason" style="background: #ffffff; border: 1px solid #cbd5e1; padding: 14px; border-radius: 8px; font-size: 0.9rem; color: #1e293b; min-height: 80px; max-height: 200px; overflow-y: auto; white-space: pre-wrap; word-break: break-word; line-height: 1.5;">-</div>
-                </div>
-
-                <!-- Attachment Document Section -->
-                <div style="margin-bottom: 20px;">
-                    <label style="font-size: 0.82rem; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">📎 Attachment / Medical Certificate / Document:</label>
-                    <div id="detailAttachmentContainer">
-                        <div style="font-size: 0.85rem; color: #94a3b8; font-style: italic;">No attachment uploaded.</div>
-                    </div>
-                </div>
-
-                <!-- HR Remark Section -->
-                <div id="detailHrRemarkSection" style="display: none; background: #fffbe6; border: 1px solid #ffe58f; padding: 14px; border-radius: 8px; margin-bottom: 10px;">
-                    <div style="font-size: 0.8rem; font-weight: 700; color: #d48806; text-transform: uppercase; margin-bottom: 4px;">🛡️ HR Approval Remark:</div>
-                    <div id="detailHrRemark" style="font-size: 0.88rem; color: #595959;"></div>
-                    <div id="detailApproverInfo" style="font-size: 0.78rem; color: #8c8c8c; margin-top: 4px;"></div>
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 16px; border-radius: 8px;">
+                    <div style="font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Duration & Dates</div>
+                    <div style="font-size: 0.95rem; font-weight: 700; color: #00a884; margin-top: 2px;" id="detailDates">-</div>
                 </div>
             </div>
-            <div class="modal-footer" style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 14px 24px; border-bottom-left-radius: 14px; border-bottom-right-radius: 14px; display: flex; justify-content: space-between; align-items: center;">
-                <div id="modalActionContainer"></div>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" style="border-radius: 8px; font-weight: 600;">Close</button>
+
+            <!-- Full Reason Box -->
+            <div style="margin-bottom: 20px;">
+                <label style="font-size: 0.82rem; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">📝 Applied Reason / Details:</label>
+                <div id="detailReason" style="background: #ffffff; border: 1px solid #cbd5e1; padding: 14px; border-radius: 8px; font-size: 0.9rem; color: #1e293b; min-height: 80px; max-height: 200px; overflow-y: auto; white-space: pre-wrap; word-break: break-word; line-height: 1.5;">-</div>
             </div>
+
+            <!-- Attachment Document Section -->
+            <div style="margin-bottom: 20px;">
+                <label style="font-size: 0.82rem; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">📎 Attachment / Medical Certificate / Document:</label>
+                <div id="detailAttachmentContainer">
+                    <div style="font-size: 0.85rem; color: #94a3b8; font-style: italic;">No attachment uploaded.</div>
+                </div>
+            </div>
+
+            <!-- HR Remark Section -->
+            <div id="detailHrRemarkSection" style="display: none; background: #fffbe6; border: 1px solid #ffe58f; padding: 14px; border-radius: 8px; margin-bottom: 10px;">
+                <div style="font-size: 0.8rem; font-weight: 700; color: #d48806; text-transform: uppercase; margin-bottom: 4px;">🛡️ HR Approval Remark:</div>
+                <div id="detailHrRemark" style="font-size: 0.88rem; color: #595959;"></div>
+                <div id="detailApproverInfo" style="font-size: 0.78rem; color: #8c8c8c; margin-top: 4px;"></div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 14px 24px; display: flex; justify-content: space-between; align-items: center;">
+            <div id="modalActionContainer"></div>
+            <button type="button" onclick="closeLeaveModal()" class="btn btn-secondary" style="border-radius: 8px; font-weight: 600; padding: 8px 18px;">Close</button>
         </div>
     </div>
 </div>
+
+<style>
+@keyframes fadeInModal {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+}
+</style>
 
 <script>
 function showLeaveDetails(app, empName, empCode, leaveTypeName, approverName) {
@@ -272,7 +280,25 @@ function showLeaveDetails(app, empName, empCode, leaveTypeName, approverName) {
         actionContainer.innerHTML = '';
     }
     
-    $('#leaveDetailsModal').modal('show');
+    var modal = document.getElementById('leaveDetailsModal');
+    modal.style.display = 'flex';
 }
+
+function closeLeaveModal() {
+    var modal = document.getElementById('leaveDetailsModal');
+    modal.style.display = 'none';
+}
+
+function closeLeaveModalOnOverlay(event) {
+    if (event.target.id === 'leaveDetailsModal') {
+        closeLeaveModal();
+    }
+}
+
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        closeLeaveModal();
+    }
+});
 </script>
 @endsection

@@ -72,12 +72,14 @@
         </li>
         @endif
 
+        @if(auth()->user()->hasRole('super-admin') || auth()->user()->hasRole('admin') || auth()->user()->hasRole('hr'))
         <li class="menu-item">
             <a href="{{ route('admin.announcements.index') }}" class="menu-link {{ request()->routeIs('admin.announcements.*') ? 'active' : '' }}">
                 <i class="fa-solid fa-bullhorn"></i>
                 <span>Company Notices</span>
             </a>
         </li>
+        @endif
 
         <!-- 2. HR & Candidate Recruitment Section -->
         @if(auth()->user()->hasPermission('candidates.view') || auth()->user()->hasRole('talent-acquisition') || auth()->user()->hasRole('ta-team-lead') || auth()->user()->hasRole('data-entry') || auth()->user()->hasRole('data-entry-team-lead') || auth()->user()->hasRole('super-admin') || auth()->user()->hasRole('hr'))

@@ -74,10 +74,10 @@
                         @endif
                     </td>
                     <td style="color: var(--danger); font-weight: 600;">
-                        ₹{{ number_format($p ? $p->total_deductions : ($s ? $s->other_deductions : 0), 2) }}
+                        ₹{{ number_format(round($p ? $p->total_deductions : ($s ? $s->other_deductions : 0))) }}
                     </td>
                     <td>
-                        <strong style="color: #00a884; font-size: 1rem;">₹{{ number_format($p ? $p->net_salary : ($s ? $s->net_salary : 0), 2) }}</strong>
+                        <strong style="color: #00a884; font-size: 1rem;">₹{{ number_format(round($p ? $p->net_salary : ($s ? $s->net_salary : 0))) }}</strong>
                     </td>
                     <td>
                         @if($p)

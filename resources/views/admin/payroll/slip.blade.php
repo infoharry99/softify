@@ -63,6 +63,14 @@
             </div>
         </div>
 
+        @php
+            $lopDeduction = round($payroll->leave_deductions);
+            $otherDeduction = round($salary ? $salary->other_deductions : 0);
+            $calculatedTotalDeductions = round($lopDeduction + $otherDeduction);
+            $calculatedGross = round($payroll->gross_salary);
+            $calculatedNetSalary = max(0, round($calculatedGross - $calculatedTotalDeductions));
+        @endphp
+
         <table class="table">
             <thead>
                 <tr>
@@ -77,13 +85,13 @@
                     <td>Basic Salary</td>
                     <td>₹{{ number_format(round($salary ? $salary->basic_salary : 0)) }}</td>
                     <td>Unpaid Leave (LOP Deductions)</td>
-                    <td>₹{{ number_format(round($payroll->leave_deductions)) }}</td>
+                    <td>₹{{ number_format($lopDeduction) }}</td>
                 </tr>
                 <tr>
                     <td>House Rent Allowance (HRA)</td>
                     <td>₹{{ number_format(round($salary ? $salary->hra : 0)) }}</td>
                     <td>Other Deductions</td>
-                    <td>₹{{ number_format(round($salary ? $salary->other_deductions : 0)) }}</td>
+                    <td>₹{{ number_format($otherDeduction) }}</td>
                 </tr>
                 <tr>
                     <td>Conveyance & Allowances</td>
@@ -99,16 +107,16 @@
                 </tr>
                 <tr class="total-row">
                     <td>Total Gross Earnings</td>
-                    <td>₹{{ number_format(round($payroll->gross_salary)) }}</td>
+                    <td>₹{{ number_format($calculatedGross) }}</td>
                     <td>Total Deductions</td>
-                    <td>₹{{ number_format(round($payroll->total_deductions)) }}</td>
+                    <td>₹{{ number_format($calculatedTotalDeductions) }}</td>
                 </tr>
             </tbody>
         </table>
 
         <div style="background: #e6f7f3; border: 1px solid #9ee5d4; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 30px;">
             <div style="font-size: 0.9rem; color: #00a884; font-weight: 700; text-transform: uppercase;">Net Payable Amount</div>
-            <div style="font-size: 2rem; font-weight: 800; color: #008f70;">₹{{ number_format(round($payroll->net_salary)) }}</div>
+            <div style="font-size: 2rem; font-weight: 800; color: #008f70;">₹{{ number_format($calculatedNetSalary) }}</div>
         </div>
 
         <div class="footer">

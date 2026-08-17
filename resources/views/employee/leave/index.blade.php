@@ -141,50 +141,48 @@
     </div>
 </div>
 
-<!-- Employee Leave Details Modal -->
-<div class="modal fade" id="empLeaveDetailsModal" tabindex="-1" aria-labelledby="empLeaveDetailsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" style="max-width: 580px;">
-        <div class="modal-content" style="border-radius: 14px; border: none; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);">
-            <div class="modal-header" style="background-color: #f8fafc; border-bottom: 1px solid #e2e8f0; padding: 18px 24px; border-top-left-radius: 14px; border-top-right-radius: 14px;">
-                <h5 class="modal-title" id="empLeaveDetailsModalLabel" style="font-weight: 700; color: #0f172a; font-size: 1.05rem;">
-                    📋 My Leave Application Details
-                </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="outline: none;">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" style="padding: 24px;">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 16px; border-radius: 8px;">
-                        <div style="font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Leave Type</div>
-                        <div style="font-size: 0.95rem; font-weight: 700; color: #0f172a; margin-top: 2px;" id="empLeaveType">-</div>
-                    </div>
-                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 16px; border-radius: 8px;">
-                        <div style="font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Duration & Dates</div>
-                        <div style="font-size: 0.95rem; font-weight: 700; color: #00a884; margin-top: 2px;" id="empDates">-</div>
-                    </div>
-                </div>
+<!-- Standalone Custom Employee Leave Details Modal (100% Hidden by default) -->
+<div id="empLeaveDetailsModal" onclick="closeEmpLeaveModalOnOverlay(event)" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.65); z-index: 99999; backdrop-filter: blur(4px); align-items: center; justify-content: center; padding: 20px;">
+    <div style="background: #ffffff; width: 100%; max-width: 580px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); overflow: hidden; display: flex; flex-direction: column; max-height: 90vh; animation: fadeInModal 0.2s ease-out;">
+        <div style="background-color: #f8fafc; border-bottom: 1px solid #e2e8f0; padding: 18px 24px; display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="font-weight: 700; color: #0f172a; font-size: 1.1rem; margin: 0;">
+                📋 My Leave Application Details
+            </h3>
+            <button type="button" onclick="closeEmpLeaveModal()" style="background: none; border: none; font-size: 1.5rem; color: #64748b; cursor: pointer; line-height: 1; outline: none; padding: 0 6px;">&times;</button>
+        </div>
 
-                <div style="margin-bottom: 20px;">
-                    <label style="font-size: 0.82rem; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">📝 My Applied Reason:</label>
-                    <div id="empReason" style="background: #ffffff; border: 1px solid #cbd5e1; padding: 14px; border-radius: 8px; font-size: 0.9rem; color: #1e293b; min-height: 80px; max-height: 200px; overflow-y: auto; white-space: pre-wrap; word-break: break-word; line-height: 1.5;">-</div>
+        <div style="padding: 24px; overflow-y: auto;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 16px; border-radius: 8px;">
+                    <div style="font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Leave Type</div>
+                    <div style="font-size: 0.95rem; font-weight: 700; color: #0f172a; margin-top: 2px;" id="empLeaveType">-</div>
                 </div>
-
-                <div style="margin-bottom: 20px;">
-                    <label style="font-size: 0.82rem; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">📎 Uploaded Document:</label>
-                    <div id="empAttachmentContainer">
-                        <div style="font-size: 0.85rem; color: #94a3b8; font-style: italic;">No attachment uploaded.</div>
-                    </div>
-                </div>
-
-                <div id="empHrRemarkSection" style="display: none; background: #fffbe6; border: 1px solid #ffe58f; padding: 14px; border-radius: 8px;">
-                    <div style="font-size: 0.8rem; font-weight: 700; color: #d48806; text-transform: uppercase; margin-bottom: 4px;">🛡️ HR Feedback / Remarks:</div>
-                    <div id="empHrRemark" style="font-size: 0.88rem; color: #595959;"></div>
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 16px; border-radius: 8px;">
+                    <div style="font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Duration & Dates</div>
+                    <div style="font-size: 0.95rem; font-weight: 700; color: #00a884; margin-top: 2px;" id="empDates">-</div>
                 </div>
             </div>
-            <div class="modal-footer" style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 14px 24px; border-bottom-left-radius: 14px; border-bottom-right-radius: 14px;">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" style="border-radius: 8px; font-weight: 600;">Close</button>
+
+            <div style="margin-bottom: 20px;">
+                <label style="font-size: 0.82rem; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">📝 My Applied Reason:</label>
+                <div id="empReason" style="background: #ffffff; border: 1px solid #cbd5e1; padding: 14px; border-radius: 8px; font-size: 0.9rem; color: #1e293b; min-height: 80px; max-height: 200px; overflow-y: auto; white-space: pre-wrap; word-break: break-word; line-height: 1.5;">-</div>
             </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="font-size: 0.82rem; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">📎 Uploaded Document:</label>
+                <div id="empAttachmentContainer">
+                    <div style="font-size: 0.85rem; color: #94a3b8; font-style: italic;">No attachment uploaded.</div>
+                </div>
+            </div>
+
+            <div id="empHrRemarkSection" style="display: none; background: #fffbe6; border: 1px solid #ffe58f; padding: 14px; border-radius: 8px;">
+                <div style="font-size: 0.8rem; font-weight: 700; color: #d48806; text-transform: uppercase; margin-bottom: 4px;">🛡️ HR Feedback / Remarks:</div>
+                <div id="empHrRemark" style="font-size: 0.88rem; color: #595959;"></div>
+            </div>
+        </div>
+
+        <div style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 14px 24px; display: flex; justify-content: flex-end;">
+            <button type="button" onclick="closeEmpLeaveModal()" class="btn btn-secondary" style="border-radius: 8px; font-weight: 600; padding: 8px 18px;">Close</button>
         </div>
     </div>
 </div>
@@ -230,7 +228,19 @@ function showEmpLeaveDetails(app, leaveTypeName) {
         hrSection.style.display = 'none';
     }
     
-    $('#empLeaveDetailsModal').modal('show');
+    var modal = document.getElementById('empLeaveDetailsModal');
+    modal.style.display = 'flex';
+}
+
+function closeEmpLeaveModal() {
+    var modal = document.getElementById('empLeaveDetailsModal');
+    modal.style.display = 'none';
+}
+
+function closeEmpLeaveModalOnOverlay(event) {
+    if (event.target.id === 'empLeaveDetailsModal') {
+        closeEmpLeaveModal();
+    }
 }
 </script>
 @endsection

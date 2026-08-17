@@ -1,6 +1,6 @@
 -- ========================================================
 -- Softify Production MySQL Database Dump
--- Generated: 2026-08-17 11:17:00
+-- Generated: 2026-08-17 14:51:01
 -- Ready for Import on Live MySQL / phpMyAdmin Server
 -- ========================================================
 
@@ -472,6 +472,7 @@ CREATE TABLE `leave_applications` (
 
 -- Data for table `leave_applications`
 INSERT INTO `leave_applications` (`id`, `employee_id`, `leave_type_id`, `from_date`, `to_date`, `total_days`, `is_half_day`, `reason`, `attachment`, `status`, `approved_by`, `admin_remark`, `created_at`, `updated_at`) VALUES ('1', '1', '1', '2026-08-19 11:15:23', '2026-08-21 11:15:23', '2', '0', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Full medical leave request with complete details.', 'leave_attachments/1/test_medical.pdf', 'Pending', NULL, NULL, '2026-08-17 11:15:23', '2026-08-17 11:15:23');
+INSERT INTO `leave_applications` (`id`, `employee_id`, `leave_type_id`, `from_date`, `to_date`, `total_days`, `is_half_day`, `reason`, `attachment`, `status`, `approved_by`, `admin_remark`, `created_at`, `updated_at`) VALUES ('2', '1', '1', '2026-08-19 14:45:34', '2026-08-21 14:45:34', '2', '0', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Full medical leave request with complete details.', 'leave_attachments/1/test_medical.pdf', 'Pending', NULL, NULL, '2026-08-17 14:45:34', '2026-08-17 14:45:34');
 
 DROP TABLE IF EXISTS `attendance_sessions`;
 CREATE TABLE `attendance_sessions` (

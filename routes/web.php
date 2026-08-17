@@ -246,8 +246,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/payroll/download/{payroll}', [AdminPayrollController::class, 'download'])->name('payroll.download');
         });
 
-        // Company Announcements (Admin)
-        Route::middleware('permission:dashboard.view')->group(function () {
+        // Company Announcements (Admin & HR Only)
+        Route::middleware('permission:hr.view')->group(function () {
             Route::get('/announcements', [AdminAnnouncementController::class, 'index'])->name('announcements.index');
             Route::post('/announcements', [AdminAnnouncementController::class, 'store'])->name('announcements.store');
             Route::put('/announcements/{announcement}', [AdminAnnouncementController::class, 'update'])->name('announcements.update');
