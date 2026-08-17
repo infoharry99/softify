@@ -113,11 +113,17 @@
 
         <div class="footer">
             <div>
-                <div>Processed by: {{ $payroll->processor->name ?? 'HR Admin' }}</div>
-                <div>Generated on: {{ $payroll->updated_at->format('M d, Y') }}</div>
+                <div style="font-size: 0.85rem; color: #475569;">Processed by: <strong>{{ $payroll->processor->name ?? 'HR Admin' }}</strong></div>
+                <div style="font-size: 0.85rem; color: #475569; margin-top: 2px;">Generated on: {{ $payroll->updated_at->format('M d, Y') }}</div>
             </div>
-            <div style="text-align: right;">
-                <div style="border-top: 1px solid #000; width: 180px; text-align: center; padding-top: 5px;">
+            <div style="text-align: right; position: relative;">
+                <div style="display: flex; align-items: flex-end; justify-content: flex-end; gap: 12px; margin-bottom: 6px; position: relative;">
+                    <!-- Company Stamp / Seal -->
+                    <img src="{{ asset('images/company_seal.png') }}" alt="Talentifyy Seal" style="height: 75px; width: auto; object-fit: contain; mix-blend-mode: multiply; opacity: 0.92;">
+                    <!-- Authorized Signature (Majid Khan) -->
+                    <img src="{{ asset('images/authorized_signature.png') }}" alt="Majid Khan Signature" style="height: 52px; width: auto; object-fit: contain; mix-blend-mode: multiply; margin-bottom: 2px;">
+                </div>
+                <div style="border-top: 1.5px solid #334155; width: 220px; margin-left: auto; text-align: center; padding-top: 5px; font-weight: 700; font-size: 0.85rem; color: #1e293b;">
                     Authorized Signature
                 </div>
             </div>
