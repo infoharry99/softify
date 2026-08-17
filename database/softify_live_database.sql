@@ -1,6 +1,6 @@
 -- ========================================================
 -- Softify Production MySQL Database Dump
--- Generated: 2026-08-17 14:54:15
+-- Generated: 2026-08-17 15:07:17
 -- Ready for Import on Live MySQL / phpMyAdmin Server
 -- ========================================================
 
@@ -643,6 +643,7 @@ INSERT INTO `notifications` (`id`, `user_id`, `type`, `title`, `message`, `is_re
 INSERT INTO `notifications` (`id`, `user_id`, `type`, `title`, `message`, `is_read`, `data`, `created_at`, `updated_at`) VALUES ('9', '6', 'payroll_generated', 'Salary Slip Generated', 'Your salary slip for 2026-08 has been finalized. Net Amount: ₹46,300.00', '0', NULL, '2026-08-16 16:36:22', '2026-08-16 16:36:22');
 INSERT INTO `notifications` (`id`, `user_id`, `type`, `title`, `message`, `is_read`, `data`, `created_at`, `updated_at`) VALUES ('10', '6', 'payroll_generated', 'Salary Slip Generated', 'Your salary slip for 2026-08 has been finalized. Net Amount: ₹46,300.00', '0', NULL, '2026-08-16 16:36:26', '2026-08-16 16:36:26');
 INSERT INTO `notifications` (`id`, `user_id`, `type`, `title`, `message`, `is_read`, `data`, `created_at`, `updated_at`) VALUES ('11', '2', 'payroll_generated', 'Salary Slip Generated', 'Your salary slip for 2026-08 has been finalized. Net Amount: ₹55,500.00', '0', NULL, '2026-08-16 16:53:14', '2026-08-16 16:53:14');
+INSERT INTO `notifications` (`id`, `user_id`, `type`, `title`, `message`, `is_read`, `data`, `created_at`, `updated_at`) VALUES ('12', '2', 'payroll_generated', 'Salary Slip Generated', 'Your salary slip for 2026-07 has been finalized. Net Amount: ₹55,500', '0', NULL, '2026-08-17 14:58:37', '2026-08-17 14:58:37');
 
 DROP TABLE IF EXISTS `activity_logs`;
 CREATE TABLE `activity_logs` (
