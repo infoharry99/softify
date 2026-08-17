@@ -106,6 +106,7 @@ class AdminPayrollController extends Controller
     public function updatePayroll(Request $request, MonthlyPayroll $payroll)
     {
         $validated = $request->validate([
+            'month' => 'nullable|string|regex:/^\d{4}-\d{2}$/',
             'working_days' => 'required|integer|min:1|max:31',
             'present_days' => 'required|integer|min:0|max:31',
             'paid_leave_days' => 'required|integer|min:0|max:31',

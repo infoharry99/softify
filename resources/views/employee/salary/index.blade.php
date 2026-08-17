@@ -13,26 +13,29 @@
             </div>
             <div class="card-body">
                 @if($structure)
+                    @php
+                        $structureNet = max(0, round($structure->gross_salary - $structure->other_deductions - $structure->pf_deduction - $structure->esi_deduction - $structure->pt_deduction - $structure->tds_deduction));
+                    @endphp
                     <div style="text-align: center; background: #ecfdf5; padding: 15px; border-radius: var(--radius); margin-bottom: 20px; border: 1px solid #a7f3d0;">
                         <div style="font-size: 0.8rem; color: #065f46; text-transform: uppercase; font-weight: 600;">Net Monthly Salary</div>
-                        <div style="font-size: 1.8rem; font-weight: 700; color: #047857;">₹{{ number_format($structure->net_salary, 2) }}</div>
+                        <div style="font-size: 1.8rem; font-weight: 700; color: #047857;">₹{{ number_format($structureNet) }}</div>
                     </div>
 
                     <div style="font-size: 0.85rem; display: flex; flex-direction: column; gap: 10px;">
                         <div style="display: flex; justify-content: space-between;">
-                            <span>Basic Salary:</span> <strong>₹{{ number_format($structure->basic_salary, 2) }}</strong>
+                            <span>Basic Salary:</span> <strong>₹{{ number_format(round($structure->basic_salary)) }}</strong>
                         </div>
                         <div style="display: flex; justify-content: space-between;">
-                            <span>HRA:</span> <strong>₹{{ number_format($structure->hra, 2) }}</strong>
+                            <span>HRA:</span> <strong>₹{{ number_format(round($structure->hra)) }}</strong>
                         </div>
                         <div style="display: flex; justify-content: space-between;">
-                            <span>Allowances:</span> <strong>₹{{ number_format($structure->allowances, 2) }}</strong>
+                            <span>Allowances:</span> <strong>₹{{ number_format(round($structure->allowances)) }}</strong>
                         </div>
                         <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--border-color); padding-top: 8px;">
-                            <span>Gross Salary:</span> <strong>₹{{ number_format($structure->gross_salary, 2) }}</strong>
+                            <span>Gross Salary:</span> <strong>₹{{ number_format(round($structure->gross_salary)) }}</strong>
                         </div>
                         <div style="display: flex; justify-content: space-between; color: var(--danger);">
-                            <span>Other Deductions:</span> <strong>- ₹{{ number_format($structure->other_deductions, 2) }}</strong>
+                            <span>Other Deductions:</span> <strong>- ₹{{ number_format(round($structure->other_deductions)) }}</strong>
                         </div>
                     </div>
                 @else
@@ -50,7 +53,7 @@
                 @forelse($histories as $hist)
                     <div style="border-left: 2px solid var(--primary); padding-left: 12px; margin-bottom: 15px;">
                         <div style="font-size: 0.85rem; font-weight: 700;">
-                            ₹{{ number_format($hist->previous_net_salary, 2) }} ➔ ₹{{ number_format($hist->new_net_salary, 2) }}
+                            ₹{{ number_format(round($hist->previous_net_salary)) }} ➔ ₹{{ number_format(round($hist->new_net_salary)) }}
                         </div>
                         <div style="font-size: 0.75rem; color: var(--text-muted);">
                             Effective: {{ $hist->effective_date->format('M d, Y') }}
@@ -88,6 +91,13 @@
                     </thead>
                     <tbody>
                         @forelse($payrolls as $pay)
+                        @php
+                            $payLopDed = round($pay->leave_deductions);
+                            $payOtherDed = round($structure ? $structure->other_deductions : 0);
+                            $payTotalDed = round($payLopDed + $payOtherDed);
+                            $payGross = round($pay->gross_salary);
+                            $payNet = max(0, round($payGross - $payTotalDed));
+                        @endphp
                         <tr>
                             <td>
                                 <strong>{{ \Carbon\Carbon::parse($pay->month . '-01')->format('F Y') }}</strong>
@@ -102,9 +112,9 @@
                                     <small>({{ $pay->paid_leave_days }} Paid, {{ $pay->unpaid_leave_days }} LOP)</small>
                                 </span>
                             </td>
-                            <td>₹{{ number_format($pay->gross_salary, 2) }}</td>
-                            <td style="color: var(--danger); font-weight: 600;">₹{{ number_format($pay->total_deductions, 2) }}</td>
-                            <td><strong style="color: #00a884; font-size: 1rem;">₹{{ number_format($pay->net_salary, 2) }}</strong></td>
+                            <td>₹{{ number_format($payGross) }}</td>
+                            <td style="color: var(--danger); font-weight: 600;">₹{{ number_format($payTotalDed) }}</td>
+                            <td><strong style="color: #00a884; font-size: 1rem;">₹{{ number_format($payNet) }}</strong></td>
                             <td>
                                 <span class="badge badge-success">
                                     Paid ({{ $pay->payment_date ? $pay->payment_date->format('M d') : 'Done' }})

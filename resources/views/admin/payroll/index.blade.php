@@ -138,6 +138,11 @@
             @csrf
             @method('PUT')
             
+            <div style="margin-bottom: 16px; background: #f0fdf4; padding: 12px 16px; border-radius: 10px; border: 1px solid #bbf7d0;">
+                <label style="font-size:0.82rem; font-weight:700; color:#15803d; display:block; margin-bottom:4px;">📅 Salary Month & Year (Period)</label>
+                <input type="month" id="idx_month" name="month" class="form-control" required style="border-color: #00a884; font-weight: 700; color: #0f172a;">
+            </div>
+
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:16px;">
                 <div>
                     <label style="font-size:0.82rem; font-weight:700; color:#475569;">Working Days in Month</label>
@@ -206,6 +211,7 @@ function openEditPayrollIndexModal(payroll) {
     var form = document.getElementById('editPayrollIndexForm');
     form.action = '/admin/payroll/' + payroll.id;
 
+    document.getElementById('idx_month').value = payroll.month || '';
     document.getElementById('idx_working_days').value = payroll.working_days || 30;
     document.getElementById('idx_present_days').value = payroll.present_days || 0;
     document.getElementById('idx_paid_leave_days').value = payroll.paid_leave_days || 0;

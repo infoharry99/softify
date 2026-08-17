@@ -336,11 +336,12 @@
 <div class="card">
     <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
         <h3 class="card-title"><i class="fa-solid fa-file-invoice-dollar" style="color: #00a884;"></i> Monthly Payroll Slips History</h3>
-        <form action="{{ route('admin.payroll.process', $employee->id) }}" method="POST">
+        <form action="{{ route('admin.payroll.process', $employee->id) }}" method="POST" style="display: flex; gap: 10px; align-items: center;">
             @csrf
-            <input type="hidden" name="month" value="{{ date('Y-m') }}">
-            <button type="submit" class="btn btn-primary btn-sm" style="border-radius: 8px; font-weight: 700;">
-                <i class="fa-solid fa-calculator"></i> Process / Recalculate Current Month
+            <label style="font-size: 0.82rem; font-weight: 700; color: #475569; margin: 0;">Select Month:</label>
+            <input type="month" name="month" value="{{ date('Y-m') }}" class="form-control" style="width: 165px; font-weight: 700; border-color: #00a884; font-size: 0.85rem; padding: 4px 8px;" required>
+            <button type="submit" class="btn btn-primary btn-sm" style="border-radius: 8px; font-weight: 700; background-color: #00a884; border-color: #00a884; white-space: nowrap;">
+                <i class="fa-solid fa-calculator"></i> Process / Generate Slip
             </button>
         </form>
     </div>
@@ -412,6 +413,11 @@
             @csrf
             @method('PUT')
             
+            <div style="margin-bottom: 16px; background: #f0fdf4; padding: 12px 16px; border-radius: 10px; border: 1px solid #bbf7d0;">
+                <label style="font-size:0.82rem; font-weight:700; color:#15803d; display:block; margin-bottom:4px;">📅 Salary Month & Year (Period)</label>
+                <input type="month" id="edit_month" name="month" class="form-control" required style="border-color: #00a884; font-weight: 700; color: #0f172a;">
+            </div>
+
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:16px;">
                 <div>
                     <label style="font-size:0.82rem; font-weight:700; color:#475569;">Working Days in Month</label>
@@ -480,6 +486,7 @@ function openEditPayrollModal(payroll) {
     var form = document.getElementById('editPayrollForm');
     form.action = '/admin/payroll/' + payroll.id;
 
+    document.getElementById('edit_month').value = payroll.month || '';
     document.getElementById('edit_working_days').value = payroll.working_days || 30;
     document.getElementById('edit_present_days').value = payroll.present_days || 0;
     document.getElementById('edit_paid_leave_days').value = payroll.paid_leave_days || 0;

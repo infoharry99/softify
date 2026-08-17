@@ -120,7 +120,7 @@ class PayrollService
         $totalDeductions = round($leaveDeductions + $otherDeductions);
         $netSalary = max(0, round(($grossSalary + $bonusAmount) - $totalDeductions));
 
-        $payroll->update([
+        $updateFields = [
             'working_days' => $workingDays,
             'present_days' => $presentDays,
             'paid_leave_days' => $paidLeaveDays,
@@ -134,7 +134,13 @@ class PayrollService
             'payment_status' => $data['payment_status'] ?? $payroll->payment_status,
             'processed_by' => $adminUser->id,
             'payment_date' => now(),
-        ]);
+        ];
+
+        if (!empty($data['month'])) {
+            $updateFields['month'] = $data['month'];
+        }
+
+        $payroll->update($updateFields);
 
         return $payroll;
     }
