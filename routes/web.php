@@ -214,8 +214,10 @@ Route::middleware('auth')->group(function () {
             Route::get('/employees/{employee}/edit', [AdminEmployeeController::class, 'edit'])->name('employees.edit');
             Route::put('/employees/{employee}', [AdminEmployeeController::class, 'update'])->name('employees.update');
 
-            // Documents Upload
+            // Documents Upload, Preview, Download & Delete
             Route::post('/employees/{employee}/documents', [AdminDocumentController::class, 'upload'])->name('employees.documents.upload');
+            Route::get('/documents/{document}/preview', [AdminDocumentController::class, 'preview'])->name('documents.preview');
+            Route::get('/documents/{document}/download', [AdminDocumentController::class, 'download'])->name('documents.download');
             Route::delete('/documents/{document}', [AdminDocumentController::class, 'destroy'])->name('documents.destroy');
         });
 
@@ -275,6 +277,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/salary/slip/{payroll}', [EmployeeSalaryController::class, 'slip'])->name('salary.slip');
         Route::get('/salary/download/{payroll}', [EmployeeSalaryController::class, 'download'])->name('salary.download');
         Route::get('/documents', [EmployeeDocumentController::class, 'index'])->name('documents');
+        Route::get('/documents/{document}/preview', [EmployeeDocumentController::class, 'preview'])->name('documents.preview');
         Route::get('/documents/{document}/download', [EmployeeDocumentController::class, 'download'])->name('documents.download');
     });
 });

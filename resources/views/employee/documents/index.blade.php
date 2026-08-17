@@ -28,10 +28,15 @@
                     </td>
                     <td>v{{ $doc->version }}</td>
                     <td>{{ $doc->created_at->format('M d, Y') }}</td>
-                    <td style="text-align: right;">
-                        <a href="{{ route('employee.documents.download', $doc->id) }}" class="btn btn-secondary btn-sm">
-                            📥 Download Document
-                        </a>
+                    <td style="text-align: right; white-space: nowrap;">
+                        <div style="display: inline-flex; gap: 6px; align-items: center; justify-content: flex-end;">
+                            <a href="{{ route('employee.documents.preview', $doc->id) }}" target="_blank" class="btn btn-secondary btn-sm" style="padding: 6px 12px; border-radius: 6px;" title="Preview Document">
+                                <i class="fa-solid fa-eye" style="color: #00a884;"></i> Preview
+                            </a>
+                            <a href="{{ route('employee.documents.download', $doc->id) }}" class="btn btn-primary btn-sm" style="padding: 6px 12px; border-radius: 6px; background-color: #0284c7; border-color: #0284c7;" title="Download Document">
+                                <i class="fa-solid fa-download"></i> Download
+                            </a>
+                        </div>
                     </td>
                 </tr>
                 @empty

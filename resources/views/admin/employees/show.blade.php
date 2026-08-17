@@ -550,12 +550,22 @@ function recalculateSalaryModal() {
                         <td><span class="badge badge-primary">{{ $doc->document_type }}</span></td>
                         <td>v{{ $doc->version }}</td>
                         <td>{{ $doc->created_at->format('M d, Y') }}</td>
-                        <td style="text-align: right;">
-                            <form action="{{ route('admin.documents.destroy', $doc->id) }}" method="POST" style="display:inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirmSwalDelete(event, this.form, 'Delete Document?', 'Are you sure you want to delete this official document?')">🗑️</button>
-                            </form>
+                        <td style="text-align: right; white-space: nowrap;">
+                            <div style="display: inline-flex; gap: 4px; align-items: center; justify-content: flex-end;">
+                                <a href="{{ route('admin.documents.preview', $doc->id) }}" target="_blank" class="btn btn-secondary btn-sm" style="padding: 6px 10px; border-radius: 6px;" title="View / Preview Document">
+                                    <i class="fa-solid fa-eye" style="color: #00a884;"></i>
+                                </a>
+                                <a href="{{ route('admin.documents.download', $doc->id) }}" class="btn btn-primary btn-sm" style="padding: 6px 10px; border-radius: 6px; background-color: #0284c7; border-color: #0284c7;" title="Download Document">
+                                    <i class="fa-solid fa-download"></i>
+                                </a>
+                                <form action="{{ route('admin.documents.destroy', $doc->id) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirmSwalDelete(event, this.form, 'Delete Document?', 'Are you sure you want to delete this official document?')" style="padding: 6px 10px; border-radius: 6px;" title="Delete Document">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     @empty
