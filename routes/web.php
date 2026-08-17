@@ -231,6 +231,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/leave', [AdminLeaveController::class, 'index'])->name('leave.index');
             Route::post('/leave/{application}/approve', [AdminLeaveController::class, 'approve'])->name('leave.approve');
             Route::post('/leave/{application}/reject', [AdminLeaveController::class, 'reject'])->name('leave.reject');
+            Route::get('/leave/{application}/attachment', [AdminLeaveController::class, 'downloadAttachment'])->name('leave.attachment');
+            Route::get('/leave/{application}/attachment-preview', [AdminLeaveController::class, 'previewAttachment'])->name('leave.attachment_preview');
             Route::post('/leave/balances/{employee}', [AdminLeaveController::class, 'updateBalances'])->name('leave.balances.update');
         });
 

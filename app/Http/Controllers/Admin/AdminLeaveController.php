@@ -77,6 +77,36 @@ class AdminLeaveController extends Controller
     }
 
     /**
+     * Download leave attachment document.
+     */
+    public function downloadAttachment(LeaveApplication $application)
+    {
+        if (!$application->attachment || !\Illuminate\Support\Facades\Storage::disk('public')->exists($application->attachment)) {
+            return back()->with('error', 'Leave attachment document not found on server.');
+        }
+
+        return \Illuminate\Support\Facades\Storage::disk('public')->download($application->attachment);
+    }
+
+    /**
+     * Preview leave attachment document in browser.
+     */
+    public function previewAttachment(LeaveApplication $application)
+    {
+        if (!$application->attachment || !\Illuminate\Support\Facades\Storage::disk('public')->exists($application->attachment)) {
+            return back()->with('error', 'Leave attachment document not found on server.');
+        }
+
+        $filePath = \Illuminate\Support\Facades\Storage::disk('public')->path($application->attachment);
+        $mimeType = \Illuminate\Support\Facades\Storage::disk('public')->mimeType($application->attachment) ?? 'application/octet-stream';
+
+        return response()->file($filePath, [
+            'Content-Type' => $mimeType,
+            'Content-Disposition' => 'inline; filename="Leave_Attachment_' . $application->id . '"',
+        ]);
+    }
+
+    /**
      * Update employee leave balance quotas.
      */
     public function updateBalances(Request $request, \App\Models\Employee $employee)

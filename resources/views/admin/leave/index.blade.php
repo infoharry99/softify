@@ -56,7 +56,7 @@
                     <th>Employee Name</th>
                     <th>Leave Type</th>
                     <th>Dates & Duration</th>
-                    <th>Reason</th>
+                    <th>Reason & Evidence</th>
                     <th>Status</th>
                     <th style="text-align: right;">Actions</th>
                 </tr>
@@ -71,22 +71,35 @@
                     <td><strong>{{ $app->leaveType->name }}</strong></td>
                     <td>
                         <div>{{ $app->from_date->format('M d, Y') }} - {{ $app->to_date->format('M d, Y') }}</div>
-                        <div style="font-size: 0.75rem; color: var(--primary);">{{ $app->total_days }} day(s)</div>
+                        <div style="font-size: 0.75rem; color: var(--primary); font-weight: 600;">{{ $app->total_days }} day(s) {{ $app->is_half_day ? '(Half Day)' : '' }}</div>
                     </td>
-                    <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                        {{ $app->reason }}
+                    <td style="max-width: 220px;">
+                        <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ $app->reason }}">
+                            {{ $app->reason }}
+                        </div>
+                        @if($app->attachment)
+                            <div style="margin-top: 4px;">
+                                <span class="badge" style="font-size: 0.7rem; background-color: #e0f2fe; color: #0284c7; border: 1px solid #7dd3fc; font-weight: 600;">
+                                    📎 Attachment Included
+                                </span>
+                            </div>
+                        @endif
                     </td>
                     <td>
                         <span class="badge {{ $app->status === 'Approved' ? 'badge-success' : ($app->status === 'Pending' ? 'badge-warning' : 'badge-danger') }}">
                             {{ $app->status }}
                         </span>
                         @if($app->admin_remark)
-                            <small style="display: block; color: var(--text-muted);">{{ $app->admin_remark }}</small>
+                            <small style="display: block; color: var(--text-muted); margin-top: 3px;">{{ $app->admin_remark }}</small>
                         @endif
                     </td>
                     <td style="text-align: right;">
-                        @if($app->status === 'Pending')
-                            <div style="display: inline-flex; gap: 5px;">
+                        <div style="display: inline-flex; gap: 6px; align-items: center; justify-content: flex-end;">
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="showLeaveDetails({{ json_encode($app) }}, '{{ addslashes($app->employee->user->name) }}', '{{ addslashes($app->employee->employee_code) }}', '{{ addslashes($app->leaveType->name) }}', '{{ addslashes($app->approver->name ?? '') }}')" style="font-weight: 600; border-radius: 8px; font-size: 0.78rem;">
+                                👁️ View
+                            </button>
+
+                            @if($app->status === 'Pending')
                                 <form action="{{ route('admin.leave.approve', $app->id) }}" method="POST" style="display:inline;">
                                     @csrf
                                     <button type="submit" class="btn btn-success btn-sm" onclick="return confirmSwalDelete(event, this.form, 'Approve Leave Application?', 'Are you sure you want to approve this employee leave request?')">
@@ -99,15 +112,15 @@
                                         ❌ Reject
                                     </button>
                                 </form>
-                            </div>
-                        @else
-                            <span style="font-size: 0.8rem; color: var(--text-muted);">Handled by {{ $app->approver->name ?? 'Admin' }}</span>
-                        @endif
+                            @else
+                                <span style="font-size: 0.78rem; color: var(--text-muted);">Handled</span>
+                            @endif
+                        </div>
                     </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 30px;">
+                    <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 35px;">
                         No leave applications found.
                     </td>
                 </tr>
@@ -120,4 +133,146 @@
         {{ $applications->links() }}
     </div>
 </div>
+
+<!-- Comprehensive Leave Application Details Modal -->
+<div class="modal fade" id="leaveDetailsModal" tabindex="-1" aria-labelledby="leaveDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 620px;">
+        <div class="modal-content" style="border-radius: 14px; border: none; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);">
+            <div class="modal-header" style="background-color: #f8fafc; border-bottom: 1px solid #e2e8f0; padding: 18px 24px; border-top-left-radius: 14px; border-top-right-radius: 14px;">
+                <h5 class="modal-title" id="leaveDetailsModalLabel" style="font-weight: 700; color: #0f172a; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
+                    📋 Leave Application Details
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="outline: none;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 24px;">
+                <!-- Employee Summary Header -->
+                <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 15px 18px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-size: 1.05rem; font-weight: 700; color: #166534;" id="detailEmpName">-</div>
+                        <div style="font-size: 0.8rem; color: #15803d;" id="detailEmpCode">-</div>
+                    </div>
+                    <div id="detailStatusBadge"></div>
+                </div>
+
+                <!-- Key Metrics Grid -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 16px; border-radius: 8px;">
+                        <div style="font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Leave Type</div>
+                        <div style="font-size: 0.95rem; font-weight: 700; color: #0f172a; margin-top: 2px;" id="detailLeaveType">-</div>
+                    </div>
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 16px; border-radius: 8px;">
+                        <div style="font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Duration & Dates</div>
+                        <div style="font-size: 0.95rem; font-weight: 700; color: #00a884; margin-top: 2px;" id="detailDates">-</div>
+                    </div>
+                </div>
+
+                <!-- Full Reason Box -->
+                <div style="margin-bottom: 20px;">
+                    <label style="font-size: 0.82rem; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">📝 Applied Reason / Details:</label>
+                    <div id="detailReason" style="background: #ffffff; border: 1px solid #cbd5e1; padding: 14px; border-radius: 8px; font-size: 0.9rem; color: #1e293b; min-height: 80px; max-height: 200px; overflow-y: auto; white-space: pre-wrap; word-break: break-word; line-height: 1.5;">-</div>
+                </div>
+
+                <!-- Attachment Document Section -->
+                <div style="margin-bottom: 20px;">
+                    <label style="font-size: 0.82rem; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">📎 Attachment / Medical Certificate / Document:</label>
+                    <div id="detailAttachmentContainer">
+                        <div style="font-size: 0.85rem; color: #94a3b8; font-style: italic;">No attachment uploaded.</div>
+                    </div>
+                </div>
+
+                <!-- HR Remark Section -->
+                <div id="detailHrRemarkSection" style="display: none; background: #fffbe6; border: 1px solid #ffe58f; padding: 14px; border-radius: 8px; margin-bottom: 10px;">
+                    <div style="font-size: 0.8rem; font-weight: 700; color: #d48806; text-transform: uppercase; margin-bottom: 4px;">🛡️ HR Approval Remark:</div>
+                    <div id="detailHrRemark" style="font-size: 0.88rem; color: #595959;"></div>
+                    <div id="detailApproverInfo" style="font-size: 0.78rem; color: #8c8c8c; margin-top: 4px;"></div>
+                </div>
+            </div>
+            <div class="modal-footer" style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 14px 24px; border-bottom-left-radius: 14px; border-bottom-right-radius: 14px; display: flex; justify-content: space-between; align-items: center;">
+                <div id="modalActionContainer"></div>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" style="border-radius: 8px; font-weight: 600;">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showLeaveDetails(app, empName, empCode, leaveTypeName, approverName) {
+    document.getElementById('detailEmpName').innerText = empName;
+    document.getElementById('detailEmpCode').innerText = empCode ? 'ID: ' + empCode : '';
+    document.getElementById('detailLeaveType').innerText = leaveTypeName;
+    
+    var totalDays = app.total_days + ' day(s)' + (app.is_half_day ? ' (Half Day)' : '');
+    var fromStr = new Date(app.from_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    var toStr = new Date(app.to_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    document.getElementById('detailDates').innerText = fromStr + ' - ' + toStr + ' (' + totalDays + ')';
+    
+    document.getElementById('detailReason').innerText = app.reason || 'No specific reason entered.';
+    
+    // Status Badge
+    var statusBadgeHtml = '';
+    if (app.status === 'Approved') {
+        statusBadgeHtml = '<span class="badge badge-success" style="font-size: 0.9rem; padding: 6px 14px;">Approved</span>';
+    } else if (app.status === 'Pending') {
+        statusBadgeHtml = '<span class="badge badge-warning" style="font-size: 0.9rem; padding: 6px 14px;">Pending Approval</span>';
+    } else {
+        statusBadgeHtml = '<span class="badge badge-danger" style="font-size: 0.9rem; padding: 6px 14px;">Rejected</span>';
+    }
+    document.getElementById('detailStatusBadge').innerHTML = statusBadgeHtml;
+    
+    // Attachment section
+    var attachContainer = document.getElementById('detailAttachmentContainer');
+    if (app.attachment) {
+        var downloadUrl = '{{ url("/admin/leave") }}/' + app.id + '/attachment';
+        var previewUrl = '{{ url("/admin/leave") }}/' + app.id + '/attachment-preview';
+        attachContainer.innerHTML = 
+            '<div style="display: flex; gap: 10px; align-items: center; background: #f0f9ff; border: 1px solid #bae6fd; padding: 12px 16px; border-radius: 8px;">' +
+                '<div style="font-size: 1.4rem; color: #0284c7;"><i class="fa-solid fa-file-pdf"></i></div>' +
+                '<div style="flex: 1;">' +
+                    '<div style="font-size: 0.85rem; font-weight: 700; color: #0369a1;">Leave Support Attachment</div>' +
+                    '<div style="font-size: 0.75rem; color: #0284c7;">Document uploaded by employee</div>' +
+                '</div>' +
+                '<div style="display: flex; gap: 6px;">' +
+                    '<a href="' + previewUrl + '" target="_blank" class="btn btn-secondary btn-sm" style="font-size: 0.78rem; font-weight: 600; color: #0284c7; border-color: #38bdf8;">👁️ Preview Document</a>' +
+                    '<a href="' + downloadUrl + '" class="btn btn-primary btn-sm" style="font-size: 0.78rem; font-weight: 700; background-color: #0284c7; border-color: #0284c7;">📥 Download</a>' +
+                '</div>' +
+            '</div>';
+    } else {
+        attachContainer.innerHTML = '<div style="font-size: 0.85rem; color: #94a3b8; font-style: italic; background: #f8fafc; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0;">No attachment document uploaded.</div>';
+    }
+    
+    // HR Remarks Section
+    var hrSection = document.getElementById('detailHrRemarkSection');
+    if (app.admin_remark || approverName) {
+        hrSection.style.display = 'block';
+        document.getElementById('detailHrRemark').innerText = app.admin_remark || 'No remark entered.';
+        document.getElementById('detailApproverInfo').innerText = approverName ? 'Action handled by: ' + approverName : '';
+    } else {
+        hrSection.style.display = 'none';
+    }
+
+    // Modal Actions (Approve / Reject forms if pending)
+    var actionContainer = document.getElementById('modalActionContainer');
+    if (app.status === 'Pending') {
+        var approveUrl = '{{ url("/admin/leave") }}/' + app.id + '/approve';
+        var rejectUrl = '{{ url("/admin/leave") }}/' + app.id + '/reject';
+        actionContainer.innerHTML = 
+            '<div style="display: flex; gap: 8px;">' +
+                '<form action="' + approveUrl + '" method="POST" style="display:inline;">' +
+                    '<input type="hidden" name="_token" value="{{ csrf_token() }}">' +
+                    '<button type="submit" class="btn btn-success btn-sm" onclick="return confirm(\'Approve this leave request?\')">✅ Approve Leave</button>' +
+                '</form>' +
+                '<form action="' + rejectUrl + '" method="POST" style="display:inline;">' +
+                    '<input type="hidden" name="_token" value="{{ csrf_token() }}">' +
+                    '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Reject this leave request?\')">❌ Reject Leave</button>' +
+                '</form>' +
+            '</div>';
+    } else {
+        actionContainer.innerHTML = '';
+    }
+    
+    $('#leaveDetailsModal').modal('show');
+}
+</script>
 @endsection
