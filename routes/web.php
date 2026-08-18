@@ -213,6 +213,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/employees/{employee}', [AdminEmployeeController::class, 'show'])->name('employees.show');
             Route::get('/employees/{employee}/edit', [AdminEmployeeController::class, 'edit'])->name('employees.edit');
             Route::put('/employees/{employee}', [AdminEmployeeController::class, 'update'])->name('employees.update');
+            Route::delete('/employees/{employee}', [AdminEmployeeController::class, 'destroy'])->name('employees.destroy');
 
             // Documents Upload, Preview, Download & Delete
             Route::post('/employees/{employee}/documents', [AdminDocumentController::class, 'upload'])->name('employees.documents.upload');

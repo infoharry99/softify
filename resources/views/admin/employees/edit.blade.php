@@ -1,12 +1,12 @@
 @extends('layouts.admin')
 
-@section('title', 'Edit Employee - ' . $employee->user->name)
+@section('title', 'Edit Employee - ' . ($employee->user->name ?? 'Employee'))
 @section('page_title', 'Edit Employee Record')
 
 @section('content')
 <div class="card">
     <div class="card-header">
-        <h3 class="card-title">Edit Employee: {{ $employee->user->name }} ({{ $employee->employee_code }})</h3>
+        <h3 class="card-title">Edit Employee: {{ $employee->user->name ?? 'Employee' }} ({{ $employee->employee_code }})</h3>
         <a href="{{ route('admin.employees.show', $employee->id) }}" class="btn btn-secondary btn-sm">⬅️ Back to 360° Profile</a>
     </div>
     <div class="card-body">
@@ -32,46 +32,46 @@
 
                 <div class="form-group">
                     <label class="form-label">Full Name *</label>
-                    <input type="text" name="name" class="form-control" value="{{ old('name', $employee->user->name) }}" required>
+                    <input type="text" name="name" class="form-control" value="{{ old('name', $employee->user->name ?? '') }}" required>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Email Address *</label>
-                    <input type="email" name="email" class="form-control" value="{{ old('email', $employee->user->email) }}" required>
+                    <input type="email" name="email" class="form-control" value="{{ old('email', $employee->user->email ?? '') }}" required>
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">Mobile Number</label>
-                    <input type="tel" name="mobile" class="form-control" value="{{ old('mobile', $employee->user->mobile) }}" placeholder="e.g. 9876543210" pattern="^(\+91[\-\s]?)?[6789]\d{9}$" maxlength="13" title="Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9 (e.g. 9876543210 or +919876543210)">
+                    <input type="tel" name="mobile" class="form-control" value="{{ old('mobile', $employee->user->mobile ?? '') }}" placeholder="e.g. 9876543210" pattern="^(\+91[\-\s]?)?[6789]\d{9}$" maxlength="13" title="Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9 (e.g. 9876543210 or +919876543210)">
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Department *</label>
                     <select name="department" class="form-control" required>
                         <option value="">-- Select Department --</option>
-                        <option value="Human Resources" {{ old('department', $employee->user->department) == 'Human Resources' ? 'selected' : '' }}>Human Resources (HR)</option>
-                        <option value="Sales" {{ old('department', $employee->user->department) == 'Sales' ? 'selected' : '' }}>Sales</option>
-                        <option value="Finance" {{ old('department', $employee->user->department) == 'Finance' ? 'selected' : '' }}>Finance</option>
-                        <option value="Business Development" {{ old('department', $employee->user->department) == 'Business Development' ? 'selected' : '' }}>Business Development (BDA)</option>
-                        <option value="Talent Acquisition" {{ old('department', $employee->user->department) == 'Talent Acquisition' ? 'selected' : '' }}>Talent Acquisition</option>
-                        <option value="Data Entry" {{ old('department', $employee->user->department) == 'Data Entry' ? 'selected' : '' }}>Data Entry</option>
-                        <option value="Management" {{ old('department', $employee->user->department) == 'Management' ? 'selected' : '' }}>Management</option>
-                        <option value="IT & Software" {{ old('department', $employee->user->department) == 'IT & Software' ? 'selected' : '' }}>IT & Software</option>
+                        <option value="Human Resources" {{ old('department', $employee->user->department ?? '') == 'Human Resources' ? 'selected' : '' }}>Human Resources (HR)</option>
+                        <option value="Sales" {{ old('department', $employee->user->department ?? '') == 'Sales' ? 'selected' : '' }}>Sales</option>
+                        <option value="Finance" {{ old('department', $employee->user->department ?? '') == 'Finance' ? 'selected' : '' }}>Finance</option>
+                        <option value="Business Development" {{ old('department', $employee->user->department ?? '') == 'Business Development' ? 'selected' : '' }}>Business Development (BDA)</option>
+                        <option value="Talent Acquisition" {{ old('department', $employee->user->department ?? '') == 'Talent Acquisition' ? 'selected' : '' }}>Talent Acquisition</option>
+                        <option value="Data Entry" {{ old('department', $employee->user->department ?? '') == 'Data Entry' ? 'selected' : '' }}>Data Entry</option>
+                        <option value="Management" {{ old('department', $employee->user->department ?? '') == 'Management' ? 'selected' : '' }}>Management</option>
+                        <option value="IT & Software" {{ old('department', $employee->user->department ?? '') == 'IT & Software' ? 'selected' : '' }}>IT & Software</option>
                     </select>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Designation *</label>
-                    <input type="text" name="designation" class="form-control" value="{{ old('designation', $employee->user->designation) }}" required>
+                    <input type="text" name="designation" class="form-control" value="{{ old('designation', $employee->user->designation ?? '') }}" required>
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">System Role *</label>
-                    @php $userRoleId = $employee->user->roles->pluck('id')->first(); @endphp
+                    @php $userRoleId = $employee->user ? $employee->user->roles->pluck('id')->first() : null; @endphp
                     <select name="role_id" class="form-control" required>
                         @foreach($roles as $role)
                             <option value="{{ $role->id }}" {{ $role->id == $userRoleId ? 'selected' : '' }}>{{ $role->name }}</option>
@@ -84,7 +84,8 @@
                     <select name="reporting_manager_id" class="form-control">
                         <option value="">-- None / Top Management --</option>
                         @foreach($managers as $m)
-                            <option value="{{ $m->id }}" {{ $m->id == $employee->reporting_manager_id ? 'selected' : '' }}>{{ $m->user->name }} ({{ $m->employee_code }})</option>
+                            @if(!$m->user) @continue @endif
+                            <option value="{{ $m->id }}" {{ $m->id == $employee->reporting_manager_id ? 'selected' : '' }}>{{ $m->user->name ?? 'N/A' }} ({{ $m->employee_code }})</option>
                         @endforeach
                     </select>
                 </div>

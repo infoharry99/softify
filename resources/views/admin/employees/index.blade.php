@@ -77,14 +77,21 @@
                         </span>
                     </td>
                     <td>{{ $emp->joiningDetail ? $emp->joiningDetail->joining_date->format('M d, Y') : '-' }}</td>
-                    <td style="text-align: right;">
-                        <div style="display: inline-flex; gap: 5px;">
-                            <a href="{{ route('admin.employees.show', $emp->id) }}" class="btn btn-secondary btn-sm" title="View 360° Profile">
-                                👁️ 360° View
+                    <td style="text-align: right; white-space: nowrap;">
+                        <div style="display: inline-flex; gap: 4px; align-items: center; justify-content: flex-end;">
+                            <a href="{{ route('admin.employees.show', $emp->id) }}" class="btn btn-secondary btn-sm" style="padding: 6px 10px; border-radius: 6px;" title="View 360° Profile">
+                                <i class="fa-solid fa-eye" style="color: #00a884;"></i>
                             </a>
-                            <a href="{{ route('admin.employees.edit', $emp->id) }}" class="btn btn-secondary btn-sm" title="Edit Employee">
-                                ✏️ Edit
+                            <a href="{{ route('admin.employees.edit', $emp->id) }}" class="btn btn-secondary btn-sm" style="padding: 6px 10px; border-radius: 6px;" title="Edit Employee">
+                                <i class="fa-solid fa-pen-to-square"></i>
                             </a>
+                            <form action="{{ route('admin.employees.destroy', $emp->id) }}" method="POST" style="display:inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirmSwalDelete(event, this.form, 'Delete Employee Account?', 'Are you sure you want to permanently delete this employee account and user profile?')" style="padding: 6px 10px; border-radius: 6px;" title="Delete Employee Account">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </form>
                         </div>
                     </td>
                 </tr>

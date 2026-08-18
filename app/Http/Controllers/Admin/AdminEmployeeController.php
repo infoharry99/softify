@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Employee;
-use App\Models\EmployeeProfile;
 use App\Models\EmployeeJoiningDetail;
-use App\Models\User;
+use App\Models\EmployeeProfile;
 use App\Models\Role;
+use App\Models\User;
 use App\Services\ActivityLogger;
 use App\Services\LeaveService;
 use Illuminate\Http\Request;
@@ -56,8 +56,7 @@ class AdminEmployeeController extends Controller
             });
         }
 
-        $employees = $query->latest()->paginate(10)->withQueryString();
-
+        $employees = $query->latest()->paginate(15);
         return view('admin.employees.index', compact('employees'));
     }
 
@@ -66,7 +65,7 @@ class AdminEmployeeController extends Controller
      */
     public function create()
     {
-        $managers = Employee::with('user')->get();
+        $managers = Employee::has('user')->with('user')->get();
         $roles = Role::where('status', 'active')->whereNotIn('slug', ['super-admin', 'admin'])->get();
 
         return view('admin.employees.create', compact('managers', 'roles'));
@@ -164,7 +163,7 @@ class AdminEmployeeController extends Controller
     }
 
     /**
-     * Show form for editing an employee.
+     * Show edit form for an employee.
      */
     public function edit(Employee $employee)
     {
@@ -173,7 +172,7 @@ class AdminEmployeeController extends Controller
         }
 
         $employee->load(['user.roles', 'profile', 'joiningDetail']);
-        $managers = Employee::where('id', '!=', $employee->id)->with('user')->get();
+        $managers = Employee::has('user')->where('id', '!=', $employee->id)->with('user')->get();
         $roles = Role::where('status', 'active')->whereNotIn('slug', ['super-admin', 'admin'])->get();
 
         return view('admin.employees.edit', compact('employee', 'managers', 'roles'));
@@ -203,15 +202,17 @@ class AdminEmployeeController extends Controller
         ]);
 
         // Update User
-        $employee->user->update([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'mobile' => $validated['mobile'],
-            'department' => $validated['department'],
-            'designation' => $validated['designation'],
-        ]);
+        if ($employee->user) {
+            $employee->user->update([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'mobile' => $validated['mobile'],
+                'department' => $validated['department'],
+                'designation' => $validated['designation'],
+            ]);
 
-        $employee->user->roles()->sync([$validated['role_id']]);
+            $employee->user->roles()->sync([$validated['role_id']]);
+        }
 
         // Update Employee
         $employee->update([
@@ -219,16 +220,41 @@ class AdminEmployeeController extends Controller
         ]);
 
         // Update Joining details
-        $employee->joiningDetail()->update([
-            'joining_date' => $validated['joining_date'],
-            'employment_type' => $validated['employment_type'],
-            'employment_status' => $validated['employment_status'],
-            'work_location' => $validated['work_location'] ?? 'Office',
-        ]);
+        if ($employee->joiningDetail) {
+            $employee->joiningDetail->update([
+                'joining_date' => $validated['joining_date'],
+                'employment_type' => $validated['employment_type'],
+                'employment_status' => $validated['employment_status'],
+                'work_location' => $validated['work_location'] ?? 'Office',
+            ]);
+        }
 
-        ActivityLogger::log('Employee Updated', "Updated details for employee {$employee->user->name}", Employee::class, $employee->id);
+        ActivityLogger::log('Employee Updated', "Updated details for employee " . ($employee->user->name ?? $employee->employee_code), Employee::class, $employee->id);
 
         return redirect()->route('admin.employees.show', $employee->id)
             ->with('success', 'Employee record updated successfully.');
+    }
+
+    /**
+     * Delete employee record and user account.
+     */
+    public function destroy(Employee $employee)
+    {
+        if ($employee->user && $employee->user->hasRole('super-admin')) {
+            return back()->with('error', 'Super Admin accounts cannot be deleted.');
+        }
+
+        $name = $employee->user->name ?? $employee->employee_code;
+
+        if ($employee->user) {
+            $employee->user->delete();
+        } else {
+            $employee->delete();
+        }
+
+        ActivityLogger::log('Employee Deleted', "Deleted employee record for {$name}");
+
+        return redirect()->route('admin.employees.index')
+            ->with('success', "Employee record for {$name} deleted successfully.");
     }
 }
