@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'Employee 360° - ' . $employee->user->name)
-@section('page_title', 'Employee 360° View: ' . $employee->user->name)
+@section('title', 'Employee 360° - ' . ($employee->user->name ?? 'Employee'))
+@section('page_title', 'Employee 360° View: ' . ($employee->user->name ?? 'Employee'))
 
 @section('content')
 <!-- Top Header Card -->
@@ -9,11 +9,11 @@
     <div class="card-body" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
         <div style="display: flex; align-items: center; gap: 20px;">
             <div class="user-avatar" style="width: 64px; height: 64px; font-size: 1.5rem;">
-                {{ strtoupper(substr($employee->user->name, 0, 1)) }}
+                {{ strtoupper(substr($employee->user->name ?? 'E', 0, 1)) }}
             </div>
             <div>
                 <h2 style="font-size: 1.4rem; font-weight: 700; color: var(--text-main);">
-                    {{ $employee->user->name }}
+                    {{ $employee->user->name ?? 'Unknown Employee' }}
                     <code style="font-size: 0.9rem; font-weight: 600; color: var(--primary);">({{ $employee->employee_code }})</code>
                 </h2>
                 <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 3px;">

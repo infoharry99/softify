@@ -57,11 +57,12 @@
             </thead>
             <tbody>
                 @forelse($employees as $emp)
+                @if(!$emp->user) @continue @endif
                 <tr>
                     <td><code>{{ $emp->employee_code }}</code></td>
                     <td>
-                        <strong style="color: var(--text-main);">{{ $emp->user->name }}</strong>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">{{ $emp->user->email }}</div>
+                        <strong style="color: var(--text-main);">{{ $emp->user->name ?? 'N/A' }}</strong>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">{{ $emp->user->email ?? 'N/A' }}</div>
                     </td>
                     <td>
                         <div>{{ $emp->user->department ?? 'General' }}</div>

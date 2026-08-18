@@ -1,6 +1,6 @@
 -- ========================================================
 -- Softify Production MySQL Database Dump
--- Generated: 2026-08-17 15:07:17
+-- Generated: 2026-08-18 15:32:16
 -- Ready for Import on Live MySQL / phpMyAdmin Server
 -- ========================================================
 

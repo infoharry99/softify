@@ -21,7 +21,7 @@ class AdminEmployeeController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Employee::with(['user.roles', 'joiningDetail', 'profile']);
+        $query = Employee::has('user')->with(['user.roles', 'joiningDetail', 'profile']);
 
         if (!auth()->user()->hasRole('super-admin')) {
             $query->whereHas('user', function ($q) {
