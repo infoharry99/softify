@@ -16,19 +16,21 @@ class AdminLeaveController extends Controller
      */
     public function index(Request $request)
     {
-        $pendingCount = LeaveApplication::where('status', 'Pending')->count();
-        $approvedCount = LeaveApplication::where('status', 'Approved')->count();
-        $rejectedCount = LeaveApplication::where('status', 'Rejected')->count();
-
-        $query = LeaveApplication::whereHas('employee.user')->with(['employee.user', 'leaveType', 'approver']);
-
+        $baseQuery = LeaveApplication::whereHas('employee.user');
         if (!auth()->user()->hasRole('super-admin')) {
-            $query->whereHas('employee.user', function ($q) {
+            $baseQuery->whereHas('employee.user', function ($q) {
                 $q->whereDoesntHave('roles', function ($rq) {
                     $rq->where('slug', 'super-admin');
                 });
             });
         }
+
+        $pendingCount = (clone $baseQuery)->where('status', 'Pending')->count();
+        $approvedCount = (clone $baseQuery)->where('status', 'Approved')->count();
+        $rejectedCount = (clone $baseQuery)->where('status', 'Rejected')->count();
+
+        $query = clone $baseQuery;
+        $query->with(['employee.user', 'leaveType', 'approver']);
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);

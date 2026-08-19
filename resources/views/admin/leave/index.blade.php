@@ -69,7 +69,7 @@
                         <strong>{{ $app->employee->user->name ?? 'N/A' }}</strong>
                         <div style="font-size: 0.75rem; color: var(--text-muted);">{{ $app->employee->employee_code ?? 'N/A' }}</div>
                     </td>
-                    <td><strong>{{ $app->leaveType->name }}</strong></td>
+                    <td><strong>{{ $app->leaveType->name ?? 'Leave' }}</strong></td>
                     <td>
                         <div>{{ $app->from_date->format('M d, Y') }} - {{ $app->to_date->format('M d, Y') }}</div>
                         <div style="font-size: 0.75rem; color: var(--primary); font-weight: 600;">{{ $app->total_days }} day(s) {{ $app->is_half_day ? '(Half Day)' : '' }}</div>
@@ -96,7 +96,7 @@
                     </td>
                     <td style="text-align: right;">
                         <div style="display: inline-flex; gap: 6px; align-items: center; justify-content: flex-end;">
-                            <button type="button" class="btn btn-secondary btn-sm" onclick="showLeaveDetails({{ json_encode($app) }}, '{{ addslashes($app->employee->user->name) }}', '{{ addslashes($app->employee->employee_code) }}', '{{ addslashes($app->leaveType->name) }}', '{{ addslashes($app->approver->name ?? '') }}')" style="font-weight: 600; border-radius: 8px; font-size: 0.78rem;">
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="showLeaveDetails({{ json_encode($app) }}, '{{ addslashes($app->employee->user->name ?? 'N/A') }}', '{{ addslashes($app->employee->employee_code ?? 'N/A') }}', '{{ addslashes($app->leaveType->name ?? 'Leave') }}', '{{ addslashes($app->approver->name ?? '') }}')" style="font-weight: 600; border-radius: 8px; font-size: 0.78rem;">
                                 👁️ View
                             </button>
 
