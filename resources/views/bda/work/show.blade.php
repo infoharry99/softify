@@ -65,51 +65,22 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td><span class="badge badge-secondary">10:00 - 10:15</span></td>
-                                <td><strong>Morning Meeting & Target Assignment</strong></td>
-                                <td>Daily plan review</td>
+                            @foreach($task->effective_schedule_items as $idx => $item)
+                            @php $isLunch = str_contains(strtolower($item['activity'] ?? ''), 'lunch'); @endphp
+                            <tr @if($isLunch) style="background: #fefce8;" @endif>
+                                <td><span class="badge {{ $isLunch ? 'badge-warning' : 'badge-secondary' }}">{{ $item['time_slot'] ?? '' }}</span></td>
+                                <td>
+                                    @if($isLunch)
+                                        <strong><i class="fa-solid fa-utensils"></i> {{ $item['activity'] ?? '' }}</strong>
+                                    @elseif(str_contains(strtolower($item['activity'] ?? ''), 'morning') || str_contains(strtolower($item['activity'] ?? ''), 'meeting'))
+                                        <strong>{{ $item['activity'] ?? '' }}</strong>
+                                    @else
+                                        {{ $item['activity'] ?? '' }}
+                                    @endif
+                                </td>
+                                <td>{{ $item['objective'] ?? '-' }}</td>
                             </tr>
-                            <tr>
-                                <td><span class="badge badge-secondary">10:15 - 11:30</span></td>
-                                <td>Research new IT companies</td>
-                                <td>15 - 20 companies</td>
-                            </tr>
-                            <tr>
-                                <td><span class="badge badge-secondary">11:30 - 12:30</span></td>
-                                <td>Create database (HR, Email, Phone, LinkedIn)</td>
-                                <td>Complete verified records</td>
-                            </tr>
-                            <tr>
-                                <td><span class="badge badge-secondary">12:30 - 01:30</span></td>
-                                <td>LinkedIn requests & Emails</td>
-                                <td>20 - 30 quality requests</td>
-                            </tr>
-                            <tr style="background: #fefce8;">
-                                <td><span class="badge badge-warning">01:30 - 02:00</span></td>
-                                <td><strong><i class="fa-solid fa-utensils"></i> Lunch Break</strong></td>
-                                <td>-</td>
-                            </tr>
-                            <tr>
-                                <td><span class="badge badge-secondary">02:00 - 04:30</span></td>
-                                <td>Cold Calling HR / Hiring Managers</td>
-                                <td>25 - 35 calls</td>
-                            </tr>
-                            <tr>
-                                <td><span class="badge badge-secondary">04:30 - 05:30</span></td>
-                                <td>Follow-ups</td>
-                                <td>10 - 15 follow-ups</td>
-                            </tr>
-                            <tr>
-                                <td><span class="badge badge-secondary">05:30 - 06:30</span></td>
-                                <td>Client discussion & Meeting booking</td>
-                                <td>2 - 3 meetings</td>
-                            </tr>
-                            <tr>
-                                <td><span class="badge badge-secondary">06:30 - 07:00</span></td>
-                                <td>CRM Update & Daily Report Submission</td>
-                                <td>100% updated</td>
-                            </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -382,6 +353,31 @@ function closeEditTaskModal() {
                     <label style="font-size:0.75rem; font-weight:700; color:#334155;">Meetings Booked</label>
                     <input type="number" name="target_meetings" class="form-control" value="{{ old('target_meetings', $task->target_meetings) }}" min="0" required>
                 </div>
+            </div>
+
+            <h5 style="font-size:0.9rem; font-weight:800; color:#0f172a; margin-top:20px; margin-bottom:10px; border-bottom:1px solid #e2e8f0; padding-bottom:5px; display:flex; align-items:center; gap:6px;">
+                <i class="fa-solid fa-clock" style="color:#00a884;"></i> Daily Time Schedule & Activity Workflow (Optional Customization)
+            </h5>
+
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:15px; margin-bottom:20px; max-height:240px; overflow-y:auto;">
+                <div style="display:grid; grid-template-columns:140px 1fr 160px; gap:10px; margin-bottom:8px; font-size:0.75rem; font-weight:700; color:#64748b;">
+                    <div>TIME SLOT</div>
+                    <div>ACTIVITY WORKFLOW</div>
+                    <div>TARGET OBJECTIVE</div>
+                </div>
+                @foreach($task->effective_schedule_items as $idx => $item)
+                <div style="display:grid; grid-template-columns:140px 1fr 160px; gap:10px; margin-bottom:8px; align-items:center;">
+                    <div>
+                        <input type="text" name="schedule_items[{{ $idx }}][time_slot]" class="form-control" value="{{ $item['time_slot'] ?? '' }}" placeholder="e.g. 10:00 - 10:15" style="font-size:0.8rem; padding:4px 8px;">
+                    </div>
+                    <div>
+                        <input type="text" name="schedule_items[{{ $idx }}][activity]" class="form-control" value="{{ $item['activity'] ?? '' }}" placeholder="Activity Workflow..." style="font-size:0.8rem; padding:4px 8px;">
+                    </div>
+                    <div>
+                        <input type="text" name="schedule_items[{{ $idx }}][objective]" class="form-control" value="{{ $item['objective'] ?? '' }}" placeholder="Target Objective..." style="font-size:0.8rem; padding:4px 8px;">
+                    </div>
+                </div>
+                @endforeach
             </div>
 
             <div class="form-group" style="margin-bottom:20px;">

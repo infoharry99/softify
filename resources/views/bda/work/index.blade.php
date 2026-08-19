@@ -224,6 +224,28 @@ function openEditTaskModal(task) {
     document.getElementById('edit_target_meetings').value = task.target_meetings || 0;
     document.getElementById('edit_lead_notes').value = task.lead_notes || '';
 
+    var items = task.schedule_items && task.schedule_items.length > 0 ? task.schedule_items : [
+        {time_slot: '10:00 - 10:15', activity: 'Morning Meeting & Target Assignment', objective: 'Daily plan review'},
+        {time_slot: '10:15 - 11:30', activity: 'Research new IT companies', objective: '15 - 20 companies'},
+        {time_slot: '11:30 - 12:30', activity: 'Create database (HR, Email, Phone, LinkedIn)', objective: 'Complete verified records'},
+        {time_slot: '12:30 - 01:30', activity: 'LinkedIn requests & Emails', objective: '20 - 30 quality requests'},
+        {time_slot: '01:30 - 02:00', activity: 'Lunch Break', objective: '-'},
+        {time_slot: '02:00 - 04:30', activity: 'Cold Calling HR / Hiring Managers', objective: '25 - 35 calls'},
+        {time_slot: '04:30 - 05:30', activity: 'Follow-ups', objective: '10 - 15 follow-ups'},
+        {time_slot: '05:30 - 06:30', activity: 'Client discussion & Meeting booking', objective: '2 - 3 meetings'},
+        {time_slot: '06:30 - 07:00', activity: 'CRM Update & Daily Report Submission', objective: '100% updated'}
+    ];
+
+    var html = '';
+    items.forEach(function(item, idx) {
+        html += '<div style="display:grid; grid-template-columns:140px 1fr 160px; gap:10px; margin-bottom:8px; align-items:center;">';
+        html += '<div><input type="text" name="schedule_items['+idx+'][time_slot]" class="form-control" value="'+(item.time_slot || '')+'" placeholder="10:00 - 10:15" style="font-size:0.8rem; padding:4px 8px;"></div>';
+        html += '<div><input type="text" name="schedule_items['+idx+'][activity]" class="form-control" value="'+(item.activity || '')+'" placeholder="Activity..." style="font-size:0.8rem; padding:4px 8px;"></div>';
+        html += '<div><input type="text" name="schedule_items['+idx+'][objective]" class="form-control" value="'+(item.objective || '')+'" placeholder="Objective..." style="font-size:0.8rem; padding:4px 8px;"></div>';
+        html += '</div>';
+    });
+    document.getElementById('edit_schedule_container').innerHTML = html;
+
     document.getElementById('editTaskModal').style.display = 'flex';
 }
 
@@ -307,6 +329,21 @@ function closeEditTaskModal() {
                 <div>
                     <label style="font-size:0.75rem; font-weight:700; color:#334155;">Meetings Booked</label>
                     <input type="number" id="edit_target_meetings" name="target_meetings" class="form-control" min="0" required>
+                </div>
+            </div>
+
+            <h5 style="font-size:0.9rem; font-weight:800; color:#0f172a; margin-top:20px; margin-bottom:10px; border-bottom:1px solid #e2e8f0; padding-bottom:5px; display:flex; align-items:center; gap:6px;">
+                <i class="fa-solid fa-clock" style="color:#00a884;"></i> Daily Time Schedule & Activity Workflow (Optional Customization)
+            </h5>
+
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:15px; margin-bottom:20px; max-height:240px; overflow-y:auto;">
+                <div style="display:grid; grid-template-columns:140px 1fr 160px; gap:10px; margin-bottom:8px; font-size:0.75rem; font-weight:700; color:#64748b;">
+                    <div>TIME SLOT</div>
+                    <div>ACTIVITY WORKFLOW</div>
+                    <div>TARGET OBJECTIVE</div>
+                </div>
+                <div id="edit_schedule_container">
+                    <!-- Populated dynamically via JS -->
                 </div>
             </div>
 

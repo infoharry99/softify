@@ -186,7 +186,24 @@ class BdaWorkController extends Controller
             'target_followups' => 'required|integer|min:0',
             'target_meetings' => 'required|integer|min:0',
             'lead_notes' => 'nullable|string',
+            'schedule_items' => 'nullable|array',
+            'schedule_items.*.time_slot' => 'nullable|string',
+            'schedule_items.*.activity' => 'nullable|string',
+            'schedule_items.*.objective' => 'nullable|string',
         ]);
+
+        $scheduleItems = [];
+        if (!empty($request->schedule_items) && is_array($request->schedule_items)) {
+            foreach ($request->schedule_items as $item) {
+                if (!empty($item['time_slot']) || !empty($item['activity'])) {
+                    $scheduleItems[] = [
+                        'time_slot' => $item['time_slot'] ?? '',
+                        'activity' => $item['activity'] ?? '',
+                        'objective' => $item['objective'] ?? '',
+                    ];
+                }
+            }
+        }
 
         $task->update([
             'assigned_to' => $validated['assigned_to'],
@@ -200,6 +217,7 @@ class BdaWorkController extends Controller
             'target_followups' => $validated['target_followups'],
             'target_meetings' => $validated['target_meetings'],
             'lead_notes' => $validated['lead_notes'] ?? null,
+            'schedule_items' => count($scheduleItems) > 0 ? $scheduleItems : null,
         ]);
 
         ActivityLogger::log('BDA Work Assignment Edited', "Edited BDA daily work assignment #{$task->id}", BdaWorkAssignment::class, $task->id);
