@@ -72,11 +72,16 @@
                 <div class="form-group">
                     <label class="form-label">System Role *</label>
                     @php $userRoleId = $employee->user ? $employee->user->roles->pluck('id')->first() : null; @endphp
-                    <select name="role_id" class="form-control" required>
-                        @foreach($roles as $role)
-                            <option value="{{ $role->id }}" {{ $role->id == $userRoleId ? 'selected' : '' }}>{{ $role->name }}</option>
-                        @endforeach
-                    </select>
+                    @if($employee->user_id === auth()->id())
+                        <input type="hidden" name="role_id" value="{{ $userRoleId }}">
+                        <input type="text" class="form-control" value="{{ $employee->user->roles->first()->name ?? 'Staff' }} (Self Profile - Protected)" readonly style="background-color: #f1f5f9; font-weight: 700; color: #64748b;">
+                    @else
+                        <select name="role_id" class="form-control" required>
+                            @foreach($roles as $role)
+                                <option value="{{ $role->id }}" {{ $role->id == $userRoleId ? 'selected' : '' }}>{{ $role->name }}</option>
+                            @endforeach
+                        </select>
+                    @endif
                 </div>
 
                 <div class="form-group">

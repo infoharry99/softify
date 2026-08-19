@@ -71,11 +71,6 @@
                     <label class="form-label">Confirm Password *</label>
                     <input type="password" name="password_confirmation" class="form-control" required placeholder="Re-type password">
                 </div>
-
-                <div class="form-group">
-                    <label class="form-label">Profile Photo</label>
-                    <input type="file" name="profile_photo" class="form-control" accept="image/*">
-                </div>
             </div>
 
             <hr style="margin: 25px 0; border: 0; border-top: 1px solid var(--border-color);">

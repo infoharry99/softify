@@ -308,6 +308,8 @@ Route::get('/run-seeder', function () {
         Artisan::call('migrate', ['--force' => true]);
         Artisan::call('db:seed', ['--class' => 'RoleAndPermissionSeeder', '--force' => true]);
         Artisan::call('db:seed', ['--class' => 'EmployeeSystemSeeder', '--force' => true]);
+        \App\Models\BdaWorkAssignment::doesntHave('assignee')->delete();
+        \App\Models\TaWorkAssignment::doesntHave('assignee')->delete();
         Artisan::call('route:clear');
         Artisan::call('cache:clear');
         Artisan::call('view:clear');

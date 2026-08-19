@@ -41,12 +41,7 @@
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label">Profile Photo</label>
-                    <input type="file" name="profile_photo" class="form-control" accept="image/*">
-                </div>
-
-                <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Update Profile Details</button>
+                <button type="submit" class="btn btn-primary" style="margin-top: 15px;">Update Profile Details</button>
             </form>
         </div>
     </div>

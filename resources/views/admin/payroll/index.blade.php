@@ -4,18 +4,26 @@
 @section('page_title', 'Monthly Payroll & Salary Processing')
 
 @section('content')
-<div class="stats-grid">
+<div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px;">
     <div class="stat-card">
         <div class="stat-label">Total Monthly Payroll Cost</div>
-        <div class="stat-value" style="color: var(--primary);">₹{{ number_format($totalPayrollCost, 2) }}</div>
+        <div class="stat-value" style="color: var(--primary);">₹{{ number_format(round($totalPayrollCost)) }}</div>
+        <div style="font-size: 0.72rem; color: #64748b; margin-top: 4px;">Sum of Net Salaries for {{ \Carbon\Carbon::parse($month . '-01')->format('F Y') }}</div>
     </div>
     <div class="stat-card">
-        <div class="stat-label">Paid Payslips</div>
+        <div class="stat-label">Total Active Employees</div>
+        <div class="stat-value" style="color: #0f172a;">{{ count($employees) }}</div>
+        <div style="font-size: 0.72rem; color: #64748b; margin-top: 4px;">Eligible staff members in directory</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Processed & Paid</div>
         <div class="stat-value" style="color: var(--success);">{{ $paidCount }}</div>
+        <div style="font-size: 0.72rem; color: #64748b; margin-top: 4px;">Payslips generated for {{ \Carbon\Carbon::parse($month . '-01')->format('M Y') }}</div>
     </div>
     <div class="stat-card">
-        <div class="stat-label">Unprocessed Employees</div>
+        <div class="stat-label">Pending / Unprocessed</div>
         <div class="stat-value" style="color: var(--warning);">{{ $pendingCount }}</div>
+        <div style="font-size: 0.72rem; color: #64748b; margin-top: 4px;">Remaining staff requiring processing</div>
     </div>
 </div>
 

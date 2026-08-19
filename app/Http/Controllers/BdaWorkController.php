@@ -17,7 +17,7 @@ class BdaWorkController extends Controller
         $user = auth()->user();
         $isLead = $user->hasRole('bda-team-lead') || $user->hasRole('super-admin') || $user->hasRole('admin');
 
-        $query = BdaWorkAssignment::with(['assigner', 'assignee']);
+        $query = BdaWorkAssignment::has('assignee')->with(['assigner', 'assignee']);
 
         if (!$isLead) {
             // Standard BDA Employee sees only their own work assignments

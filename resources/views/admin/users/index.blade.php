@@ -141,7 +141,7 @@
                                 </a>
                             @endif
 
-                            @if(auth()->user()->hasPermission('users.delete') && $user->id !== auth()->id())
+                            @if(auth()->user()->hasPermission('users.delete') && $user->id !== auth()->id() && !$user->hasRole('super-admin'))
                                 <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" style="display:inline;">
                                     @csrf
                                     @method('DELETE')

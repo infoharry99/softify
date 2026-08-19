@@ -66,7 +66,11 @@ class AdminEmployeeController extends Controller
     public function create()
     {
         $managers = Employee::has('user')->with('user')->get();
-        $roles = Role::where('status', 'active')->whereNotIn('slug', ['super-admin', 'admin'])->get();
+        if (auth()->user()->hasRole('super-admin')) {
+            $roles = Role::where('status', 'active')->get();
+        } else {
+            $roles = Role::where('status', 'active')->whereNotIn('slug', ['super-admin', 'admin'])->get();
+        }
 
         return view('admin.employees.create', compact('managers', 'roles'));
     }
@@ -93,6 +97,13 @@ class AdminEmployeeController extends Controller
         ], [
             'mobile.regex' => 'Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9 (e.g. 9876543210 or +919876543210).',
         ]);
+
+        if (!auth()->user()->hasRole('super-admin')) {
+            $protectedRoleIds = Role::whereIn('slug', ['super-admin', 'admin'])->pluck('id')->toArray();
+            if (in_array($validated['role_id'], $protectedRoleIds)) {
+                return back()->with('error', 'You do not have permission to assign Super Admin or Admin roles.')->withInput();
+            }
+        }
 
         // Create User account
         $user = User::create([
@@ -173,7 +184,11 @@ class AdminEmployeeController extends Controller
 
         $employee->load(['user.roles', 'profile', 'joiningDetail']);
         $managers = Employee::has('user')->where('id', '!=', $employee->id)->with('user')->get();
-        $roles = Role::where('status', 'active')->whereNotIn('slug', ['super-admin', 'admin'])->get();
+        if (auth()->user()->hasRole('super-admin')) {
+            $roles = Role::where('status', 'active')->get();
+        } else {
+            $roles = Role::where('status', 'active')->whereNotIn('slug', ['super-admin', 'admin'])->get();
+        }
 
         return view('admin.employees.edit', compact('employee', 'managers', 'roles'));
     }
@@ -200,6 +215,20 @@ class AdminEmployeeController extends Controller
             'work_location' => 'nullable|string|max:150',
             'role_id' => 'required|exists:roles,id',
         ]);
+
+        if (!auth()->user()->hasRole('super-admin')) {
+            $protectedRoleIds = Role::whereIn('slug', ['super-admin', 'admin'])->pluck('id')->toArray();
+            if (in_array($validated['role_id'], $protectedRoleIds)) {
+                return back()->with('error', 'You do not have permission to assign Super Admin or Admin roles.')->withInput();
+            }
+        }
+
+        if ($employee->user_id === auth()->id()) {
+            $currentRoleId = $employee->user ? $employee->user->roles->pluck('id')->first() : null;
+            if ($currentRoleId) {
+                $validated['role_id'] = $currentRoleId;
+            }
+        }
 
         // Update User
         if ($employee->user) {
@@ -240,6 +269,10 @@ class AdminEmployeeController extends Controller
      */
     public function destroy(Employee $employee)
     {
+        if ($employee->user_id === auth()->id()) {
+            return back()->with('error', 'You cannot delete your own logged-in user account.');
+        }
+
         if ($employee->user && $employee->user->hasRole('super-admin')) {
             return back()->with('error', 'Super Admin accounts cannot be deleted.');
         }

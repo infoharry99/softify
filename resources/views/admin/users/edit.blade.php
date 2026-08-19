@@ -72,23 +72,23 @@
                     <label class="form-label">Confirm New Password</label>
                     <input type="password" name="password_confirmation" class="form-control" placeholder="Confirm New Password">
                 </div>
-
-                <div class="form-group">
-                    <label class="form-label">Profile Photo</label>
-                    <input type="file" name="profile_photo" class="form-control" accept="image/*">
-                </div>
             </div>
 
             <hr style="margin: 25px 0; border: 0; border-top: 1px solid var(--border-color);">
 
             <!-- Role Assignment -->
             <div class="form-group">
-                <label class="form-label" style="font-size: 1rem; font-weight: 600; margin-bottom: 10px;">Assigned Role(s)</label>
+                <label class="form-label" style="font-size: 1rem; font-weight: 600; margin-bottom: 10px;">
+                    Assigned Role(s)
+                    @if($user->id === auth()->id())
+                        <small style="color: var(--danger); font-weight: 600; margin-left: 8px;">(Self Profile - Role Modification Protected)</small>
+                    @endif
+                </label>
                 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; background: #f8fafc; padding: 15px; border-radius: var(--radius); border: 1px solid var(--border-color);">
                     @php $userRoleIds = $user->roles->pluck('id')->toArray(); @endphp
                     @foreach($roles as $role)
                         <label class="checkbox-label">
-                            <input type="checkbox" name="roles[]" value="{{ $role->id }}" {{ in_array($role->id, old('roles', $userRoleIds)) ? 'checked' : '' }}>
+                            <input type="checkbox" name="roles[]" value="{{ $role->id }}" {{ in_array($role->id, old('roles', $userRoleIds)) ? 'checked' : '' }} {{ $user->id === auth()->id() ? 'disabled' : '' }}>
                             <span><strong>{{ $role->name }}</strong></span>
                         </label>
                     @endforeach

@@ -58,7 +58,11 @@ class UserController extends Controller
      */
     public function create()
     {
-        $roles = Role::where('status', 'active')->get();
+        if (auth()->user()->hasRole('super-admin')) {
+            $roles = Role::where('status', 'active')->get();
+        } else {
+            $roles = Role::where('status', 'active')->whereNotIn('slug', ['super-admin', 'admin'])->get();
+        }
         $permissionsByModule = Permission::all()->groupBy('module');
 
         return view('admin.users.create', compact('roles', 'permissionsByModule'));
@@ -86,6 +90,14 @@ class UserController extends Controller
             'mobile.regex' => 'Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9 (e.g. 9876543210 or +919876543210).',
         ]);
 
+        if (!auth()->user()->hasRole('super-admin')) {
+            $protectedRoleIds = Role::whereIn('slug', ['super-admin', 'admin'])->pluck('id')->toArray();
+            $requestRoles = $request->input('roles', []);
+            if (array_intersect($requestRoles, $protectedRoleIds)) {
+                return back()->with('error', 'You do not have permission to assign Super Admin or Admin roles.')->withInput();
+            }
+        }
+
         if ($request->hasFile('profile_photo')) {
             $validated['profile_photo'] = $request->file('profile_photo')->store('profile_photos', 'public');
         }
@@ -109,14 +121,10 @@ class UserController extends Controller
     }
 
     /**
-     * Display the specified user details.
+     * Display the specified user.
      */
     public function show(User $user)
     {
-        if ($user->hasRole('super-admin') && !auth()->user()->hasRole('super-admin')) {
-            abort(403, 'Only Super Admin can view or edit Super Admin accounts.');
-        }
-
         $user->load(['roles.permissions', 'permissions']);
         $directPermissions = $user->permissions;
         $rolePermissions = Permission::whereHas('roles', function ($q) use ($user) {
@@ -136,7 +144,11 @@ class UserController extends Controller
         }
 
         $user->load(['roles', 'permissions']);
-        $roles = Role::get();
+        if (auth()->user()->hasRole('super-admin')) {
+            $roles = Role::where('status', 'active')->get();
+        } else {
+            $roles = Role::where('status', 'active')->whereNotIn('slug', ['super-admin', 'admin'])->get();
+        }
         $permissionsByModule = Permission::all()->groupBy('module');
 
         return view('admin.users.edit', compact('user', 'roles', 'permissionsByModule'));
@@ -165,6 +177,14 @@ class UserController extends Controller
             'profile_photo' => 'nullable|image|max:2048',
         ]);
 
+        if (!auth()->user()->hasRole('super-admin')) {
+            $protectedRoleIds = Role::whereIn('slug', ['super-admin', 'admin'])->pluck('id')->toArray();
+            $requestRoles = $request->input('roles', []);
+            if (array_intersect($requestRoles, $protectedRoleIds)) {
+                return back()->with('error', 'You do not have permission to assign Super Admin or Admin roles.')->withInput();
+            }
+        }
+
         if ($request->filled('password')) {
             $request->validate([
                 'password' => 'string|min:8|confirmed',
@@ -177,7 +197,12 @@ class UserController extends Controller
         }
 
         $user->update($validated);
-        $user->roles()->sync($request->input('roles', []));
+
+        if ($user->id === auth()->id()) {
+            // Do not alter self roles
+        } else {
+            $user->roles()->sync($request->input('roles', []));
+        }
         $user->permissions()->sync($request->input('permissions', []));
 
         ActivityLogger::log('User Updated', "Updated user details for {$user->name}", User::class, $user->id);
@@ -193,6 +218,10 @@ class UserController extends Controller
     {
         if ($user->id === auth()->id()) {
             return back()->with('error', 'You cannot delete your own account.');
+        }
+
+        if ($user->hasRole('super-admin')) {
+            return back()->with('error', 'Super Admin accounts cannot be deleted.');
         }
 
         $name = $user->name;

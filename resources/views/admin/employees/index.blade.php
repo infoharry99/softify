@@ -85,6 +85,7 @@
                             <a href="{{ route('admin.employees.edit', $emp->id) }}" class="btn btn-secondary btn-sm" style="padding: 6px 10px; border-radius: 6px;" title="Edit Employee">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </a>
+                            @if($emp->user_id !== auth()->id() && !($emp->user && $emp->user->hasRole('super-admin')))
                             <form action="{{ route('admin.employees.destroy', $emp->id) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
@@ -92,6 +93,7 @@
                                     <i class="fa-solid fa-trash-can"></i>
                                 </button>
                             </form>
+                            @endif
                         </div>
                     </td>
                 </tr>

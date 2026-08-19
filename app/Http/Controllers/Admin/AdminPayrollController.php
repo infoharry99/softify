@@ -20,11 +20,7 @@ class AdminPayrollController extends Controller
     {
         $month = $request->get('month', Carbon::now()->format('Y-m'));
 
-        $payrolls = MonthlyPayroll::with(['employee.user'])
-            ->where('month', $month)
-            ->get();
-
-        $empQuery = Employee::with(['user', 'salaryStructure']);
+        $empQuery = Employee::has('user')->with(['user.roles', 'salaryStructure']);
         if (!auth()->user()->hasRole('super-admin')) {
             $empQuery->whereHas('user', function ($q) {
                 $q->whereDoesntHave('roles', function ($rq) {
@@ -33,10 +29,16 @@ class AdminPayrollController extends Controller
             });
         }
         $employees = $empQuery->get();
+        $employeeIds = $employees->pluck('id')->toArray();
 
-        $totalPayrollCost = $payrolls->sum('net_salary');
+        $payrolls = MonthlyPayroll::with(['employee.user'])
+            ->whereIn('employee_id', $employeeIds)
+            ->where('month', $month)
+            ->get();
+
+        $totalPayrollCost = round($payrolls->sum('net_salary'));
         $paidCount = $payrolls->where('payment_status', 'Paid')->count();
-        $pendingCount = count($employees) - $paidCount;
+        $pendingCount = max(0, count($employees) - $paidCount);
 
         return view('admin.payroll.index', compact(
             'month',

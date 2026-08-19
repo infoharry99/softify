@@ -17,7 +17,7 @@ class TaWorkController extends Controller
         $user = auth()->user();
         $isLead = $user->hasRole('ta-team-lead') || $user->hasRole('super-admin') || $user->hasRole('admin');
 
-        $query = TaWorkAssignment::with(['assigner', 'assignee']);
+        $query = TaWorkAssignment::has('assignee')->with(['assigner', 'assignee']);
 
         if (!$isLead) {
             // Standard TA Employee sees only their own work assignments
