@@ -213,7 +213,7 @@
             <i class="fa-solid fa-address-card"></i> 1. Personal & Contact Information
         </div>
 
-        <div class="compact-grid-3">
+        <div class="compact-grid-2">
             <!-- Full Name -->
             <div class="form-group-compact">
                 <label for="inputName">Full Name <span class="required">*</span></label>
@@ -228,7 +228,9 @@
                 <div class="inline-error" id="error_phone"></div>
                 <div id="duplicatePhoneBanner" style="display: none;"></div>
             </div>
+        </div>
 
+        <div class="compact-grid-2">
             <!-- Email Address -->
             <div class="form-group-compact">
                 <label for="inputEmail">Email Address <span class="required">*</span></label>
@@ -236,26 +238,12 @@
                 <div class="inline-error" id="error_email"></div>
                 <div id="duplicateEmailBanner" style="display: none;"></div>
             </div>
-        </div>
 
-        <div class="compact-grid-2">
             <!-- Location -->
             <div class="form-group-compact">
                 <label for="inputLocation">Location (City / State) <span class="required">*</span></label>
                 <input type="text" id="inputLocation" name="location" tabindex="4" placeholder="e.g. Indore, MP" required autocomplete="off">
                 <div class="inline-error" id="error_location"></div>
-            </div>
-
-            <!-- Hiring Company -->
-            <div class="form-group-compact">
-                <label for="inputCompany">Hiring Company (Client) <span class="required">*</span></label>
-                <input type="text" id="inputCompany" name="company_name" list="companyList" tabindex="5" placeholder="e.g. Client Company Name" required autocomplete="off">
-                <datalist id="companyList">
-                    @foreach($hiringCompanies as $comp)
-                        <option value="{{ $comp }}">
-                    @endforeach
-                </datalist>
-                <div class="inline-error" id="error_company_name"></div>
             </div>
         </div>
 
@@ -268,21 +256,21 @@
             <!-- Key Skills -->
             <div class="form-group-compact">
                 <label for="inputSkills">Key Skills <span class="required">*</span></label>
-                <input type="text" id="inputSkills" name="skills" tabindex="6" placeholder="e.g. PHP, Laravel, MySQL, React" required autocomplete="off">
+                <input type="text" id="inputSkills" name="skills" tabindex="5" placeholder="e.g. PHP, Laravel, MySQL, React" required autocomplete="off">
                 <div class="inline-error" id="error_skills"></div>
             </div>
 
             <!-- Experience -->
             <div class="form-group-compact">
                 <label for="inputExperience">Experience (Years) <span class="required">*</span></label>
-                <input type="number" step="0.5" min="0" max="50" id="inputExperience" name="experience" tabindex="7" placeholder="e.g. 3" required autocomplete="off">
+                <input type="number" step="0.5" min="0" max="50" id="inputExperience" name="experience" tabindex="6" placeholder="e.g. 3" required autocomplete="off">
                 <div class="inline-error" id="error_experience"></div>
             </div>
 
             <!-- Job Type -->
             <div class="form-group-compact">
                 <label for="inputJobType">Job Type <span class="required">*</span></label>
-                <select id="inputJobType" name="job_type" tabindex="8" required>
+                <select id="inputJobType" name="job_type" tabindex="7" required>
                     <option value="Full Time" selected>Full Time</option>
                     <option value="Part Time">Part Time</option>
                     <option value="Contract">Contract</option>
@@ -297,7 +285,7 @@
             <!-- Notice Period -->
             <div class="form-group-compact">
                 <label for="inputNoticePeriod">Notice Period <span class="required">*</span></label>
-                <select id="inputNoticePeriod" name="notice_period" tabindex="9" required>
+                <select id="inputNoticePeriod" name="notice_period" tabindex="8" required>
                     <option value="Immediate" selected>Immediate</option>
                     <option value="15 Days">15 Days</option>
                     <option value="30 Days">30 Days</option>
@@ -310,39 +298,22 @@
             <!-- Current CTC -->
             <div class="form-group-compact">
                 <label for="inputCurrentCtc">Current CTC (Annual ₹)</label>
-                <input type="number" step="10000" min="0" id="inputCurrentCtc" name="current_ctc" tabindex="10" placeholder="e.g. 500000" autocomplete="off">
+                <input type="number" step="10000" min="0" id="inputCurrentCtc" name="current_ctc" tabindex="9" placeholder="e.g. 500000" autocomplete="off">
                 <div class="inline-error" id="error_current_ctc"></div>
             </div>
 
             <!-- Expected CTC -->
             <div class="form-group-compact">
                 <label for="inputExpectedCtc">Expected CTC (Annual ₹)</label>
-                <input type="number" step="10000" min="0" id="inputExpectedCtc" name="expected_ctc" tabindex="11" placeholder="e.g. 700000" autocomplete="off">
+                <input type="number" step="10000" min="0" id="inputExpectedCtc" name="expected_ctc" tabindex="10" placeholder="e.g. 700000" autocomplete="off">
                 <div class="inline-error" id="error_expected_ctc"></div>
             </div>
         </div>
 
-        <div class="compact-grid-2">
-            <!-- Pipeline Stage -->
-            <div class="form-group-compact">
-                <label for="inputStatus">Pipeline Stage / Status <span class="required">*</span></label>
-                <select id="inputStatus" name="status" tabindex="12" required>
-                    <option value="Applied" selected>Applied</option>
-                    <option value="Screening">Screening</option>
-                    <option value="Interview Scheduled">Interview Scheduled</option>
-                    <option value="Offered">Offered</option>
-                    <option value="Hired">Hired</option>
-                    <option value="Rejected">Rejected</option>
-                </select>
-                <div class="inline-error" id="error_status"></div>
-            </div>
-
-            <!-- Resume Upload -->
-            <div class="form-group-compact">
-                <label for="inputResume">📎 Resume Attachment (Optional - PDF/DOCX Max 5MB)</label>
-                <input type="file" id="inputResume" name="resume_file" tabindex="13" accept=".pdf,.doc,.docx">
-                <div class="inline-error" id="error_resume_file"></div>
-            </div>
+        <div class="form-group-compact" style="margin-top: 15px;">
+            <label for="inputResume">Resume File (PDF, DOC, DOCX - Max 5MB)</label>
+            <input type="file" id="inputResume" name="resume_file" tabindex="11" accept=".pdf,.doc,.docx">
+            <div class="inline-error" id="error_resume_file"></div>
         </div>
 
         <!-- Section 3: HR Notes -->

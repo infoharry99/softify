@@ -143,7 +143,7 @@
             <i class="fa-solid fa-user"></i> Personal & Contact Information
         </div>
 
-        <div class="form-grid-3">
+        <div class="form-grid-2">
             <div class="form-group">
                 <label class="form-label">Full Name *</label>
                 <input type="text" name="name" class="form-control @error('name') is-invalid-input @enderror" value="{{ old('name') }}" required minlength="2" maxlength="255" placeholder="e.g. Rahul Sharma">
@@ -167,21 +167,11 @@
                     <span class="field-error-msg"><i class="fa-solid fa-circle-exclamation"></i> {{ $message }}</span>
                 @enderror
             </div>
-        </div>
 
-        <div class="form-grid-2">
             <div class="form-group">
                 <label class="form-label">Location *</label>
                 <input type="text" name="location" class="form-control @error('location') is-invalid-input @enderror" value="{{ old('location') }}" required placeholder="e.g. Mumbai / Bangalore / Remote">
                 @error('location')
-                    <span class="field-error-msg"><i class="fa-solid fa-circle-exclamation"></i> {{ $message }}</span>
-                @enderror
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Hiring Company (Client) *</label>
-                <input type="text" name="company_name" class="form-control @error('company_name') is-invalid-input @enderror" value="{{ old('company_name') }}" required placeholder="e.g. Nextecki / Infosys / Client Corp">
-                @error('company_name')
                     <span class="field-error-msg"><i class="fa-solid fa-circle-exclamation"></i> {{ $message }}</span>
                 @enderror
             </div>
@@ -227,9 +217,7 @@
                     <span class="field-error-msg"><i class="fa-solid fa-circle-exclamation"></i> {{ $message }}</span>
                 @enderror
             </div>
-        </div>
 
-        <div class="form-grid-3">
             <div class="form-group">
                 <label class="form-label">Notice Period *</label>
                 <select name="notice_period" class="form-control @error('notice_period') is-invalid-input @enderror" required>
@@ -261,35 +249,18 @@
             </div>
         </div>
 
-        <div class="form-grid-2">
-            <div class="form-group">
-                <label class="form-label">Pipeline Stage / Status *</label>
-                <select name="status" class="form-control @error('status') is-invalid-input @enderror" required>
-                    <option value="Applied" {{ old('status') === 'Applied' ? 'selected' : '' }}>Applied</option>
-                    <option value="Screening" {{ old('status') === 'Screening' ? 'selected' : '' }}>Screening</option>
-                    <option value="Interview Scheduled" {{ old('status') === 'Interview Scheduled' ? 'selected' : '' }}>Interview Scheduled</option>
-                    <option value="Offered" {{ old('status') === 'Offered' ? 'selected' : '' }}>Offered</option>
-                    <option value="Hired" {{ old('status') === 'Hired' ? 'selected' : '' }}>Hired</option>
-                    <option value="Rejected" {{ old('status') === 'Rejected' ? 'selected' : '' }}>Rejected</option>
-                </select>
-                @error('status')
-                    <span class="field-error-msg"><i class="fa-solid fa-circle-exclamation"></i> {{ $message }}</span>
-                @enderror
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Resume Attachment (PDF, DOCX Max 5MB)</label>
-                <div class="compact-dropzone @error('resume_file') is-invalid-input @enderror" onclick="document.getElementById('resume_file_input').click();">
-                    <i class="fa-solid fa-cloud-arrow-up" style="font-size: 1.4rem; color: #00a884;"></i>
-                    <div style="flex: 1;">
-                        <div id="file_selected_name" style="font-size: 0.84rem; font-weight: 600; color: #0f172a;">Click to upload resume (Max 5MB)</div>
-                    </div>
-                    <input type="file" name="resume_file" id="resume_file_input" style="display: none;" accept=".pdf,.doc,.docx" onchange="document.getElementById('file_selected_name').innerText = this.files[0].name;">
+        <div class="form-group" style="margin-top: 15px;">
+            <label class="form-label">Resume Attachment (PDF, DOCX Max 5MB)</label>
+            <div class="compact-dropzone @error('resume_file') is-invalid-input @enderror" onclick="document.getElementById('resume_file_input').click();">
+                <i class="fa-solid fa-cloud-arrow-up" style="font-size: 1.4rem; color: #00a884;"></i>
+                <div style="flex: 1;">
+                    <div id="file_selected_name" style="font-size: 0.84rem; font-weight: 600; color: #0f172a;">Click to upload resume (Max 5MB)</div>
                 </div>
-                @error('resume_file')
-                    <span class="field-error-msg"><i class="fa-solid fa-circle-exclamation"></i> {{ $message }}</span>
-                @enderror
+                <input type="file" name="resume_file" id="resume_file_input" style="display: none;" accept=".pdf,.doc,.docx" onchange="document.getElementById('file_selected_name').innerText = this.files[0].name;">
             </div>
+            @error('resume_file')
+                <span class="field-error-msg"><i class="fa-solid fa-circle-exclamation"></i> {{ $message }}</span>
+            @enderror
         </div>
 
         <!-- 3. Remarks -->

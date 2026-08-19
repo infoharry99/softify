@@ -139,7 +139,7 @@ class CandidateController extends Controller
             'email' => 'required|email|max:255|unique:candidates,email',
             'phone' => ['required', 'string', 'regex:/^(\+91[\-\s]?)?[6789]\d{9}$/'],
             'location' => 'required|string|max:255',
-            'company_name' => 'required|string|max:255',
+            'company_name' => 'nullable|string|max:255',
             'job_title' => 'nullable|string|max:255',
             'skills' => 'required|string|min:2',
             'experience' => 'required|numeric|min:0|max:50',
@@ -147,10 +147,13 @@ class CandidateController extends Controller
             'notice_period' => 'required|in:Immediate,15 Days,30 Days,60 Days,90 Days',
             'current_ctc' => 'nullable|numeric|min:0',
             'expected_ctc' => 'nullable|numeric|min:0',
-            'status' => 'required|in:Applied,Screening,Interview Scheduled,Offered,Hired,Rejected',
+            'status' => 'nullable|in:Applied,Screening,Interview Scheduled,Offered,Hired,Rejected',
             'resume_file' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
             'note' => 'nullable|string|max:2000',
         ], $this->validationMessages());
+
+        $validated['company_name'] = $validated['company_name'] ?? 'General';
+        $validated['status'] = $validated['status'] ?? 'Applied';
 
         if ($request->hasFile('resume_file')) {
             $validated['resume'] = $request->file('resume_file')->store('candidate_resumes', 'public');
@@ -204,7 +207,7 @@ class CandidateController extends Controller
             'email' => ['required', 'email', 'max:255', Rule::unique('candidates')->ignore($candidate->id)],
             'phone' => ['required', 'string', 'regex:/^(\+91[\-\s]?)?[6789]\d{9}$/'],
             'location' => 'required|string|max:255',
-            'company_name' => 'required|string|max:255',
+            'company_name' => 'nullable|string|max:255',
             'job_title' => 'nullable|string|max:255',
             'skills' => 'required|string|min:2',
             'experience' => 'required|numeric|min:0|max:50',
@@ -212,10 +215,13 @@ class CandidateController extends Controller
             'notice_period' => 'required|in:Immediate,15 Days,30 Days,60 Days,90 Days',
             'current_ctc' => 'nullable|numeric|min:0',
             'expected_ctc' => 'nullable|numeric|min:0',
-            'status' => 'required|in:Applied,Screening,Interview Scheduled,Offered,Hired,Rejected',
+            'status' => 'nullable|in:Applied,Screening,Interview Scheduled,Offered,Hired,Rejected',
             'resume_file' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
             'note' => 'nullable|string|max:2000',
         ], $this->validationMessages());
+
+        $validated['company_name'] = $validated['company_name'] ?? ($candidate->company_name ?? 'General');
+        $validated['status'] = $validated['status'] ?? ($candidate->status ?? 'Applied');
 
         if ($request->hasFile('resume_file')) {
             if ($candidate->resume && Storage::disk('public')->exists($candidate->resume)) {
