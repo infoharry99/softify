@@ -301,6 +301,47 @@ class CandidateController extends Controller
      */
     public function uploadEditedResume(Request $request, Candidate $candidate)
     {
+        if ($request->filled('edited_resume_pdf_base64')) {
+            $base64Data = $request->input('edited_resume_pdf_base64');
+            if (preg_match('/^data:application\/pdf;base64,/', $base64Data)) {
+                $base64Data = substr($base64Data, strpos($base64Data, ',') + 1);
+            }
+            $pdfContent = base64_decode($base64Data);
+
+            if ($pdfContent === false) {
+                if ($request->ajax()) {
+                    return response()->json(['success' => false, 'message' => 'Invalid PDF data.'], 400);
+                }
+                return back()->with('error', 'Invalid PDF data provided.');
+            }
+
+            if ($candidate->edited_resume && Storage::disk('public')->exists($candidate->edited_resume)) {
+                Storage::disk('public')->delete($candidate->edited_resume);
+            }
+
+            $filename = 'edited_resume_' . $candidate->id . '_' . time() . '.pdf';
+            $path = 'candidate_edited_resumes/' . $filename;
+            Storage::disk('public')->put($path, $pdfContent);
+
+            $candidate->update([
+                'edited_resume' => $path,
+                'last_updated_by' => auth()->id(),
+            ]);
+
+            ActivityLogger::log('Candidate Edited Resume Saved', "Generated & saved edited copy resume for candidate '{$candidate->name}' via Live PDF Editor", Candidate::class, $candidate->id);
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => "Edited copy resume saved successfully to candidate profile!",
+                    'preview_url' => route('admin.candidates.resume_preview', ['candidate' => $candidate->id, 'type' => 'edited']),
+                    'download_url' => route('admin.candidates.resume', ['candidate' => $candidate->id, 'type' => 'edited']),
+                ]);
+            }
+
+            return back()->with('success', "Edited copy resume saved successfully for {$candidate->name}. Original resume remains 100% safe and untouched.");
+        }
+
         $request->validate([
             'edited_resume_file' => 'required|file|mimes:pdf,doc,docx|max:5120',
         ]);
