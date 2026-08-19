@@ -63,10 +63,11 @@
             </thead>
             <tbody>
                 @forelse($applications as $app)
+                @if(!$app->employee || !$app->employee->user) @continue @endif
                 <tr>
                     <td>
-                        <strong>{{ $app->employee->user->name }}</strong>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">{{ $app->employee->employee_code }}</div>
+                        <strong>{{ $app->employee->user->name ?? 'N/A' }}</strong>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">{{ $app->employee->employee_code ?? 'N/A' }}</div>
                     </td>
                     <td><strong>{{ $app->leaveType->name }}</strong></td>
                     <td>

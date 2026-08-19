@@ -20,7 +20,7 @@ class AdminLeaveController extends Controller
         $approvedCount = LeaveApplication::where('status', 'Approved')->count();
         $rejectedCount = LeaveApplication::where('status', 'Rejected')->count();
 
-        $query = LeaveApplication::with(['employee.user', 'leaveType', 'approver']);
+        $query = LeaveApplication::whereHas('employee.user')->with(['employee.user', 'leaveType', 'approver']);
 
         if (!auth()->user()->hasRole('super-admin')) {
             $query->whereHas('employee.user', function ($q) {

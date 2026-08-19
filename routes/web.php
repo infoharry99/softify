@@ -312,6 +312,7 @@ Route::get('/run-seeder', function () {
         Artisan::call('db:seed', ['--class' => 'EmployeeSystemSeeder', '--force' => true]);
         \App\Models\BdaWorkAssignment::doesntHave('assignee')->delete();
         \App\Models\TaWorkAssignment::doesntHave('assignee')->delete();
+        \App\Models\LeaveApplication::doesntHave('employee.user')->delete();
         Artisan::call('route:clear');
         Artisan::call('cache:clear');
         Artisan::call('view:clear');
