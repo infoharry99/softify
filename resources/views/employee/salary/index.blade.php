@@ -9,16 +9,17 @@
     <div>
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">💵 Current Salary Breakdown</h3>
+                <h3 class="card-title">💵 Base Salary Structure</h3>
             </div>
             <div class="card-body">
                 @if($structure)
                     @php
                         $structureNet = max(0, round($structure->gross_salary - $structure->other_deductions - $structure->pf_deduction - $structure->esi_deduction - $structure->pt_deduction - $structure->tds_deduction));
                     @endphp
-                    <div style="text-align: center; background: #ecfdf5; padding: 15px; border-radius: var(--radius); margin-bottom: 20px; border: 1px solid #a7f3d0;">
-                        <div style="font-size: 0.8rem; color: #065f46; text-transform: uppercase; font-weight: 600;">Net Monthly Salary</div>
-                        <div style="font-size: 1.8rem; font-weight: 700; color: #047857;">₹{{ number_format($structureNet) }}</div>
+                    <div style="text-align: center; background: #f0fdf4; padding: 15px; border-radius: var(--radius); margin-bottom: 20px; border: 1px solid #bbf7d0;">
+                        <div style="font-size: 0.78rem; color: #166534; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Base Monthly Package</div>
+                        <div style="font-size: 1.8rem; font-weight: 800; color: #15803d;">₹{{ number_format($structureNet) }}</div>
+                        <div style="font-size: 0.72rem; color: #166534; margin-top: 2px;">Configured monthly base structure</div>
                     </div>
 
                     <div style="font-size: 0.85rem; display: flex; flex-direction: column; gap: 10px;">
@@ -37,6 +38,10 @@
                         <div style="display: flex; justify-content: space-between; color: var(--danger);">
                             <span>Other Deductions:</span> <strong>- ₹{{ number_format(round($structure->other_deductions)) }}</strong>
                         </div>
+                    </div>
+
+                    <div style="font-size: 0.74rem; color: #64748b; margin-top: 15px; text-align: center; border-top: 1px dashed var(--border-color); padding-top: 10px; line-height: 1.4;">
+                        ℹ️ <em>This is your assigned base salary structure. Actual monthly payout slips will appear under <strong>Monthly Salary Slips</strong> when processed by HR.</em>
                     </div>
                 @else
                     <div style="color: var(--text-muted); text-align: center;">Salary structure not set by Admin yet.</div>

@@ -6,24 +6,24 @@
 @section('content')
 <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px;">
     <div class="stat-card">
-        <div class="stat-label">Total Monthly Payroll Cost</div>
-        <div class="stat-value" style="color: var(--primary);">₹{{ number_format(round($totalPayrollCost)) }}</div>
-        <div style="font-size: 0.72rem; color: #64748b; margin-top: 4px;">Sum of Net Salaries for {{ \Carbon\Carbon::parse($month . '-01')->format('F Y') }}</div>
+        <div class="stat-label">Total Monthly Commitment</div>
+        <div class="stat-value" style="color: var(--primary);">₹{{ number_format($totalCommitment) }}</div>
+        <div style="font-size: 0.72rem; color: #64748b; margin-top: 4px;">Total monthly payroll across {{ count($employees) }} staff</div>
     </div>
     <div class="stat-card">
-        <div class="stat-label">Total Active Employees</div>
+        <div class="stat-label">Total Disbursed / Paid</div>
+        <div class="stat-value" style="color: var(--success);">₹{{ number_format($totalPaidAmount) }}</div>
+        <div style="font-size: 0.72rem; color: #64748b; margin-top: 4px;">Disbursed across {{ $paidCount }} paid payslip(s)</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Total Pending Payout</div>
+        <div class="stat-value" style="color: var(--warning);">₹{{ number_format($totalPendingAmount) }}</div>
+        <div style="font-size: 0.72rem; color: #64748b; margin-top: 4px;">Remaining payout for {{ $pendingCount }} pending staff</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Total Active Directory</div>
         <div class="stat-value" style="color: #0f172a;">{{ count($employees) }}</div>
-        <div style="font-size: 0.72rem; color: #64748b; margin-top: 4px;">Eligible staff members in directory</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-label">Processed & Paid</div>
-        <div class="stat-value" style="color: var(--success);">{{ $paidCount }}</div>
-        <div style="font-size: 0.72rem; color: #64748b; margin-top: 4px;">Payslips generated for {{ \Carbon\Carbon::parse($month . '-01')->format('M Y') }}</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-label">Pending / Unprocessed</div>
-        <div class="stat-value" style="color: var(--warning);">{{ $pendingCount }}</div>
-        <div style="font-size: 0.72rem; color: #64748b; margin-top: 4px;">Remaining staff requiring processing</div>
+        <div style="font-size: 0.72rem; color: #64748b; margin-top: 4px;">{{ $paidCount }} Paid &nbsp;•&nbsp; {{ $pendingCount }} Pending</div>
     </div>
 </div>
 

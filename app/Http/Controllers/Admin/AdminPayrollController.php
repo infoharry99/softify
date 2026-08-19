@@ -36,7 +36,28 @@ class AdminPayrollController extends Controller
             ->where('month', $month)
             ->get();
 
-        $totalPayrollCost = round($payrolls->sum('net_salary'));
+        $totalCommitment = 0;
+        $totalPaidAmount = 0;
+        $totalPendingAmount = 0;
+
+        foreach ($employees as $emp) {
+            $p = $payrolls->where('employee_id', $emp->id)->first();
+            if ($p) {
+                $net = round($p->net_salary);
+                $totalCommitment += $net;
+                if ($p->payment_status === 'Paid') {
+                    $totalPaidAmount += $net;
+                } else {
+                    $totalPendingAmount += $net;
+                }
+            } else {
+                $s = $emp->salaryStructure;
+                $net = $s ? max(0, round($s->gross_salary - $s->other_deductions - $s->pf_deduction - $s->esi_deduction - $s->pt_deduction - $s->tds_deduction)) : 0;
+                $totalCommitment += $net;
+                $totalPendingAmount += $net;
+            }
+        }
+
         $paidCount = $payrolls->where('payment_status', 'Paid')->count();
         $pendingCount = max(0, count($employees) - $paidCount);
 
@@ -44,7 +65,9 @@ class AdminPayrollController extends Controller
             'month',
             'payrolls',
             'employees',
-            'totalPayrollCost',
+            'totalCommitment',
+            'totalPaidAmount',
+            'totalPendingAmount',
             'paidCount',
             'pendingCount'
         ));
