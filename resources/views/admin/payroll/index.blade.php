@@ -63,7 +63,7 @@
                         <strong>{{ $emp->user->name }}</strong>
                         <div style="font-size: 0.75rem; color: var(--text-muted);">{{ $emp->user->email }}</div>
                     </td>
-                    <td>₹{{ number_format($p ? $p->gross_salary : ($s ? $s->gross_salary : 0), 2) }}</td>
+                    <td>₹{{ number_format(round($p ? $p->gross_salary : ($s ? $s->gross_salary : 0))) }}</td>
                     <td>
                         @if($p)
                             <span class="badge badge-secondary">{{ $p->present_days }} / {{ $p->working_days }} Days</span>
