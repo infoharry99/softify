@@ -117,6 +117,6 @@
     </div>
 
     <div class="ajax-pagination-links">
-        {{ $candidates->links() }}
+        {{ $candidates->links('pagination::bootstrap-5') }}
     </div>
 </div>

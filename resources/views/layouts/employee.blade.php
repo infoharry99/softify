@@ -251,6 +251,74 @@
         .btn-warning { background-color: var(--warning); color: #ffffff; }
         .btn-sm { padding: 6px 14px; font-size: 0.82rem; }
 
+        /* Pagination Controls Styling */
+        .pagination-footer {
+            padding: 16px 20px;
+            background-color: #ffffff;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .pagination {
+            display: inline-flex !important;
+            flex-wrap: wrap !important;
+            list-style: none !important;
+            gap: 5px !important;
+            align-items: center !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .pagination .page-item {
+            display: inline-block !important;
+            margin: 0 !important;
+            list-style: none !important;
+        }
+
+        .pagination .page-item .page-link {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            min-width: 34px !important;
+            height: 34px !important;
+            padding: 0 12px !important;
+            font-size: 0.85rem !important;
+            font-weight: 600 !important;
+            color: #475569 !important;
+            background-color: #ffffff !important;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 8px !important;
+            text-decoration: none !important;
+            transition: all 0.15s ease !important;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #00a884 !important;
+            color: #ffffff !important;
+            border-color: #00a884 !important;
+            font-weight: 700 !important;
+            box-shadow: 0 2px 6px rgba(0, 168, 132, 0.3) !important;
+        }
+
+        .pagination .page-item.disabled .page-link {
+            color: #94a3b8 !important;
+            opacity: 0.5 !important;
+            cursor: not-allowed !important;
+            background-color: #f8fafc !important;
+        }
+
+        .pagination .page-item .page-link:hover:not(.disabled) {
+            background-color: #e6f7f3 !important;
+            border-color: #00a884 !important;
+            color: #00a884 !important;
+        }
+
         /* Metric Summary Cards */
         .stats-grid {
             display: grid;
