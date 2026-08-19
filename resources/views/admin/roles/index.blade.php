@@ -70,7 +70,7 @@
                             @if(auth()->user()->hasPermission('roles.edit') && $role->slug !== 'super-admin')
                                 <form action="{{ route('admin.roles.toggle-status', $role->id) }}" method="POST" style="display:inline;">
                                     @csrf
-                                    <button type="submit" class="btn btn-secondary btn-sm" onclick="return confirmSwalDelete(event, this.form, 'Toggle Role Status?', 'Are you sure you want to toggle status for this role?')">
+                                    <button type="submit" class="btn btn-secondary btn-sm" onclick="return confirmSwalAction(event, this.form, 'Toggle Role Status?', 'Are you sure you want to toggle status for this role?', 'Yes, Change Status', '#00a884', 'question')">
                                         {{ $role->status === 'active' ? '🚫' : '✅' }}
                                     </button>
                                 </form>

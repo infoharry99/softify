@@ -313,6 +313,7 @@ Route::get('/run-seeder', function () {
         \App\Models\BdaWorkAssignment::doesntHave('assignee')->delete();
         \App\Models\TaWorkAssignment::doesntHave('assignee')->delete();
         \App\Models\LeaveApplication::doesntHave('employee.user')->delete();
+        \App\Models\Role::whereIn('slug', ['support', 'data-entry-team-lead', 'sales', 'accountant'])->delete();
         Artisan::call('route:clear');
         Artisan::call('cache:clear');
         Artisan::call('view:clear');

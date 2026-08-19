@@ -67,9 +67,9 @@ class AdminEmployeeController extends Controller
     {
         $managers = Employee::has('user')->with('user')->get();
         if (auth()->user()->hasRole('super-admin')) {
-            $roles = Role::where('status', 'active')->get();
+            $roles = Role::where('status', 'active')->whereNotIn('slug', ['support', 'data-entry-team-lead', 'sales', 'accountant'])->get();
         } else {
-            $roles = Role::where('status', 'active')->whereNotIn('slug', ['super-admin', 'admin'])->get();
+            $roles = Role::where('status', 'active')->whereNotIn('slug', ['super-admin', 'admin', 'support', 'data-entry-team-lead', 'sales', 'accountant'])->get();
         }
 
         return view('admin.employees.create', compact('managers', 'roles'));
@@ -185,9 +185,9 @@ class AdminEmployeeController extends Controller
         $employee->load(['user.roles', 'profile', 'joiningDetail']);
         $managers = Employee::has('user')->where('id', '!=', $employee->id)->with('user')->get();
         if (auth()->user()->hasRole('super-admin')) {
-            $roles = Role::where('status', 'active')->get();
+            $roles = Role::where('status', 'active')->whereNotIn('slug', ['support', 'data-entry-team-lead', 'sales', 'accountant'])->get();
         } else {
-            $roles = Role::where('status', 'active')->whereNotIn('slug', ['super-admin', 'admin'])->get();
+            $roles = Role::where('status', 'active')->whereNotIn('slug', ['super-admin', 'admin', 'support', 'data-entry-team-lead', 'sales', 'accountant'])->get();
         }
 
         return view('admin.employees.edit', compact('employee', 'managers', 'roles'));

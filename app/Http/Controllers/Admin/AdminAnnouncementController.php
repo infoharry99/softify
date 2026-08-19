@@ -26,13 +26,13 @@ class AdminAnnouncementController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'message' => 'required|string',
-            'audience' => 'required|in:All Employees,Department,Role,Selected Employees',
+            'audience' => 'nullable|string',
         ]);
 
         $announcement = Announcement::create([
             'title' => $validated['title'],
             'message' => $validated['message'],
-            'audience' => $validated['audience'],
+            'audience' => $validated['audience'] ?? 'All Employees',
             'published_by' => auth()->id(),
             'published_at' => now(),
         ]);
@@ -50,13 +50,13 @@ class AdminAnnouncementController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'message' => 'required|string',
-            'audience' => 'required|in:All Employees,Department,Role,Selected Employees',
+            'audience' => 'nullable|string',
         ]);
 
         $announcement->update([
             'title' => $validated['title'],
             'message' => $validated['message'],
-            'audience' => $validated['audience'],
+            'audience' => $validated['audience'] ?? ($announcement->audience ?? 'All Employees'),
         ]);
 
         ActivityLogger::log('Announcement Updated', "Updated company announcement '{$announcement->title}'", Announcement::class, $announcement->id);

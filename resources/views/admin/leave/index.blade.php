@@ -103,13 +103,13 @@
                             @if($app->status === 'Pending')
                                 <form action="{{ route('admin.leave.approve', $app->id) }}" method="POST" style="display:inline;">
                                     @csrf
-                                    <button type="submit" class="btn btn-success btn-sm" onclick="return confirmSwalDelete(event, this.form, 'Approve Leave Application?', 'Are you sure you want to approve this employee leave request?')">
+                                    <button type="submit" class="btn btn-success btn-sm" onclick="return confirmSwalAction(event, this.form, 'Approve Leave Application?', 'Are you sure you want to approve this employee leave request?', '✅ Yes, Approve', '#00a884', 'question')">
                                         ✅ Approve
                                     </button>
                                 </form>
                                 <form action="{{ route('admin.leave.reject', $app->id) }}" method="POST" style="display:inline;">
                                     @csrf
-                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirmSwalDelete(event, this.form, 'Reject Leave Application?', 'Are you sure you want to reject this employee leave request?')">
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirmSwalAction(event, this.form, 'Reject Leave Application?', 'Are you sure you want to reject this employee leave request?', '❌ Yes, Reject', '#ef4444', 'warning')">
                                         ❌ Reject
                                     </button>
                                 </form>
@@ -270,11 +270,11 @@ function showLeaveDetails(app, empName, empCode, leaveTypeName, approverName) {
             '<div style="display: flex; gap: 8px;">' +
                 '<form action="' + approveUrl + '" method="POST" style="display:inline;">' +
                     '<input type="hidden" name="_token" value="{{ csrf_token() }}">' +
-                    '<button type="submit" class="btn btn-success btn-sm" onclick="return confirm(\'Approve this leave request?\')">✅ Approve Leave</button>' +
+                    '<button type="submit" class="btn btn-success btn-sm" onclick="return confirmSwalAction(event, this.form, \'Approve Leave Application?\', \'Are you sure you want to approve this employee leave request?\', \'✅ Yes, Approve\', \'#00a884\', \'question\')">✅ Approve Leave</button>' +
                 '</form>' +
                 '<form action="' + rejectUrl + '" method="POST" style="display:inline;">' +
                     '<input type="hidden" name="_token" value="{{ csrf_token() }}">' +
-                    '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Reject this leave request?\')">❌ Reject Leave</button>' +
+                    '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirmSwalAction(event, this.form, \'Reject Leave Application?\', \'Are you sure you want to reject this employee leave request?\', \'❌ Yes, Reject\', \'#ef4444\', \'warning\')">❌ Reject Leave</button>' +
                 '</form>' +
             '</div>';
     } else {

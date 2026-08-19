@@ -51,13 +51,10 @@
                     <select name="department" class="form-control" required>
                         <option value="">-- Select Department --</option>
                         <option value="Human Resources" {{ old('department') == 'Human Resources' ? 'selected' : '' }}>Human Resources (HR)</option>
-                        <option value="Sales" {{ old('department') == 'Sales' ? 'selected' : '' }}>Sales</option>
                         <option value="Finance" {{ old('department') == 'Finance' ? 'selected' : '' }}>Finance</option>
                         <option value="Business Development" {{ old('department') == 'Business Development' ? 'selected' : '' }}>Business Development (BDA)</option>
                         <option value="Talent Acquisition" {{ old('department') == 'Talent Acquisition' ? 'selected' : '' }}>Talent Acquisition</option>
                         <option value="Data Entry" {{ old('department') == 'Data Entry' ? 'selected' : '' }}>Data Entry</option>
-                        <option value="Management" {{ old('department') == 'Management' ? 'selected' : '' }}>Management</option>
-                        <option value="IT & Software" {{ old('department') == 'IT & Software' ? 'selected' : '' }}>IT & Software</option>
                     </select>
                 </div>
 
@@ -119,7 +116,7 @@
 
                 <div class="form-group">
                     <label class="form-label">Work Location</label>
-                    <input type="text" name="work_location" class="form-control" value="{{ old('work_location', 'Head Office') }}">
+                    <input type="text" name="work_location" class="form-control" value="{{ old('work_location', 'Remote') }}">
                 </div>
             </div>
 

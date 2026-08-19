@@ -52,13 +52,10 @@
                     <select name="department" class="form-control" required>
                         <option value="">-- Select Department --</option>
                         <option value="Human Resources" {{ old('department', $employee->user->department ?? '') == 'Human Resources' ? 'selected' : '' }}>Human Resources (HR)</option>
-                        <option value="Sales" {{ old('department', $employee->user->department ?? '') == 'Sales' ? 'selected' : '' }}>Sales</option>
                         <option value="Finance" {{ old('department', $employee->user->department ?? '') == 'Finance' ? 'selected' : '' }}>Finance</option>
                         <option value="Business Development" {{ old('department', $employee->user->department ?? '') == 'Business Development' ? 'selected' : '' }}>Business Development (BDA)</option>
                         <option value="Talent Acquisition" {{ old('department', $employee->user->department ?? '') == 'Talent Acquisition' ? 'selected' : '' }}>Talent Acquisition</option>
                         <option value="Data Entry" {{ old('department', $employee->user->department ?? '') == 'Data Entry' ? 'selected' : '' }}>Data Entry</option>
-                        <option value="Management" {{ old('department', $employee->user->department ?? '') == 'Management' ? 'selected' : '' }}>Management</option>
-                        <option value="IT & Software" {{ old('department', $employee->user->department ?? '') == 'IT & Software' ? 'selected' : '' }}>IT & Software</option>
                     </select>
                 </div>
 
@@ -129,7 +126,7 @@
 
                 <div class="form-group">
                     <label class="form-label">Work Location</label>
-                    <input type="text" name="work_location" class="form-control" value="{{ old('work_location', $employee->joiningDetail->work_location ?? 'Head Office') }}">
+                    <input type="text" name="work_location" class="form-control" value="{{ old('work_location', $employee->joiningDetail->work_location ?? 'Remote') }}">
                 </div>
             </div>
 

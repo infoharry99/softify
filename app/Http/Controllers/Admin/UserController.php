@@ -59,9 +59,9 @@ class UserController extends Controller
     public function create()
     {
         if (auth()->user()->hasRole('super-admin')) {
-            $roles = Role::where('status', 'active')->get();
+            $roles = Role::where('status', 'active')->whereNotIn('slug', ['support', 'data-entry-team-lead', 'sales', 'accountant'])->get();
         } else {
-            $roles = Role::where('status', 'active')->whereNotIn('slug', ['super-admin', 'admin'])->get();
+            $roles = Role::where('status', 'active')->whereNotIn('slug', ['super-admin', 'admin', 'support', 'data-entry-team-lead', 'sales', 'accountant'])->get();
         }
         $permissionsByModule = Permission::all()->groupBy('module');
 
@@ -145,9 +145,9 @@ class UserController extends Controller
 
         $user->load(['roles', 'permissions']);
         if (auth()->user()->hasRole('super-admin')) {
-            $roles = Role::where('status', 'active')->get();
+            $roles = Role::where('status', 'active')->whereNotIn('slug', ['support', 'data-entry-team-lead', 'sales', 'accountant'])->get();
         } else {
-            $roles = Role::where('status', 'active')->whereNotIn('slug', ['super-admin', 'admin'])->get();
+            $roles = Role::where('status', 'active')->whereNotIn('slug', ['super-admin', 'admin', 'support', 'data-entry-team-lead', 'sales', 'accountant'])->get();
         }
         $permissionsByModule = Permission::all()->groupBy('module');
 

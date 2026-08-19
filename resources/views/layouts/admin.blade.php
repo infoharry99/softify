@@ -736,6 +736,30 @@
             });
         }
 
+        function confirmSwalAction(event, form, title, text, confirmBtnText, confirmBtnColor, icon) {
+            if (event && typeof event.preventDefault === 'function') {
+                event.preventDefault();
+            }
+
+            var formElement = typeof form === 'string' ? document.getElementById(form) : form;
+
+            Swal.fire({
+                title: title || 'Are you sure?',
+                text: text || 'Please confirm this action.',
+                icon: icon || 'question',
+                showCancelButton: true,
+                confirmButtonColor: confirmBtnColor || '#00a884',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: confirmBtnText || 'Yes, Proceed',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed && formElement) {
+                    formElement.submit();
+                }
+            });
+            return false;
+        }
+
         function confirmSwalDelete(arg1, arg2, arg3, arg4) {
             var formElement = null;
             var titleText = 'Confirm Deletion';

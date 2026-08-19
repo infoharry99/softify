@@ -18,7 +18,6 @@
                             <i class="fa-solid fa-bullhorn" style="color: #00a884;"></i> {{ $ann->title }}
                         </h4>
                         <div style="display: flex; align-items: center; gap: 8px;">
-                            <span class="badge badge-primary">{{ $ann->audience }}</span>
                             <button type="button" onclick="openEditNoticeModal({{ json_encode($ann) }})" class="btn btn-secondary btn-sm" style="padding: 4px 8px; border-radius: 6px;" title="Edit Announcement">
                                 <i class="fa-solid fa-pen-to-square" style="color: #00a884;"></i>
                             </button>
@@ -66,16 +65,6 @@
                 <input type="text" id="edit_notice_title" name="title" class="form-control" required>
             </div>
 
-            <div class="form-group" style="margin-bottom:16px;">
-                <label class="form-label">Target Audience *</label>
-                <select id="edit_notice_audience" name="audience" class="form-control" required>
-                    <option value="All Employees">All Employees</option>
-                    <option value="Department">Department Specific</option>
-                    <option value="Role">Role Specific</option>
-                    <option value="Selected Employees">Selected Employees</option>
-                </select>
-            </div>
-
             <div class="form-group" style="margin-bottom:20px;">
                 <label class="form-label">Notice Message *</label>
                 <textarea id="edit_notice_message" name="message" class="form-control" rows="5" required></textarea>
@@ -96,7 +85,6 @@ function openEditNoticeModal(notice) {
     form.action = '/admin/announcements/' + notice.id;
 
     document.getElementById('edit_notice_title').value = notice.title || '';
-    document.getElementById('edit_notice_audience').value = notice.audience || 'All Employees';
     document.getElementById('edit_notice_message').value = notice.message || '';
 
     modal.style.display = 'flex';
@@ -119,16 +107,6 @@ function closeEditNoticeModal() {
                 <div class="form-group">
                     <label class="form-label">Notice Title *</label>
                     <input type="text" name="title" class="form-control" required placeholder="e.g. Office Independence Day Holiday">
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Target Audience *</label>
-                    <select name="audience" class="form-control" required>
-                        <option value="All Employees">All Employees</option>
-                        <option value="Department">Department Specific</option>
-                        <option value="Role">Role Specific</option>
-                        <option value="Selected Employees">Selected Employees</option>
-                    </select>
                 </div>
 
                 <div class="form-group">
