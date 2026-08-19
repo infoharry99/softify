@@ -164,6 +164,50 @@ class BdaWorkController extends Controller
     }
 
     /**
+     * Edit / Update full BDA work assignment targets (Team Lead / Admin).
+     */
+    public function updateTask(Request $request, BdaWorkAssignment $task)
+    {
+        $user = auth()->user();
+        $isLead = $user->hasRole('bda-team-lead') || $user->hasRole('super-admin') || $user->hasRole('admin');
+        if (!$isLead) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $validated = $request->validate([
+            'assigned_to' => 'required|exists:users,id',
+            'assigned_date' => 'required|date',
+            'title' => 'nullable|string|max:255',
+            'status' => 'required|in:Pending,In Progress,Done',
+            'target_new_companies' => 'required|integer|min:0',
+            'target_linkedin_requests' => 'required|integer|min:0',
+            'target_emails' => 'required|integer|min:0',
+            'target_cold_calls' => 'required|integer|min:0',
+            'target_followups' => 'required|integer|min:0',
+            'target_meetings' => 'required|integer|min:0',
+            'lead_notes' => 'nullable|string',
+        ]);
+
+        $task->update([
+            'assigned_to' => $validated['assigned_to'],
+            'assigned_date' => $validated['assigned_date'],
+            'title' => $validated['title'] ?? 'Daily BDA Work & Targets',
+            'status' => $validated['status'],
+            'target_new_companies' => $validated['target_new_companies'],
+            'target_linkedin_requests' => $validated['target_linkedin_requests'],
+            'target_emails' => $validated['target_emails'],
+            'target_cold_calls' => $validated['target_cold_calls'],
+            'target_followups' => $validated['target_followups'],
+            'target_meetings' => $validated['target_meetings'],
+            'lead_notes' => $validated['lead_notes'] ?? null,
+        ]);
+
+        ActivityLogger::log('BDA Work Assignment Edited', "Edited BDA daily work assignment #{$task->id}", BdaWorkAssignment::class, $task->id);
+
+        return back()->with('success', 'BDA daily work assignment updated successfully.');
+    }
+
+    /**
      * Delete a BDA work assignment.
      */
     public function destroy(BdaWorkAssignment $task)

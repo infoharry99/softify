@@ -66,6 +66,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/bda/work', [BdaWorkController::class, 'index'])->name('bda.work.index');
     Route::post('/bda/work', [BdaWorkController::class, 'store'])->name('bda.work.store');
     Route::get('/bda/work/{task}', [BdaWorkController::class, 'show'])->name('bda.work.show');
+    Route::put('/bda/work/{task}/update-task', [BdaWorkController::class, 'updateTask'])->name('bda.work.update_task');
     Route::post('/bda/work/{task}/update-employee', [BdaWorkController::class, 'updateEmployee'])->name('bda.work.update_employee');
     Route::post('/bda/work/{task}/update-lead', [BdaWorkController::class, 'updateLead'])->name('bda.work.update_lead');
     Route::delete('/bda/work/{task}', [BdaWorkController::class, 'destroy'])->name('bda.work.destroy');
@@ -74,6 +75,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/ta/work', [TaWorkController::class, 'index'])->name('ta.work.index');
     Route::post('/ta/work', [TaWorkController::class, 'store'])->name('ta.work.store');
     Route::get('/ta/work/{task}', [TaWorkController::class, 'show'])->name('ta.work.show');
+    Route::put('/ta/work/{task}/update-task', [TaWorkController::class, 'updateTask'])->name('ta.work.update_task');
     Route::post('/ta/work/{task}/update-employee', [TaWorkController::class, 'updateEmployee'])->name('ta.work.update_employee');
     Route::post('/ta/work/{task}/update-lead', [TaWorkController::class, 'updateLead'])->name('ta.work.update_lead');
     Route::delete('/ta/work/{task}', [TaWorkController::class, 'destroy'])->name('ta.work.destroy');

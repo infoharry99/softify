@@ -31,8 +31,14 @@
                 <span class="badge badge-secondary" style="font-size: 0.95rem; padding: 6px 14px;"><i class="fa-solid fa-clock"></i> Status: Pending</span>
             @endif
 
+            @if($isLead)
+            <button type="button" onclick="openEditTaModal()" class="btn btn-secondary btn-sm" style="border-radius: 8px; font-weight: 700;">
+                <i class="fa-solid fa-pen-to-square"></i> Edit Requisition Specs
+            </button>
+            @endif
+
             <button type="button" onclick="openUpdateModal()" class="btn btn-primary btn-sm" style="border-radius: 8px; font-weight: 700;">
-                <i class="fa-solid fa-pen-to-square"></i> {{ $isLead ? 'Review & Update Status' : 'Update Sourced Profiles' }}
+                <i class="fa-solid fa-circle-check"></i> {{ $isLead ? 'Review & Update Status' : 'Update Sourced Profiles' }}
             </button>
         </div>
     </div>
@@ -203,5 +209,108 @@ function openUpdateModal() {
 function closeUpdateModal() {
     document.getElementById('updateTaskModal').style.display = 'none';
 }
+function openEditTaModal() {
+    document.getElementById('editTaModal').style.display = 'flex';
+}
+function closeEditTaModal() {
+    document.getElementById('editTaModal').style.display = 'none';
+}
 </script>
+
+@if($isLead)
+<!-- Modal: Edit Job Requirement -->
+<div class="modal fade" id="editTaModal" tabindex="-1" aria-hidden="true" style="display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
+    <div style="background:#fff; width:92%; max-width:680px; border-radius:14px; padding:25px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.1); max-height:90vh; overflow-y:auto;">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e2e8f0; padding-bottom:12px; margin-bottom:20px;">
+            <h4 style="margin:0; font-weight:800; color:#00a884; display:flex; align-items:center; gap:8px;">
+                <i class="fa-solid fa-pen-to-square"></i> Edit TA Job Requisition & Targets
+            </h4>
+            <button type="button" onclick="closeEditTaModal()" style="background:none; border:none; font-size:1.4rem; cursor:pointer; color:#64748b;">&times;</button>
+        </div>
+
+        <form method="POST" action="{{ route('ta.work.update_task', $task->id) }}">
+            @csrf
+            @method('PUT')
+
+            <div class="form-row" style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:15px;">
+                <div class="form-group">
+                    <label class="form-label" style="font-weight:700;">Assigned TA Employee *</label>
+                    <input type="hidden" name="assigned_to" value="{{ $task->assigned_to }}">
+                    <input type="text" class="form-control" value="{{ $task->assignee->name ?? '' }} ({{ $task->assignee->email ?? '' }})" readonly style="background-color:#f1f5f9; font-weight:600;">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" style="font-weight:700;">Target Date *</label>
+                    <input type="date" name="assigned_date" class="form-control" value="{{ old('assigned_date', $task->assigned_date->format('Y-m-d')) }}" required>
+                </div>
+            </div>
+
+            <div class="form-row" style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:15px;">
+                <div class="form-group">
+                    <label class="form-label" style="font-weight:700;">Job Title / Role *</label>
+                    <input type="text" name="job_title" class="form-control" value="{{ old('job_title', $task->job_title) }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" style="font-weight:700;">Job Location *</label>
+                    <input type="text" name="location" class="form-control" value="{{ old('location', $task->location) }}" required>
+                </div>
+            </div>
+
+            <div class="form-row" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:15px;">
+                <div class="form-group">
+                    <label class="form-label" style="font-weight:700;">Experience Req. *</label>
+                    <input type="text" name="experience" class="form-control" value="{{ old('experience', $task->experience) }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" style="font-weight:700;">Budget / Package *</label>
+                    <input type="text" name="budget" class="form-control" value="{{ old('budget', $task->budget) }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" style="font-weight:700;">Employment Type</label>
+                    <select name="duration" class="form-control">
+                        <option value="Full Time" {{ old('duration', $task->duration) === 'Full Time' ? 'selected' : '' }}>Full Time</option>
+                        <option value="Contract" {{ old('duration', $task->duration) === 'Contract' ? 'selected' : '' }}>Contract</option>
+                        <option value="Part Time" {{ old('duration', $task->duration) === 'Part Time' ? 'selected' : '' }}>Part Time</option>
+                        <option value="Internship" {{ old('duration', $task->duration) === 'Internship' ? 'selected' : '' }}>Internship</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row" style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:15px;">
+                <div class="form-group">
+                    <label class="form-label" style="font-weight:700;">Target Profiles Required *</label>
+                    <input type="number" name="target_profiles" class="form-control" value="{{ old('target_profiles', $task->target_profiles) }}" min="1" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" style="font-weight:700;">Status *</label>
+                    <select name="status" class="form-control" required>
+                        <option value="Pending" {{ old('status', $task->status) === 'Pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="In Progress" {{ old('status', $task->status) === 'In Progress' ? 'selected' : '' }}>In Progress</option>
+                        <option value="Done" {{ old('status', $task->status) === 'Done' ? 'selected' : '' }}>Done</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom:18px;">
+                <label class="form-label" style="font-weight:700;">Job Description & Requirements *</label>
+                <textarea name="job_description" class="form-control" rows="5" required>{{ old('job_description', $task->job_description) }}</textarea>
+            </div>
+
+            <div class="form-group" style="margin-bottom:20px;">
+                <label class="form-label" style="font-weight:700;">Team Lead Specific Instructions</label>
+                <textarea name="lead_notes" class="form-control" rows="3">{{ old('lead_notes', $task->lead_notes) }}</textarea>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; gap:10px;">
+                <button type="button" onclick="closeEditTaModal()" class="btn btn-secondary btn-sm" style="border-radius:8px;">Cancel</button>
+                <button type="submit" class="btn btn-primary btn-sm" style="border-radius:8px; font-weight:700;">Update Job Requisition</button>
+            </div>
+        </form>
+    </div>
+</div>
+@endif
 @endsection

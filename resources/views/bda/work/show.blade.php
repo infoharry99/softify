@@ -31,8 +31,14 @@
                 <span class="badge badge-secondary" style="font-size: 0.95rem; padding: 6px 14px;"><i class="fa-solid fa-clock"></i> Status: Pending</span>
             @endif
 
+            @if($isLead)
+            <button type="button" onclick="openEditTaskModal()" class="btn btn-secondary btn-sm" style="border-radius: 8px; font-weight: 700;">
+                <i class="fa-solid fa-pen-to-square"></i> Edit Task Targets
+            </button>
+            @endif
+
             <button type="button" onclick="openUpdateModal()" class="btn btn-primary btn-sm" style="border-radius: 8px; font-weight: 700;">
-                <i class="fa-solid fa-pen-to-square"></i> {{ $isLead ? 'Review & Update Status' : 'Log Daily Achievements' }}
+                <i class="fa-solid fa-circle-check"></i> {{ $isLead ? 'Review & Update Status' : 'Log Daily Achievements' }}
             </button>
         </div>
     </div>
@@ -295,5 +301,100 @@ function openUpdateModal() {
 function closeUpdateModal() {
     document.getElementById('updateTaskModal').style.display = 'none';
 }
+function openEditTaskModal() {
+    document.getElementById('editTaskModal').style.display = 'flex';
+}
+function closeEditTaskModal() {
+    document.getElementById('editTaskModal').style.display = 'none';
+}
 </script>
+
+@if($isLead)
+<!-- Modal: Edit BDA Work Assignment & Targets -->
+<div class="modal fade" id="editTaskModal" tabindex="-1" aria-hidden="true" style="display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
+    <div style="background:#fff; width:92%; max-width:680px; border-radius:14px; padding:25px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.1); max-height:90vh; overflow-y:auto;">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e2e8f0; padding-bottom:12px; margin-bottom:20px;">
+            <h4 style="margin:0; font-weight:800; color:#00a884; display:flex; align-items:center; gap:8px;">
+                <i class="fa-solid fa-pen-to-square"></i> Edit BDA Daily Work Assignment & Targets
+            </h4>
+            <button type="button" onclick="closeEditTaskModal()" style="background:none; border:none; font-size:1.4rem; cursor:pointer; color:#64748b;">&times;</button>
+        </div>
+
+        <form method="POST" action="{{ route('bda.work.update_task', $task->id) }}">
+            @csrf
+            @method('PUT')
+
+            <div class="form-row" style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:15px;">
+                <div class="form-group">
+                    <label class="form-label" style="font-weight:700;">Assigned Employee *</label>
+                    <input type="hidden" name="assigned_to" value="{{ $task->assigned_to }}">
+                    <input type="text" class="form-control" value="{{ $task->assignee->name ?? '' }} ({{ $task->assignee->email ?? '' }})" readonly style="background-color: #f1f5f9; font-weight:600;">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" style="font-weight:700;">Target Date *</label>
+                    <input type="date" name="assigned_date" class="form-control" value="{{ old('assigned_date', $task->assigned_date->format('Y-m-d')) }}" required>
+                </div>
+            </div>
+
+            <div class="form-row" style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:15px;">
+                <div class="form-group">
+                    <label class="form-label" style="font-weight:700;">Target Title</label>
+                    <input type="text" name="title" class="form-control" value="{{ old('title', $task->title) }}">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" style="font-weight:700;">Status *</label>
+                    <select name="status" class="form-control" required>
+                        <option value="Pending" {{ old('status', $task->status) === 'Pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="In Progress" {{ old('status', $task->status) === 'In Progress' ? 'selected' : '' }}>In Progress</option>
+                        <option value="Done" {{ old('status', $task->status) === 'Done' ? 'selected' : '' }}>Done</option>
+                    </select>
+                </div>
+            </div>
+
+            <h5 style="font-size:0.9rem; font-weight:800; color:#0f172a; margin-top:15px; margin-bottom:10px; border-bottom:1px solid #e2e8f0; padding-bottom:5px;">
+                Daily KPI Target Objectives
+            </h5>
+
+            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-bottom:15px;">
+                <div>
+                    <label style="font-size:0.75rem; font-weight:700; color:#334155;">New Companies</label>
+                    <input type="number" name="target_new_companies" class="form-control" value="{{ old('target_new_companies', $task->target_new_companies) }}" min="0" required>
+                </div>
+                <div>
+                    <label style="font-size:0.75rem; font-weight:700; color:#334155;">LinkedIn Requests</label>
+                    <input type="number" name="target_linkedin_requests" class="form-control" value="{{ old('target_linkedin_requests', $task->target_linkedin_requests) }}" min="0" required>
+                </div>
+                <div>
+                    <label style="font-size:0.75rem; font-weight:700; color:#334155;">Emails Sent</label>
+                    <input type="number" name="target_emails" class="form-control" value="{{ old('target_emails', $task->target_emails) }}" min="0" required>
+                </div>
+                <div>
+                    <label style="font-size:0.75rem; font-weight:700; color:#334155;">Cold Calls</label>
+                    <input type="number" name="target_cold_calls" class="form-control" value="{{ old('target_cold_calls', $task->target_cold_calls) }}" min="0" required>
+                </div>
+                <div>
+                    <label style="font-size:0.75rem; font-weight:700; color:#334155;">Follow-ups</label>
+                    <input type="number" name="target_followups" class="form-control" value="{{ old('target_followups', $task->target_followups) }}" min="0" required>
+                </div>
+                <div>
+                    <label style="font-size:0.75rem; font-weight:700; color:#334155;">Meetings Booked</label>
+                    <input type="number" name="target_meetings" class="form-control" value="{{ old('target_meetings', $task->target_meetings) }}" min="0" required>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom:20px;">
+                <label class="form-label" style="font-weight:700;">Team Lead Instructions / Notes</label>
+                <textarea name="lead_notes" class="form-control" rows="3">{{ old('lead_notes', $task->lead_notes) }}</textarea>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; gap:10px;">
+                <button type="button" onclick="closeEditTaskModal()" class="btn btn-secondary btn-sm" style="border-radius:8px;">Cancel</button>
+                <button type="submit" class="btn btn-primary btn-sm" style="border-radius:8px; font-weight:700;">Update Work Assignment</button>
+            </div>
+        </form>
+    </div>
+</div>
+@endif
 @endsection

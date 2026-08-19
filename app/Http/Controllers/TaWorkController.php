@@ -157,6 +157,50 @@ class TaWorkController extends Controller
     }
 
     /**
+     * Edit / Update full TA job assignment targets & details (Team Lead / Admin).
+     */
+    public function updateTask(Request $request, TaWorkAssignment $task)
+    {
+        $user = auth()->user();
+        $isLead = $user->hasRole('ta-team-lead') || $user->hasRole('super-admin') || $user->hasRole('admin');
+        if (!$isLead) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $validated = $request->validate([
+            'assigned_to' => 'required|exists:users,id',
+            'assigned_date' => 'required|date',
+            'job_title' => 'required|string|max:255',
+            'location' => 'required|string|max:255',
+            'experience' => 'required|string|max:255',
+            'budget' => 'required|string|max:255',
+            'duration' => 'nullable|string|max:255',
+            'job_description' => 'required|string',
+            'target_profiles' => 'required|integer|min:1',
+            'status' => 'required|in:Pending,In Progress,Done',
+            'lead_notes' => 'nullable|string',
+        ]);
+
+        $task->update([
+            'assigned_to' => $validated['assigned_to'],
+            'assigned_date' => $validated['assigned_date'],
+            'job_title' => $validated['job_title'],
+            'location' => $validated['location'],
+            'experience' => $validated['experience'],
+            'budget' => $validated['budget'],
+            'duration' => $validated['duration'] ?? 'Full Time',
+            'job_description' => $validated['job_description'],
+            'target_profiles' => $validated['target_profiles'],
+            'status' => $validated['status'],
+            'lead_notes' => $validated['lead_notes'] ?? null,
+        ]);
+
+        ActivityLogger::log('TA Job Assignment Edited', "Edited TA job assignment '{$task->job_title}' (#{$task->id})", TaWorkAssignment::class, $task->id);
+
+        return back()->with('success', 'TA job requirement updated successfully.');
+    }
+
+    /**
      * Delete a TA work assignment.
      */
     public function destroy(TaWorkAssignment $task)

@@ -93,6 +93,9 @@
                             <i class="fa-solid fa-eye" style="color:#00a884;"></i> View & Update
                         </a>
                         @if($isLead)
+                        <button type="button" onclick="openEditTaskModal({{ json_encode($task) }})" class="btn btn-secondary btn-sm" style="padding: 5px 8px; border-radius: 6px; margin-right: 4px;" title="Edit Targets & Work">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
                         <form id="delete-bda-task-{{ $task->id }}" action="{{ route('bda.work.destroy', $task->id) }}" method="POST" style="display:inline;">
                             @csrf
                             @method('DELETE')
@@ -206,7 +209,119 @@ function openAssignWorkModal() {
 function closeAssignWorkModal() {
     document.getElementById('assignWorkModal').style.display = 'none';
 }
+
+function openEditTaskModal(task) {
+    document.getElementById('editTaskForm').action = '/bda/work/' + task.id + '/update-task';
+    document.getElementById('edit_assigned_to').value = task.assigned_to;
+    document.getElementById('edit_assigned_date').value = task.assigned_date ? task.assigned_date.split('T')[0] : '';
+    document.getElementById('edit_title').value = task.title || 'Daily BDA Work & Targets';
+    document.getElementById('edit_status').value = task.status || 'Pending';
+    document.getElementById('edit_target_new_companies').value = task.target_new_companies || 0;
+    document.getElementById('edit_target_linkedin_requests').value = task.target_linkedin_requests || 0;
+    document.getElementById('edit_target_emails').value = task.target_emails || 0;
+    document.getElementById('edit_target_cold_calls').value = task.target_cold_calls || 0;
+    document.getElementById('edit_target_followups').value = task.target_followups || 0;
+    document.getElementById('edit_target_meetings').value = task.target_meetings || 0;
+    document.getElementById('edit_lead_notes').value = task.lead_notes || '';
+
+    document.getElementById('editTaskModal').style.display = 'flex';
+}
+
+function closeEditTaskModal() {
+    document.getElementById('editTaskModal').style.display = 'none';
+}
 </script>
+
+<!-- Modal: Edit BDA Work Assignment -->
+<div class="modal fade" id="editTaskModal" tabindex="-1" aria-hidden="true" style="display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
+    <div style="background:#fff; width:92%; max-width:680px; border-radius:14px; padding:25px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.1); max-height:90vh; overflow-y:auto;">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e2e8f0; padding-bottom:12px; margin-bottom:20px;">
+            <h4 style="margin:0; font-weight:800; color:#00a884; display:flex; align-items:center; gap:8px;">
+                <i class="fa-solid fa-pen-to-square"></i> Edit BDA Work Assignment & Targets
+            </h4>
+            <button type="button" onclick="closeEditTaskModal()" style="background:none; border:none; font-size:1.4rem; cursor:pointer; color:#64748b;">&times;</button>
+        </div>
+
+        <form id="editTaskForm" method="POST" action="">
+            @csrf
+            @method('PUT')
+
+            <div class="form-row" style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:15px;">
+                <div class="form-group">
+                    <label class="form-label" style="font-weight:700;">Select BDA Employee *</label>
+                    <select id="edit_assigned_to" name="assigned_to" class="form-control" required>
+                        <option value="">-- Choose Employee --</option>
+                        @foreach($bdaEmployees as $bda)
+                            <option value="{{ $bda->id }}">{{ $bda->name }} ({{ $bda->email }})</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" style="font-weight:700;">Target Date *</label>
+                    <input type="date" id="edit_assigned_date" name="assigned_date" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="form-row" style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:15px;">
+                <div class="form-group">
+                    <label class="form-label" style="font-weight:700;">Target Title</label>
+                    <input type="text" id="edit_title" name="title" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" style="font-weight:700;">Status *</label>
+                    <select id="edit_status" name="status" class="form-control" required>
+                        <option value="Pending">Pending</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Done">Done</option>
+                    </select>
+                </div>
+            </div>
+
+            <h5 style="font-size:0.9rem; font-weight:800; color:#0f172a; margin-top:15px; margin-bottom:10px; border-bottom:1px solid #e2e8f0; padding-bottom:5px;">
+                Daily KPI Target Objectives
+            </h5>
+
+            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-bottom:15px;">
+                <div>
+                    <label style="font-size:0.75rem; font-weight:700; color:#334155;">New Companies</label>
+                    <input type="number" id="edit_target_new_companies" name="target_new_companies" class="form-control" min="0" required>
+                </div>
+                <div>
+                    <label style="font-size:0.75rem; font-weight:700; color:#334155;">LinkedIn Requests</label>
+                    <input type="number" id="edit_target_linkedin_requests" name="target_linkedin_requests" class="form-control" min="0" required>
+                </div>
+                <div>
+                    <label style="font-size:0.75rem; font-weight:700; color:#334155;">Emails Sent</label>
+                    <input type="number" id="edit_target_emails" name="target_emails" class="form-control" min="0" required>
+                </div>
+                <div>
+                    <label style="font-size:0.75rem; font-weight:700; color:#334155;">Cold Calls</label>
+                    <input type="number" id="edit_target_cold_calls" name="target_cold_calls" class="form-control" min="0" required>
+                </div>
+                <div>
+                    <label style="font-size:0.75rem; font-weight:700; color:#334155;">Follow-ups</label>
+                    <input type="number" id="edit_target_followups" name="target_followups" class="form-control" min="0" required>
+                </div>
+                <div>
+                    <label style="font-size:0.75rem; font-weight:700; color:#334155;">Meetings Booked</label>
+                    <input type="number" id="edit_target_meetings" name="target_meetings" class="form-control" min="0" required>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom:20px;">
+                <label class="form-label" style="font-weight:700;">Team Lead Instructions / Notes</label>
+                <textarea id="edit_lead_notes" name="lead_notes" class="form-control" rows="3"></textarea>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; gap:10px;">
+                <button type="button" onclick="closeEditTaskModal()" class="btn btn-secondary btn-sm" style="border-radius:8px;">Cancel</button>
+                <button type="submit" class="btn btn-primary btn-sm" style="border-radius:8px; font-weight:700;">Update Work Assignment</button>
+            </div>
+        </form>
+    </div>
+</div>
 @endif
 
 @endsection
