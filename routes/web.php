@@ -310,6 +310,7 @@ Route::get('/run-seeder', function () {
         Artisan::call('migrate', ['--force' => true]);
         Artisan::call('db:seed', ['--class' => 'RoleAndPermissionSeeder', '--force' => true]);
         Artisan::call('db:seed', ['--class' => 'EmployeeSystemSeeder', '--force' => true]);
+        Artisan::call('db:seed', ['--class' => 'StudentSeeder', '--force' => true]);
         \App\Models\BdaWorkAssignment::doesntHave('assignee')->delete();
         \App\Models\TaWorkAssignment::doesntHave('assignee')->delete();
         \App\Models\LeaveApplication::doesntHave('employee.user')->delete();
