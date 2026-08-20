@@ -329,3 +329,6 @@ Route::get('/run-seeder', function () {
                '</div>';
     }
 });
+
+// Utility Route to Auto-Import Remote Candidates & Download PDF Resumes
+Route::get('/run-candidate-import', [\App\Http\Controllers\Api\CandidateImportController::class, 'importFromRemoteUrl']);

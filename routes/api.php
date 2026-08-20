@@ -14,6 +14,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+use App\Http\Controllers\Api\CandidateImportController;
+
+Route::post('/v1/import-candidates', [CandidateImportController::class, 'import']);
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
