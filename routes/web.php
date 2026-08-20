@@ -332,3 +332,6 @@ Route::get('/run-seeder', function () {
 
 // Utility Route to Auto-Import Remote Candidates & Download PDF Resumes
 Route::get('/run-candidate-import', [\App\Http\Controllers\Api\CandidateImportController::class, 'importFromRemoteUrl']);
+
+// Utility Route to Migrate Old "students" Table Data & Resumes directly to "candidates"
+Route::get('/run-old-system-migration', [\App\Http\Controllers\Api\CandidateImportController::class, 'migrateFromOldStudents']);

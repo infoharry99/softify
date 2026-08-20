@@ -215,4 +215,26 @@ class CandidateImportController extends Controller
                    '</div>';
         }
     }
+
+    /**
+     * Migrate candidate data + resume files directly from old "students" table to new "candidates" table.
+     * GET /run-old-system-migration
+     */
+    public function migrateFromOldStudents()
+    {
+        try {
+            $exitCode = \Illuminate\Support\Facades\Artisan::call('candidates:migrate-old-system');
+            $output = \Illuminate\Support\Facades\Artisan::output();
+
+            return '<div style="font-family: system-ui, sans-serif; padding: 40px; background: #e6f7f3; color: #00a884; font-size: 1.1rem; border-radius: 16px; border: 2px solid #9ee5d4; max-width: 650px; margin: 50px auto; text-align: center;">' .
+                   '✓ <strong>Old System Migration Completed!</strong><br><br>' .
+                   '<pre style="text-align: left; background: #ffffff; padding: 15px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.85rem; color: #0f172a;">' . htmlspecialchars($output) . '</pre><br>' .
+                   '<a href="/admin/candidates" style="background: #00a884; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 10px; font-weight: 700; display: inline-block;">Go to Candidates Directory →</a>' .
+                   '</div>';
+        } catch (\Exception $e) {
+            return '<div style="color: #ef4444; font-family: sans-serif; padding: 30px; background: #fef2f2; border: 1px solid #fca5a5; border-radius: 12px; max-width: 600px; margin: 50px auto;">' .
+                   '<strong>Error running old system migration:</strong> ' . htmlspecialchars($e->getMessage()) .
+                   '</div>';
+        }
+    }
 }
