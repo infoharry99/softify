@@ -132,6 +132,10 @@ class CandidateImportController extends Controller
     private function downloadAndSaveFile($fileUrl, $folder)
     {
         try {
+            if (!str_starts_with($fileUrl, 'http://') && !str_starts_with($fileUrl, 'https://')) {
+                $fileUrl = 'https://sale.talentifyy.com/storage/' . ltrim($fileUrl, '/');
+            }
+
             $response = Http::timeout(30)->get($fileUrl);
             if ($response->successful()) {
                 $ext = pathinfo(parse_url($fileUrl, PHP_URL_PATH), PATHINFO_EXTENSION) ?: 'pdf';
