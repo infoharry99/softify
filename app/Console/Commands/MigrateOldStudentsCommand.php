@@ -76,6 +76,30 @@ class MigrateOldStudentsCommand extends Command
             $expectedCtc = is_numeric($std->expected_ctc) ? (float)$std->expected_ctc : null;
             $experience = is_numeric($std->experience) ? (float)$std->experience : 0.0;
 
+            // Auto Download Original Resume from old platform (sale.talentifyy.com) if not present locally
+            $resumePath = $std->resume ?? null;
+            if ($resumePath && !\Illuminate\Support\Facades\Storage::disk('public')->exists($resumePath)) {
+                $oldUrl = "https://sale.talentifyy.com/storage/" . ltrim($resumePath, '/');
+                try {
+                    $res = \Illuminate\Support\Facades\Http::timeout(15)->get($oldUrl);
+                    if ($res->successful()) {
+                        \Illuminate\Support\Facades\Storage::disk('public')->put($resumePath, $res->body());
+                    }
+                } catch (\Exception $e) {}
+            }
+
+            // Auto Download Company Edited Copy Resume from old platform (sale.talentifyy.com) if not present locally
+            $editedResumePath = $std->company_resume ?? null;
+            if ($editedResumePath && !\Illuminate\Support\Facades\Storage::disk('public')->exists($editedResumePath)) {
+                $oldUrl = "https://sale.talentifyy.com/storage/" . ltrim($editedResumePath, '/');
+                try {
+                    $res = \Illuminate\Support\Facades\Http::timeout(15)->get($oldUrl);
+                    if ($res->successful()) {
+                        \Illuminate\Support\Facades\Storage::disk('public')->put($editedResumePath, $res->body());
+                    }
+                } catch (\Exception $e) {}
+            }
+
             $data = [
                 'hr_id' => $hrId,
                 'company_name' => 'General',
@@ -90,8 +114,8 @@ class MigrateOldStudentsCommand extends Command
                 'current_ctc' => $currentCtc,
                 'expected_ctc' => $expectedCtc,
                 'status' => 'Applied',
-                'resume' => $std->resume ?? null,
-                'edited_resume' => $std->company_resume ?? null,
+                'resume' => $resumePath,
+                'edited_resume' => $editedResumePath,
                 'note' => $std->note ?? null,
                 'is_highlighted' => (bool)($std->is_highlighted ?? false),
                 'created_at' => $std->created_at ?? now(),
