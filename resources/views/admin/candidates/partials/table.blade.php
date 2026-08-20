@@ -3,12 +3,11 @@
         <thead>
             <tr>
                 <th>Candidate Details</th>
-                <th>Hiring Client Company</th>
+                <th>Job Title</th>
                 <th>Skills & Experience</th>
                 <th>Notice Period & Job Type</th>
                 <th>Current / Expected CTC</th>
                 <th>Resume</th>
-                <th>Pipeline Stage</th>
                 <th style="text-align: right;">Actions</th>
             </tr>
         </thead>
@@ -17,17 +16,16 @@
             <tr>
                 <td>
                     <strong style="color: var(--text-main); font-size: 0.95rem;">{{ $cand->name }}</strong>
-                    @if($cand->job_title)
-                        <div style="font-size: 0.8rem; font-weight: 700; color: #00a884; margin-top: 2px;">
-                            <i class="fa-solid fa-briefcase"></i> {{ $cand->job_title }}
-                        </div>
-                    @endif
                     <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 3px;"><i class="fa-regular fa-envelope"></i> {{ $cand->email }}</div>
                     <div style="font-size: 0.75rem; color: var(--text-muted);"><i class="fa-solid fa-phone"></i> {{ $cand->phone }} | <i class="fa-solid fa-location-dot"></i> {{ $cand->location }}</div>
                 </td>
                 <td>
-                    <strong style="color: #0f172a;"><i class="fa-solid fa-building" style="color: #00a884;"></i> {{ $cand->company_name ?? 'General Pool' }}</strong>
-                    <div style="font-size: 0.75rem; color: var(--text-muted);">Recruiter: {{ $cand->hr->name ?? 'HR' }}</div>
+                    @if($cand->job_title)
+                        <strong style="color: #0f172a; font-size: 0.88rem;"><i class="fa-solid fa-briefcase" style="color: #00a884;"></i> {{ $cand->job_title }}</strong>
+                    @else
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">N/A</span>
+                    @endif
+                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">Recruiter: {{ $cand->hr->name ?? 'HR' }}</div>
                 </td>
                 <td>
                     <div style="max-width: 200px; display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 4px;">
@@ -70,21 +68,6 @@
                         @endif
                     </div>
                 </td>
-                <td>
-                    @php
-                        $badgeClass = match($cand->status) {
-                            'Hired' => 'badge-success',
-                            'Offered' => 'badge-success',
-                            'Interview Scheduled' => 'badge-primary',
-                            'Screening' => 'badge-warning',
-                            'Rejected' => 'badge-danger',
-                            default => 'badge-secondary'
-                        };
-                    @endphp
-                    <span class="badge {{ $badgeClass }}">
-                        {{ $cand->status }}
-                    </span>
-                </td>
                 <td style="text-align: right;">
                     <div style="display: flex; gap: 6px; justify-content: flex-end;">
                         <a href="{{ route('admin.candidates.show', $cand->id) }}" class="btn btn-secondary btn-sm" title="View Profile" style="border-radius: 8px; font-weight: 600;">
@@ -98,7 +81,7 @@
             </tr>
             @empty
             <tr>
-                <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 45px 20px;">
+                <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 45px 20px;">
                     <div style="font-size: 2.5rem; color: #cbd5e1; margin-bottom: 10px;"><i class="fa-solid fa-folder-open"></i></div>
                     <div style="font-size: 0.98rem; font-weight: 700; color: #475569;">No Candidate Records Found</div>
                     <div style="font-size: 0.82rem; color: #94a3b8; margin-top: 4px;">Try adjusting your search keywords or filter criteria matrix.</div>
