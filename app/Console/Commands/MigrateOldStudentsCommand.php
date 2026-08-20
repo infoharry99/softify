@@ -107,7 +107,9 @@ class MigrateOldStudentsCommand extends Command
             }
         });
 
-        $this->info("✓ Success! Migration completed. Processed {$migratedCount} candidates. Total Candidates in new system: " . Candidate::count());
+        Schema::dropIfExists('students');
+
+        $this->info("✓ Success! Migration completed. Processed {$migratedCount} candidates into candidates table. Temporary students table dropped. Total Candidates in new system: " . Candidate::count());
         return 0;
     }
 }
