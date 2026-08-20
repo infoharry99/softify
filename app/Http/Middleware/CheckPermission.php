@@ -33,28 +33,28 @@ class CheckPermission
             return $next($request);
         }
 
-        // HR role has access to all employee HR management modules
-        if ($user->hasRole('hr')) {
+        // HR & Admin roles have access to employee HR and Candidate management modules
+        if ($user->hasRole('hr') || $user->hasRole('admin') || $user->hasRole('hr-manager') || $user->hasRole('hr-executive')) {
             foreach ($permissions as $permission) {
-                if (str_starts_with($permission, 'hr.') || str_starts_with($permission, 'users.') || str_starts_with($permission, 'roles.') || str_starts_with($permission, 'permissions.') || str_starts_with($permission, 'activity_logs.')) {
+                if (str_starts_with($permission, 'hr.') || str_starts_with($permission, 'candidates.') || str_starts_with($permission, 'users.') || str_starts_with($permission, 'roles.') || str_starts_with($permission, 'permissions.') || str_starts_with($permission, 'activity_logs.')) {
                     return $next($request);
                 }
             }
         }
 
-        // Data Entry role has access to candidate view and create
-        if ($user->hasRole('data-entry')) {
+        // Data Entry role has access to candidate view, create, and edit
+        if ($user->hasRole('data-entry') || $user->hasRole('data-entry-team-lead')) {
             foreach ($permissions as $permission) {
-                if (in_array($permission, ['candidates.view', 'candidates.create', 'hr.view', 'hr.create'])) {
+                if (in_array($permission, ['candidates.view', 'candidates.create', 'candidates.edit', 'hr.view', 'hr.create', 'hr.edit'])) {
                     return $next($request);
                 }
             }
         }
 
-        // Talent Acquisition role has access to candidate view
-        if ($user->hasRole('talent-acquisition')) {
+        // Talent Acquisition role has access to candidate view, create, and edit
+        if ($user->hasRole('talent-acquisition') || $user->hasRole('ta-team-lead')) {
             foreach ($permissions as $permission) {
-                if (in_array($permission, ['candidates.view', 'hr.view'])) {
+                if (in_array($permission, ['candidates.view', 'candidates.create', 'candidates.edit', 'hr.view', 'hr.create', 'hr.edit'])) {
                     return $next($request);
                 }
             }
