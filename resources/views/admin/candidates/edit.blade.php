@@ -256,20 +256,43 @@
             </div>
         </div>
 
-        <div class="form-group" style="margin-top: 15px;">
-            <label class="form-label">Replace Resume File (Optional)</label>
-            <div class="compact-dropzone @error('resume_file') is-invalid-input @enderror" onclick="document.getElementById('resume_file_input').click();">
-                <i class="fa-solid fa-file-pdf" style="font-size: 1.4rem; color: #00a884;"></i>
-                <div style="flex: 1;">
-                    <div id="file_selected_name" style="font-size: 0.84rem; font-weight: 600; color: #0f172a;">
-                        {{ $candidate->resume ? 'Current Resume File Attached (Click to Replace)' : 'Click to Upload Resume' }}
+        <!-- 3. Candidate Resume Files (Original & Edited Copy) -->
+        <div class="compact-section-divider" style="margin-top: 25px;">
+            <i class="fa-solid fa-file-pdf"></i> Candidate Resume Management (Optional)
+        </div>
+
+        <div class="form-grid-2">
+            <div class="form-group">
+                <label class="form-label">Original Resume File</label>
+                <div class="compact-dropzone @error('resume_file') is-invalid-input @enderror" onclick="document.getElementById('resume_file_input').click();">
+                    <i class="fa-solid fa-file-pdf" style="font-size: 1.4rem; color: #ef4444;"></i>
+                    <div style="flex: 1;">
+                        <div id="file_selected_name" style="font-size: 0.84rem; font-weight: 600; color: #0f172a;">
+                            {{ $candidate->resume ? 'Original Resume Attached (Click to Replace)' : 'Click to Upload Original Resume' }}
+                        </div>
                     </div>
+                    <input type="file" name="resume_file" id="resume_file_input" style="display: none;" accept=".pdf,.doc,.docx" onchange="document.getElementById('file_selected_name').innerText = 'Selected: ' + this.files[0].name;">
                 </div>
-                <input type="file" name="resume_file" id="resume_file_input" style="display: none;" accept=".pdf,.doc,.docx" onchange="document.getElementById('file_selected_name').innerText = this.files[0].name;">
+                @error('resume_file')
+                    <span class="field-error-msg"><i class="fa-solid fa-circle-exclamation"></i> {{ $message }}</span>
+                @enderror
             </div>
-            @error('resume_file')
-                <span class="field-error-msg"><i class="fa-solid fa-circle-exclamation"></i> {{ $message }}</span>
-            @enderror
+
+            <div class="form-group">
+                <label class="form-label">Edited / Company Copy Resume</label>
+                <div class="compact-dropzone @error('edited_resume_file') is-invalid-input @enderror" onclick="document.getElementById('edited_resume_file_input').click();" style="border-color: #7dd3fc; background-color: #f0f9ff;">
+                    <i class="fa-solid fa-file-pen" style="font-size: 1.4rem; color: #0284c7;"></i>
+                    <div style="flex: 1;">
+                        <div id="edited_file_selected_name" style="font-size: 0.84rem; font-weight: 600; color: #0f172a;">
+                            {{ $candidate->edited_resume ? 'Edited Copy Resume Attached (Click to Replace)' : 'Click to Upload Edited Copy Resume' }}
+                        </div>
+                    </div>
+                    <input type="file" name="edited_resume_file" id="edited_resume_file_input" style="display: none;" accept=".pdf,.doc,.docx" onchange="document.getElementById('edited_file_selected_name').innerText = 'Selected: ' + this.files[0].name;">
+                </div>
+                @error('edited_resume_file')
+                    <span class="field-error-msg"><i class="fa-solid fa-circle-exclamation"></i> {{ $message }}</span>
+                @enderror
+            </div>
         </div>
 
         <!-- 3. Remarks -->

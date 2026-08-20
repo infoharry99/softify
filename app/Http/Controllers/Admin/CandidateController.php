@@ -217,6 +217,7 @@ class CandidateController extends Controller
             'expected_ctc' => 'nullable|numeric|min:0',
             'status' => 'nullable|in:Applied,Screening,Interview Scheduled,Offered,Hired,Rejected',
             'resume_file' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
+            'edited_resume_file' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
             'note' => 'nullable|string|max:2000',
         ], $this->validationMessages());
 
@@ -228,6 +229,13 @@ class CandidateController extends Controller
                 Storage::disk('public')->delete($candidate->resume);
             }
             $validated['resume'] = $request->file('resume_file')->store('candidate_resumes', 'public');
+        }
+
+        if ($request->hasFile('edited_resume_file')) {
+            if ($candidate->edited_resume && Storage::disk('public')->exists($candidate->edited_resume)) {
+                Storage::disk('public')->delete($candidate->edited_resume);
+            }
+            $validated['edited_resume'] = $request->file('edited_resume_file')->store('candidate_edited_resumes', 'public');
         }
 
         $validated['last_updated_by'] = auth()->id();
