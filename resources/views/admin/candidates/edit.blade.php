@@ -188,6 +188,14 @@
 
         <div class="form-grid-3">
             <div class="form-group">
+                <label class="form-label">Job Title / Designation</label>
+                <input type="text" name="job_title" class="form-control @error('job_title') is-invalid-input @enderror" value="{{ old('job_title', $candidate->job_title) }}" placeholder="e.g. Senior Python Developer">
+                @error('job_title')
+                    <span class="field-error-msg"><i class="fa-solid fa-circle-exclamation"></i> {{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="form-group">
                 <label class="form-label">Key Skills *</label>
                 <input type="text" name="skills" class="form-control @error('skills') is-invalid-input @enderror" value="{{ old('skills', $candidate->skills) }}" required minlength="2">
                 @error('skills')

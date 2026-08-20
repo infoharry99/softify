@@ -17,7 +17,12 @@
             <tr>
                 <td>
                     <strong style="color: var(--text-main); font-size: 0.95rem;">{{ $cand->name }}</strong>
-                    <div style="font-size: 0.75rem; color: var(--text-muted);"><i class="fa-regular fa-envelope"></i> {{ $cand->email }}</div>
+                    @if($cand->job_title)
+                        <div style="font-size: 0.8rem; font-weight: 700; color: #00a884; margin-top: 2px;">
+                            <i class="fa-solid fa-briefcase"></i> {{ $cand->job_title }}
+                        </div>
+                    @endif
+                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 3px;"><i class="fa-regular fa-envelope"></i> {{ $cand->email }}</div>
                     <div style="font-size: 0.75rem; color: var(--text-muted);"><i class="fa-solid fa-phone"></i> {{ $cand->phone }} | <i class="fa-solid fa-location-dot"></i> {{ $cand->location }}</div>
                 </td>
                 <td>
@@ -82,14 +87,12 @@
                 </td>
                 <td style="text-align: right;">
                     <div style="display: flex; gap: 6px; justify-content: flex-end;">
-                        <a href="{{ route('admin.candidates.show', $cand->id) }}" class="btn btn-secondary btn-sm" title="View Profile" style="border-radius: 8px;">
-                            <i class="fa-solid fa-eye"></i> View
+                        <a href="{{ route('admin.candidates.show', $cand->id) }}" class="btn btn-secondary btn-sm" title="View Profile" style="border-radius: 8px; font-weight: 600;">
+                            <i class="fa-solid fa-eye" style="color: #00a884;"></i> View
                         </a>
-                        @if((auth()->user()->hasPermission('hr.edit') || auth()->user()->hasRole('super-admin')) && !auth()->user()->hasRole('talent-acquisition'))
-                        <a href="{{ route('admin.candidates.edit', $cand->id) }}" class="btn btn-secondary btn-sm" title="Edit Record" style="border-radius: 8px;">
-                            <i class="fa-solid fa-pen-to-square"></i> Edit
+                        <a href="{{ route('admin.candidates.edit', $cand->id) }}" class="btn btn-secondary btn-sm" title="Edit Record" style="border-radius: 8px; font-weight: 600; color: #475569;">
+                            <i class="fa-solid fa-pen-to-square" style="color: #0284c7;"></i> Edit
                         </a>
-                        @endif
                     </div>
                 </td>
             </tr>

@@ -14,14 +14,12 @@
                         👤 {{ $candidate->name }}
                     </h3>
                     <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
-                        Recruited for Client Company: <strong>🏢 {{ $candidate->company_name ?? 'General Talent Pool' }}</strong>
+                        Job Title: <strong style="color: #00a884;">💼 {{ $candidate->job_title ?? 'N/A' }}</strong> | Recruited for Client Company: <strong>🏢 {{ $candidate->company_name ?? 'General Talent Pool' }}</strong>
                     </div>
                 </div>
                 <div>
-                    @if((auth()->user()->hasPermission('hr.edit') || auth()->user()->hasRole('super-admin')) && !auth()->user()->hasRole('talent-acquisition'))
-                    <a href="{{ route('admin.candidates.edit', $candidate->id) }}" class="btn btn-secondary btn-sm">✏️ Edit Profile</a>
-                    @endif
-                    <a href="{{ route('admin.candidates.index') }}" class="btn btn-secondary btn-sm">⬅️ Back to Directory</a>
+                    <a href="{{ route('admin.candidates.edit', $candidate->id) }}" class="btn btn-secondary btn-sm" style="border-radius: 8px; font-weight: 600;">✏️ Edit Profile</a>
+                    <a href="{{ route('admin.candidates.index') }}" class="btn btn-secondary btn-sm" style="border-radius: 8px;">⬅️ Back to Directory</a>
                 </div>
             </div>
 
