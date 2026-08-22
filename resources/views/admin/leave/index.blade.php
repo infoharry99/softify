@@ -19,6 +19,68 @@
     </div>
 </div>
 
+<!-- Company Leave Policy & Quotas Configurator (Admin Dynamic Settings) -->
+<div class="card" style="margin-bottom: 25px; border-top: 4px solid var(--primary);">
+    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <div>
+            <h3 class="card-title" style="margin-bottom: 2px;">⚙️ Company Leave Policy & Annual Quotas</h3>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">Configure annual allowed leave days per type according to company policy. Updating quotas automatically syncs active employee balances.</p>
+        </div>
+        <button type="button" class="btn btn-primary btn-sm" onclick="openAddLeaveTypeModal()" style="font-weight: 600;">
+            <i class="fa-solid fa-plus-circle"></i> Add Custom Leave Type
+        </button>
+    </div>
+    <div class="card-body">
+        <form action="{{ route('admin.leave.policy.update') }}" method="POST">
+            @csrf
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px;">
+                @foreach($leaveTypes as $lt)
+                    <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 15px; position: relative;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <label style="font-size: 0.85rem; font-weight: 700; color: var(--text-main); margin: 0;">Leave Type Name</label>
+                            <span class="badge {{ $lt->is_paid ? 'badge-success' : 'badge-secondary' }}" style="font-size: 0.7rem;">
+                                {{ $lt->is_paid ? 'Paid Leave' : 'Unpaid' }}
+                            </span>
+                        </div>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <input type="text" name="types[{{ $lt->id }}][name]" value="{{ $lt->name }}" class="form-control" required style="font-size: 0.88rem; font-weight: 600;">
+                            
+                            <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 4px;">
+                                <div style="flex: 1;">
+                                    <label style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; display: block; margin-bottom: 2px;">Allowed Days / Year</label>
+                                    <input type="number" step="0.5" min="0" max="365" name="types[{{ $lt->id }}][days_allowed_per_year]" value="{{ $lt->days_allowed_per_year }}" class="form-control" required style="font-size: 1.1rem; font-weight: 700; color: var(--primary);">
+                                </div>
+                                <div style="display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-end;">
+                                    <label style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; display: block; margin-bottom: 4px;">Paid Status</label>
+                                    <label style="display: inline-flex; align-items: center; gap: 4px; cursor: pointer; font-size: 0.78rem; font-weight: 600;">
+                                        <input type="checkbox" name="types[{{ $lt->id }}][is_paid]" value="1" {{ $lt->is_paid ? 'checked' : '' }}>
+                                        Is Paid
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        @if(!in_array($lt->slug, ['casual-leave', 'sick-leave', 'earned-leave']))
+                            <div style="margin-top: 10px; text-align: right;">
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="confirmDeleteLeaveType({{ $lt->id }}, '{{ addslashes($lt->name) }}')" style="color: #ef4444; font-size: 0.72rem; padding: 2px 8px;">
+                                    🗑️ Remove
+                                </button>
+                            </div>
+                        @endif
+                    </div>
+                @endforeach
+            </div>
+
+            <div style="margin-top: 20px; text-align: right; pt: 15px; border-top: 1px solid var(--border-color);">
+                <button type="submit" class="btn btn-success" onclick="return confirmSwalAction(event, this.form, 'Save & Sync Leave Policy?', 'This will update annual allowed leave quotas for all employees.', '✅ Yes, Update Policy', '#00a884', 'question')" style="font-weight: 700;">
+                    💾 Save Policy & Sync All Employee Quotas
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div class="card">
     <div class="card-header">
         <h3 class="card-title">Employee Leave Applications</h3>
@@ -285,6 +347,75 @@ function showLeaveDetails(app, empName, empCode, leaveTypeName, approverName) {
     modal.style.display = 'flex';
 }
 
+<!-- Modal: Add New Custom Leave Type -->
+<div id="addLeaveTypeModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 99999; align-items: center; justify-content: center; padding: 20px;" onclick="closeAddLeaveTypeModalOnOverlay(event)">
+    <div style="background: #ffffff; width: 100%; max-width: 480px; border-radius: 16px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); overflow: hidden; animation: modalSlideUp 0.25s ease-out;" onclick="event.stopPropagation();">
+        <div style="padding: 20px 24px; background: #f8fafc; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin: 0; font-size: 1.1rem; font-weight: 700; color: #0f172a;">➕ Add Custom Leave Type</h3>
+            <button type="button" onclick="closeAddLeaveTypeModal()" style="background: none; border: none; font-size: 1.25rem; color: #64748b; cursor: pointer;">✕</button>
+        </div>
+        <form action="{{ route('admin.leave.type.store') }}" method="POST" style="padding: 24px;">
+            @csrf
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label class="form-label" style="font-weight: 600;">Leave Type Name *</label>
+                <input type="text" name="name" class="form-control" required placeholder="e.g. Maternity Leave, Comp-Off, Marriage Leave">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label class="form-label" style="font-weight: 600;">Allowed Days Per Year *</label>
+                <input type="number" step="0.5" min="0" max="365" name="days_allowed_per_year" class="form-control" required value="10" placeholder="10">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.9rem; font-weight: 600;">
+                    <input type="checkbox" name="is_paid" value="1" checked style="width: 16px; height: 16px;">
+                    Is Paid Leave (Salary not deducted)
+                </label>
+            </div>
+
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button type="button" class="btn btn-secondary" onclick="closeAddLeaveTypeModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary" style="font-weight: 700;">Create & Apply Policy</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<form id="deleteLeaveTypeForm" action="" method="POST" style="display: none;">
+    @csrf
+    @method('DELETE')
+</form>
+
+<script>
+function openAddLeaveTypeModal() {
+    document.getElementById('addLeaveTypeModal').style.display = 'flex';
+}
+function closeAddLeaveTypeModal() {
+    document.getElementById('addLeaveTypeModal').style.display = 'none';
+}
+function closeAddLeaveTypeModalOnOverlay(event) {
+    if (event.target.id === 'addLeaveTypeModal') {
+        closeAddLeaveTypeModal();
+    }
+}
+function confirmDeleteLeaveType(id, name) {
+    Swal.fire({
+        title: 'Delete Leave Type?',
+        text: "Are you sure you want to remove '" + name + "' from company leave policy?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#64748b',
+        confirmButtonText: 'Yes, Delete'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            var form = document.getElementById('deleteLeaveTypeForm');
+            form.action = '/admin/leave/type/' + id;
+            form.submit();
+        }
+    });
+}
+
 function closeLeaveModal() {
     var modal = document.getElementById('leaveDetailsModal');
     modal.style.display = 'none';
@@ -299,6 +430,7 @@ function closeLeaveModalOnOverlay(event) {
 document.addEventListener('keydown', function(event) {
     if (event.key === 'Escape') {
         closeLeaveModal();
+        closeAddLeaveTypeModal();
     }
 });
 </script>

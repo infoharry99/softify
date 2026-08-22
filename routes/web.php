@@ -239,6 +239,9 @@ Route::middleware('auth')->group(function () {
             Route::get('/leave/{application}/attachment', [AdminLeaveController::class, 'downloadAttachment'])->name('leave.attachment');
             Route::get('/leave/{application}/attachment-preview', [AdminLeaveController::class, 'previewAttachment'])->name('leave.attachment_preview');
             Route::post('/leave/balances/{employee}', [AdminLeaveController::class, 'updateBalances'])->name('leave.balances.update');
+            Route::post('/leave/policy/update', [AdminLeaveController::class, 'updateCompanyPolicy'])->name('leave.policy.update');
+            Route::post('/leave/type/store', [AdminLeaveController::class, 'storeLeaveType'])->name('leave.type.store');
+            Route::delete('/leave/type/{leaveType}', [AdminLeaveController::class, 'destroyLeaveType'])->name('leave.type.destroy');
         });
 
         // Payroll Management (Admin & HR)

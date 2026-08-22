@@ -37,6 +37,45 @@ class LeaveService
     }
 
     /**
+     * Sync updated leave policy quota across all active employees for current year.
+     */
+    public static function syncCompanyPolicyToEmployees(?int $year = null)
+    {
+        $year = $year ?? Carbon::now()->year;
+        $leaveTypes = LeaveType::all();
+        $employees = Employee::all();
+
+        foreach ($employees as $employee) {
+            foreach ($leaveTypes as $type) {
+                $balance = LeaveBalance::where('employee_id', $employee->id)
+                    ->where('leave_type_id', $type->id)
+                    ->where('year', $year)
+                    ->first();
+
+                if ($balance) {
+                    $used = $balance->used_days;
+                    $allowed = $type->days_allowed_per_year;
+                    $remaining = max(0, $allowed - $used);
+
+                    $balance->update([
+                        'allowed_days' => $allowed,
+                        'remaining_days' => $remaining,
+                    ]);
+                } else {
+                    LeaveBalance::create([
+                        'employee_id' => $employee->id,
+                        'leave_type_id' => $type->id,
+                        'year' => $year,
+                        'allowed_days' => $type->days_allowed_per_year,
+                        'used_days' => 0,
+                        'remaining_days' => $type->days_allowed_per_year,
+                    ]);
+                }
+            }
+        }
+    }
+
+    /**
      * Submit a leave application.
      */
     public static function applyLeave(Employee $employee, array $data)

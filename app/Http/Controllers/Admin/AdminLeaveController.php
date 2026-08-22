@@ -140,4 +140,81 @@ class AdminLeaveController extends Controller
 
         return back()->with('success', "Leave balances for {$employee->user->name} updated successfully.");
     }
+
+    /**
+     * Update Company Leave Policy & Quotas dynamically.
+     */
+    public function updateCompanyPolicy(Request $request)
+    {
+        $validated = $request->validate([
+            'types' => 'required|array',
+            'types.*.name' => 'required|string|max:255',
+            'types.*.days_allowed_per_year' => 'required|numeric|min:0|max:365',
+            'types.*.is_paid' => 'nullable|boolean',
+        ]);
+
+        foreach ($request->input('types', []) as $id => $typeData) {
+            $leaveType = LeaveType::find($id);
+            if ($leaveType) {
+                $leaveType->update([
+                    'name' => trim($typeData['name']),
+                    'slug' => \Illuminate\Support\Str::slug($typeData['name']),
+                    'days_allowed_per_year' => (float) $typeData['days_allowed_per_year'],
+                    'is_paid' => !empty($typeData['is_paid']),
+                ]);
+            }
+        }
+
+        // Sync updated policy across all active employees for current year
+        LeaveService::syncCompanyPolicyToEmployees();
+
+        ActivityLogger::log('Company Leave Policy Updated', "Updated global company leave quotas and synced active employee balances.", LeaveType::class, 0);
+
+        return back()->with('success', 'Company Leave Policy updated and quotas synced across all employees successfully.');
+    }
+
+    /**
+     * Add a new dynamic Leave Type to Company Policy.
+     */
+    public function storeLeaveType(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:leave_types,name',
+            'days_allowed_per_year' => 'required|numeric|min:0|max:365',
+            'is_paid' => 'nullable|boolean',
+        ]);
+
+        $leaveType = LeaveType::create([
+            'name' => trim($validated['name']),
+            'slug' => \Illuminate\Support\Str::slug($validated['name']),
+            'days_allowed_per_year' => (float) $validated['days_allowed_per_year'],
+            'is_paid' => !empty($validated['is_paid']),
+        ]);
+
+        LeaveService::syncCompanyPolicyToEmployees();
+
+        ActivityLogger::log('New Leave Type Created', "Added new leave type '{$leaveType->name}' with {$leaveType->days_allowed_per_year} days/year", LeaveType::class, $leaveType->id);
+
+        return back()->with('success', "New Leave Type '{$leaveType->name}' added to company policy successfully.");
+    }
+
+    /**
+     * Delete a Leave Type from Company Policy.
+     */
+    public function destroyLeaveType(LeaveType $leaveType)
+    {
+        $name = $leaveType->name;
+
+        // Check if applications exist
+        if ($leaveType->applications()->exists()) {
+            return back()->with('error', "Cannot delete Leave Type '{$name}' because employee leave applications exist for it.");
+        }
+
+        $leaveType->balances()->delete();
+        $leaveType->delete();
+
+        ActivityLogger::log('Leave Type Deleted', "Deleted leave type '{$name}' from company policy", LeaveType::class, 0);
+
+        return back()->with('success', "Leave Type '{$name}' removed from company policy.");
+    }
 }
