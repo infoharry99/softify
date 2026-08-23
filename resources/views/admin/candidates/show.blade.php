@@ -19,7 +19,7 @@
                 </div>
                 <div>
                     <a href="{{ route('admin.candidates.edit', $candidate->id) }}" class="btn btn-secondary btn-sm" style="border-radius: 8px; font-weight: 600;">✏️ Edit Profile</a>
-                    <a href="{{ route('admin.candidates.index') }}" class="btn btn-secondary btn-sm" style="border-radius: 8px;">⬅️ Back to Directory</a>
+                    <a href="{{ session('candidate_directory_url', route('admin.candidates.index')) }}" class="btn btn-secondary btn-sm" style="border-radius: 8px;">⬅️ Back to Directory</a>
                 </div>
             </div>
 

@@ -16,6 +16,29 @@ class CandidateController extends Controller
      */
     public function index(Request $request)
     {
+        $filterKeys = ['search', 'job_title', 'skill', 'job_type', 'notice_period', 'current_ctc', 'location', 'page'];
+
+        // Reset Filters if explicitly requested via reset=1
+        if ($request->has('reset') || $request->query('reset') == 1) {
+            session()->forget(['candidate_filters', 'candidate_directory_url']);
+            if (!$request->ajax() && $request->query('reset') == 1) {
+                return redirect()->route('admin.candidates.index');
+            }
+        } 
+        // Save Filters if request has active filter params
+        elseif ($request->anyFilled(['search', 'job_title', 'skill', 'job_type', 'notice_period', 'current_ctc', 'location'])) {
+            $activeFilters = array_filter($request->only($filterKeys), fn($val) => !is_null($val) && $val !== '');
+            session(['candidate_filters' => $activeFilters]);
+            session(['candidate_directory_url' => $request->fullUrl()]);
+        } 
+        // Restore Filters if user navigated back without query parameters
+        elseif (session()->has('candidate_filters') && !$request->ajax() && empty($request->query())) {
+            $savedFilters = session('candidate_filters', []);
+            if (!empty($savedFilters)) {
+                return redirect()->route('admin.candidates.index', $savedFilters);
+            }
+        }
+
         $query = Candidate::with(['hr', 'updatedBy']);
 
         // 1. Text Search (Name, Email, Phone, Location, Job Title, Company Name)

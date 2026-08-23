@@ -117,7 +117,7 @@
         <a href="{{ route('admin.candidates.show', $candidate->id) }}" class="btn btn-secondary btn-sm" style="border-radius: 8px;">
             <i class="fa-solid fa-eye"></i> View Profile
         </a>
-        <a href="{{ route('admin.candidates.index') }}" class="btn btn-secondary btn-sm" style="border-radius: 8px;">
+        <a href="{{ session('candidate_directory_url', route('admin.candidates.index')) }}" class="btn btn-secondary btn-sm" style="border-radius: 8px;">
             <i class="fa-solid fa-arrow-left"></i> Directory
         </a>
     </div>
@@ -306,7 +306,7 @@
 
         <!-- Action Footer -->
         <div style="margin-top: 25px; pt: 15px; border-top: 1px solid var(--border-color); display: flex; gap: 12px; justify-content: flex-end;">
-            <a href="{{ route('admin.candidates.index') }}" class="btn btn-secondary">
+            <a href="{{ session('candidate_directory_url', route('admin.candidates.index')) }}" class="btn btn-secondary">
                 Cancel
             </a>
             <button type="submit" class="btn btn-primary" style="background-color: #00a884; border-color: #00a884; padding: 10px 24px;">
