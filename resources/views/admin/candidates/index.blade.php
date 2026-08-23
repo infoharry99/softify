@@ -463,6 +463,9 @@
             url = form.action + '?' + params.toString();
         }
 
+        // Update badge count
+        updateFilterBadge();
+
         // Show Loader Spinner
         overlay.style.display = 'flex';
 
@@ -478,8 +481,9 @@
                 document.getElementById('candidatesTableContainer').innerHTML = data.html;
                 // Re-bind pagination AJAX clicks
                 bindPaginationClicks();
-                // Update URL in browser bar without page reload
-                window.history.pushState({}, '', url);
+                // Clean browser URL (if reset=1, push clean URL)
+                const cleanUrl = url.replace(/[\?&]reset=1/, '');
+                window.history.pushState({}, '', cleanUrl);
             }
         })
         .catch(error => {
@@ -502,12 +506,39 @@
         });
     }
 
+    function updateFilterBadge() {
+        const form = document.getElementById('atsFilterForm');
+        if (!form) return;
+        let count = 0;
+        const keys = ['search', 'job_title', 'skill', 'job_type', 'notice_period', 'current_ctc', 'location'];
+        keys.forEach(k => {
+            const el = form.querySelector('[name="' + k + '"]');
+            if (el && el.value.trim() !== '') {
+                count++;
+            }
+        });
+        const badge = document.getElementById('activeFilterBadge');
+        if (badge) {
+            if (count > 0) {
+                badge.innerText = count;
+                badge.style.display = 'inline-flex';
+            } else {
+                badge.innerText = '0';
+                badge.style.display = 'none';
+            }
+        }
+    }
+
     function resetATSFilters() {
         const form = document.getElementById('atsFilterForm');
         form.reset();
         form.querySelectorAll('input[type="text"], input[type="number"]').forEach(input => input.value = '');
         form.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
-        loadCandidatesAJAX(form.action);
+        
+        updateFilterBadge();
+
+        const resetUrl = '{{ route("admin.candidates.index") }}?reset=1';
+        loadCandidatesAJAX(resetUrl);
     }
 
     // Event Listeners
