@@ -33,10 +33,7 @@ class CandidateController extends Controller
 
         // 2. Filter by Job Title
         if ($request->filled('job_title')) {
-            $query->where(function ($q) use ($request) {
-                $q->where('job_title', 'like', "%{$request->job_title}%")
-                  ->orWhere('skills', 'like', "%{$request->job_title}%");
-            });
+            $query->where('job_title', 'like', "%{$request->job_title}%");
         }
 
         // 3. Filter by Skills
@@ -54,9 +51,14 @@ class CandidateController extends Controller
             $query->where('notice_period', $request->notice_period);
         }
 
-        // 6. Filter by Expected CTC
-        if ($request->filled('expected_ctc')) {
-            $query->where('expected_ctc', '<=', (float) $request->expected_ctc);
+        // 6. Filter by Current CTC
+        if ($request->filled('current_ctc')) {
+            $query->where('current_ctc', '<=', (float) $request->current_ctc);
+        }
+
+        // 7. Filter by Location
+        if ($request->filled('location')) {
+            $query->where('location', 'like', "%{$request->location}%");
         }
 
         $candidates = $query->latest()->paginate(10)->withQueryString();

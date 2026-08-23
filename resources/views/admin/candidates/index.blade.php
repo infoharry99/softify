@@ -266,7 +266,7 @@
 
     @php
         $activeFilterCount = 0;
-        foreach(['search', 'job_title', 'skill', 'job_type', 'notice_period', 'expected_ctc'] as $key) {
+        foreach(['search', 'job_title', 'skill', 'job_type', 'notice_period', 'current_ctc', 'location'] as $key) {
             if(request()->filled($key)) $activeFilterCount++;
         }
         $isFilterActive = $activeFilterCount > 0;
@@ -298,7 +298,7 @@
                 </div>
             </div>
 
-            <!-- Expandable Advanced Multi-Filter Grid -->
+            <!-- Expandable Advanced Multi-Filter Grid (6 Allowed Filters) -->
             <div class="filter-panel-card" id="filterPanel" style="{{ $isFilterActive ? 'display: block;' : 'display: none;' }}">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; padding-bottom: 10px; border-bottom: 1.5px solid #e6f7f3;">
                     <div style="font-size: 0.98rem; font-weight: 700; color: #00a884; display: flex; align-items: center; gap: 8px;">
@@ -311,8 +311,9 @@
                     </div>
                 </div>
 
-                <!-- Row 1 -->
-                <div class="filter-grid-4">
+                <!-- 6 Clean Filter Fields in Grid -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 18px;">
+                    <!-- 1. Job Title -->
                     <div class="filter-field-group">
                         <label class="filter-field-label"><i class="fa-solid fa-user-gear" style="color: #00a884;"></i> Job Title</label>
                         <div class="filter-field-input-wrap">
@@ -321,6 +322,7 @@
                         </div>
                     </div>
 
+                    <!-- 2. Skills & Tech Stack -->
                     <div class="filter-field-group">
                         <label class="filter-field-label"><i class="fa-solid fa-code" style="color: #00a884;"></i> Skills & Tech Stack</label>
                         <div class="filter-field-input-wrap">
@@ -329,6 +331,7 @@
                         </div>
                     </div>
 
+                    <!-- 3. Job Type -->
                     <div class="filter-field-group">
                         <label class="filter-field-label"><i class="fa-solid fa-briefcase" style="color: #00a884;"></i> Job Type</label>
                         <div class="filter-field-input-wrap">
@@ -344,6 +347,7 @@
                         </div>
                     </div>
 
+                    <!-- 4. Notice Period -->
                     <div class="filter-field-group">
                         <label class="filter-field-label"><i class="fa-solid fa-clock" style="color: #00a884;"></i> Notice Period</label>
                         <div class="filter-field-input-wrap">
@@ -358,26 +362,34 @@
                             </select>
                         </div>
                     </div>
-                </div>
 
-                <!-- Row 2 -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 0;">
+                    <!-- 5. Current CTC -->
                     <div class="filter-field-group">
-                        <label class="filter-field-label"><i class="fa-solid fa-indian-rupee-sign" style="color: #00a884;"></i> Expected CTC (₹)</label>
+                        <label class="filter-field-label"><i class="fa-solid fa-indian-rupee-sign" style="color: #00a884;"></i> Current CTC (Max ₹)</label>
                         <div class="filter-field-input-wrap">
                             <i class="fa-solid fa-indian-rupee-sign"></i>
-                            <input type="number" step="50000" min="0" name="expected_ctc" placeholder="e.g. 800000" value="{{ request('expected_ctc') }}">
+                            <input type="number" step="50000" min="0" name="current_ctc" placeholder="e.g. 500000" value="{{ request('current_ctc') }}">
                         </div>
                     </div>
 
-                    <div style="display: flex; align-items: flex-end; gap: 10px;">
-                        <button type="submit" class="btn btn-primary" style="flex: 1; background-color: #00a884; border-color: #00a884; padding: 10px; border-radius: 10px; font-weight: 700;">
-                            <i class="fa-solid fa-check"></i> Apply Matrix
-                        </button>
-                        <button type="button" onclick="resetATSFilters()" class="btn btn-secondary" style="padding: 10px 14px; border-radius: 10px;">
-                            Reset
-                        </button>
+                    <!-- 6. Location -->
+                    <div class="filter-field-group">
+                        <label class="filter-field-label"><i class="fa-solid fa-location-dot" style="color: #00a884;"></i> Location</label>
+                        <div class="filter-field-input-wrap">
+                            <i class="fa-solid fa-location-dot"></i>
+                            <input type="text" name="location" placeholder="e.g. Mumbai, Delhi, Remote..." value="{{ request('location') }}">
+                        </div>
                     </div>
+                </div>
+
+                <!-- Action Footer Buttons -->
+                <div style="display: flex; gap: 10px; justify-content: flex-end; pt: 12px; border-top: 1px solid #e6f7f3;">
+                    <button type="submit" class="btn btn-primary" style="background-color: #00a884; border-color: #00a884; padding: 10px 24px; border-radius: 10px; font-weight: 700;">
+                        <i class="fa-solid fa-check"></i> Apply Matrix
+                    </button>
+                    <button type="button" onclick="resetATSFilters()" class="btn btn-secondary" style="padding: 10px 18px; border-radius: 10px; font-weight: 600;">
+                        Reset
+                    </button>
                 </div>
             </div>
         </form>
