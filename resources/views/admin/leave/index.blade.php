@@ -346,6 +346,7 @@ function showLeaveDetails(app, empName, empCode, leaveTypeName, approverName) {
     var modal = document.getElementById('leaveDetailsModal');
     modal.style.display = 'flex';
 }
+</script>
 
 <!-- Modal: Add New Custom Leave Type -->
 <div id="addLeaveTypeModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 99999; align-items: center; justify-content: center; padding: 20px;" onclick="closeAddLeaveTypeModalOnOverlay(event)">
@@ -410,7 +411,7 @@ function confirmDeleteLeaveType(id, name) {
     }).then((result) => {
         if (result.isConfirmed) {
             var form = document.getElementById('deleteLeaveTypeForm');
-            form.action = '/admin/leave/type/' + id;
+            form.action = '{{ url("/admin/leave/type") }}/' + id;
             form.submit();
         }
     });
