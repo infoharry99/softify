@@ -301,7 +301,8 @@ class CandidateController extends Controller
         $fileKey = ($type === 'edited' && $candidate->edited_resume) ? $candidate->edited_resume : $candidate->resume;
 
         if (!$fileKey || !Storage::disk('public')->exists($fileKey)) {
-            return back()->with('error', 'Requested resume file not found on server.');
+            $typeName = ($type === 'edited') ? 'Edited Copy' : 'Original';
+            return back()->with('error', "{$typeName} resume file for '{$candidate->name}' is not available on server.");
         }
 
         $suffix = ($type === 'edited') ? '_Edited_Copy' : '_Original';
@@ -317,7 +318,43 @@ class CandidateController extends Controller
         $fileKey = ($type === 'edited' && $candidate->edited_resume) ? $candidate->edited_resume : $candidate->resume;
 
         if (!$fileKey || !Storage::disk('public')->exists($fileKey)) {
-            return back()->with('error', 'Requested resume file not found on server.');
+            $typeName = ($type === 'edited') ? 'Edited Copy Resume' : 'Original Candidate Resume';
+            $editUrl = route('admin.candidates.edit', $candidate->id);
+            $canEdit = auth()->user() && auth()->user()->hasPermission('candidates.edit');
+
+            return response(
+                "<!DOCTYPE html>
+                <html lang='en'>
+                <head>
+                    <meta charset='UTF-8'>
+                    <title>Resume File Not Available</title>
+                    <style>
+                        body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8fafc; margin: 0; padding: 40px 20px; display: flex; align-items: center; justify-content: center; min-height: 80vh; }
+                        .error-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); max-width: 450px; width: 100%; padding: 35px 25px; text-align: center; }
+                        .error-icon { font-size: 3.2rem; color: #ef4444; margin-bottom: 15px; }
+                        .error-title { font-size: 1.2rem; font-weight: 700; color: #0f172a; margin-bottom: 8px; }
+                        .error-desc { font-size: 0.88rem; color: #64748b; line-height: 1.5; margin-bottom: 20px; }
+                        .badge-type { display: inline-block; background: #f1f5f9; color: #475569; font-size: 0.78rem; font-weight: 600; padding: 4px 10px; border-radius: 6px; margin-bottom: 15px; }
+                        .action-btn { display: inline-block; background-color: #00a884; color: #ffffff; text-decoration: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; font-size: 0.88rem; }
+                        .action-btn:hover { background-color: #008f70; }
+                    </style>
+                    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'>
+                </head>
+                <body>
+                    <div class='error-card'>
+                        <div class='error-icon'><i class='fa-solid fa-file-circle-xmark'></i></div>
+                        <div class='badge-type'>{$typeName}</div>
+                        <div class='error-title'>Resume File Not Available</div>
+                        <div class='error-desc'>
+                            The <strong>{$typeName}</strong> for <strong>" . htmlspecialchars($candidate->name) . "</strong> has not been uploaded yet or is not stored on the server.
+                        </div>
+                        " . ($canEdit ? "<a href='{$editUrl}' target='_top' class='action-btn'><i class='fa-solid fa-upload'></i> Upload Resume File</a>" : "") . "
+                    </div>
+                </body>
+                </html>",
+                200,
+                ['Content-Type' => 'text/html']
+            );
         }
 
         $filePath = Storage::disk('public')->path($fileKey);
