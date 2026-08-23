@@ -80,6 +80,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/bda-excel/{bdaWork}/edit', [BdaWorkExcelController::class, 'edit'])->name('bda.excel.edit');
     Route::put('/bda-excel/{bdaWork}', [BdaWorkExcelController::class, 'update'])->name('bda.excel.update');
     Route::get('/bda-excel/{bdaWork}/download', [BdaWorkExcelController::class, 'download'])->name('bda.excel.download');
+    Route::get('/bda-excel/{bdaWork}/stream', [BdaWorkExcelController::class, 'streamFile'])->name('bda.excel.stream');
     Route::delete('/bda-excel/{bdaWork}', [BdaWorkExcelController::class, 'destroy'])->name('bda.excel.destroy');
 
     // Talent Acquisition (TA) Work Assignment Management

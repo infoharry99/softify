@@ -200,6 +200,32 @@ class BdaWorkExcelController extends Controller
     }
 
     /**
+     * Stream Excel / CSV file binary content for in-browser viewer.
+     */
+    public function streamFile(BdaWork $bdaWork)
+    {
+        $this->authorizeAccess($bdaWork);
+
+        if (!$bdaWork->file_path || !Storage::disk('public')->exists($bdaWork->file_path)) {
+            abort(404, 'Excel file not found on server.');
+        }
+
+        $filePath = Storage::disk('public')->path($bdaWork->file_path);
+        $ext = $bdaWork->file_extension;
+        $mimeType = match($ext) {
+            'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'xls' => 'application/vnd.ms-excel',
+            'csv' => 'text/csv',
+            default => 'application/octet-stream',
+        };
+
+        return response()->file($filePath, [
+            'Content-Type' => $mimeType,
+            'Content-Disposition' => 'inline; filename="' . $bdaWork->file_name . '"',
+        ]);
+    }
+
+    /**
      * Delete an uploaded BDA Work record.
      */
     public function destroy(BdaWork $bdaWork)
