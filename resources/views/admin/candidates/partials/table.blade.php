@@ -1,5 +1,5 @@
 <div class="table-responsive">
-    <table class="table">
+    <table class="table" style="vertical-align: middle;">
         <thead>
             <tr>
                 <th>Candidate Details</th>
@@ -13,7 +13,25 @@
         </thead>
         <tbody>
             @forelse($candidates as $cand)
-            <tr>
+            @php
+                $rawSkills = $cand->skills ?? '';
+                // Remove category headers
+                $cleanSkills = preg_replace('/(Golang:|PHP:|Python:|iOS:|Databases:|Web Technologies:|Cloud & DevOps:|CI\/CD:|Others:|Microservices:)/i', '', $rawSkills);
+                // Split on commas, pipes, semicolons, or newlines
+                $rawItems = preg_split('/[,\|\;\n\r\t]+/', $cleanSkills);
+
+                $parsedSkills = [];
+                foreach($rawItems as $item) {
+                    $item = trim(preg_replace('/^[\:\s\¦]+|[\:\s\¦]+$/u', '', $item));
+                    if ($item !== '' && strlen($item) > 1 && !in_array(strtolower($item), ['and', 'with', 'or', 'for'])) {
+                        $parsedSkills[] = $item;
+                    }
+                }
+                $parsedSkills = array_values(array_unique($parsedSkills));
+                $displaySkills = array_slice($parsedSkills, 0, 4);
+                $remainingCount = count($parsedSkills) - count($displaySkills);
+            @endphp
+            <tr style="vertical-align: middle;">
                 <td>
                     <strong style="color: var(--text-main); font-size: 0.95rem;">{{ $cand->name }}</strong>
                     <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 3px;"><i class="fa-regular fa-envelope"></i> {{ $cand->email }}</div>
@@ -28,14 +46,22 @@
                     <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">Recruiter: {{ $cand->hr->name ?? 'HR' }}</div>
                 </td>
                 <td>
-                    <div style="max-width: 200px; display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 4px;">
-                        @foreach(explode(',', $cand->skills) as $sk)
-                            @if(trim($sk) !== '')
-                                <span class="badge badge-secondary" style="font-size: 0.7rem; background-color: #f0faf7; color: #00a884; border: 1px solid #9ee5d4;">{{ trim($sk) }}</span>
-                            @endif
-                        @endforeach
+                    <div style="max-width: 220px; display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 4px;">
+                        @forelse($displaySkills as $sk)
+                            <span class="badge badge-secondary" style="font-size: 0.7rem; background-color: #f0faf7; color: #00a884; border: 1px solid #9ee5d4; font-weight: 600; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ $sk }}">
+                                {{ Str::limit($sk, 25) }}
+                            </span>
+                        @empty
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">{{ Str::limit($cand->skills, 30) }}</span>
+                        @endforelse
+
+                        @if($remainingCount > 0)
+                            <span class="badge badge-secondary" style="font-size: 0.68rem; background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; font-weight: 600;" title="{{ implode(', ', array_slice($parsedSkills, 4)) }}">
+                                +{{ $remainingCount }} more
+                            </span>
+                        @endif
                     </div>
-                    <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">
+                    <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; margin-top: 2px;">
                         Experience: {{ $cand->experience }} Yrs
                     </div>
                 </td>
