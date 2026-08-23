@@ -61,6 +61,12 @@
                 <span>BDA Daily Targets</span>
             </a>
         </li>
+        <li class="menu-item">
+            <a href="{{ route('bda.excel.index') }}" class="menu-link {{ request()->routeIs('bda.excel.*') ? 'active' : '' }}">
+                <i class="fa-solid fa-file-excel" style="color: #10b981;"></i>
+                <span>BDA Excel Uploads</span>
+            </a>
+        </li>
         @endif
 
         @if(auth()->user()->hasRole('ta-team-lead') || auth()->user()->hasRole('talent-acquisition') || auth()->user()->hasRole('super-admin') || auth()->user()->hasRole('admin') || auth()->user()->department === 'Talent')

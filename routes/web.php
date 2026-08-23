@@ -21,6 +21,7 @@ use App\Http\Controllers\Employee\EmployeeSalaryController;
 use App\Http\Controllers\Employee\EmployeeDocumentController;
 use App\Http\Controllers\Employee\NotificationController;
 use App\Http\Controllers\BdaWorkController;
+use App\Http\Controllers\BdaWorkExcelController;
 use App\Http\Controllers\TaWorkController;
 
 /*
@@ -70,6 +71,16 @@ Route::middleware('auth')->group(function () {
     Route::post('/bda/work/{task}/update-employee', [BdaWorkController::class, 'updateEmployee'])->name('bda.work.update_employee');
     Route::post('/bda/work/{task}/update-lead', [BdaWorkController::class, 'updateLead'])->name('bda.work.update_lead');
     Route::delete('/bda/work/{task}', [BdaWorkController::class, 'destroy'])->name('bda.work.destroy');
+
+    // BDA Work Excel Upload Module Routes
+    Route::get('/bda-excel', [BdaWorkExcelController::class, 'index'])->name('bda.excel.index');
+    Route::get('/bda-excel/create', [BdaWorkExcelController::class, 'create'])->name('bda.excel.create');
+    Route::post('/bda-excel', [BdaWorkExcelController::class, 'store'])->name('bda.excel.store');
+    Route::get('/bda-excel/{bdaWork}', [BdaWorkExcelController::class, 'show'])->name('bda.excel.show');
+    Route::get('/bda-excel/{bdaWork}/edit', [BdaWorkExcelController::class, 'edit'])->name('bda.excel.edit');
+    Route::put('/bda-excel/{bdaWork}', [BdaWorkExcelController::class, 'update'])->name('bda.excel.update');
+    Route::get('/bda-excel/{bdaWork}/download', [BdaWorkExcelController::class, 'download'])->name('bda.excel.download');
+    Route::delete('/bda-excel/{bdaWork}', [BdaWorkExcelController::class, 'destroy'])->name('bda.excel.destroy');
 
     // Talent Acquisition (TA) Work Assignment Management
     Route::get('/ta/work', [TaWorkController::class, 'index'])->name('ta.work.index');

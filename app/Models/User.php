@@ -55,4 +55,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Employee::class);
     }
+
+    public function bdaWorks()
+    {
+        return $this->hasMany(BdaWork::class, 'uploaded_by');
+    }
 }
