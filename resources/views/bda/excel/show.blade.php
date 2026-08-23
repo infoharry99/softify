@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function loadSpreadsheetData() {
-    const streamUrl = "{{ route('bda.excel.stream', $bdaWork->id) }}";
+    const streamUrl = "{{ url('/bda-excel/' . $bdaWork->id . '/stream') }}";
     
     fetch(streamUrl)
         .then(response => {

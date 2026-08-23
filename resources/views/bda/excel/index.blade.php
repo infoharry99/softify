@@ -99,7 +99,7 @@
                         <span class="badge {{ $badgeClass }}" style="font-size: 0.72rem;">{{ $roleName }}</span>
                     </td>
                     <td>
-                        <button type="button" onclick="openExcelModal('{{ route('bda.excel.stream', $work->id) }}', '{{ route('bda.excel.download', $work->id) }}', '{{ addslashes($work->title) }}', '{{ addslashes($work->file_name) }}')" style="background: none; border: none; padding: 0; cursor: pointer; text-align: left;">
+                        <button type="button" onclick="openExcelModal('{{ url('/bda-excel/' . $work->id . '/stream') }}', '{{ route('bda.excel.download', $work->id) }}', '{{ addslashes($work->title) }}', '{{ addslashes($work->file_name) }}')" style="background: none; border: none; padding: 0; cursor: pointer; text-align: left;">
                             <div style="display: flex; align-items: center; gap: 6px; font-size: 0.82rem; color: #0284c7; font-weight: 600;">
                                 <i class="fa-solid fa-file-excel" style="color: #10b981; font-size: 1.1rem;"></i>
                                 <span style="max-width: 170px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ $work->file_name }}">
@@ -119,7 +119,7 @@
                     <td style="text-align: right;">
                         <div style="display: flex; gap: 6px; justify-content: flex-end;">
                             <!-- Open Excel Viewer Action -->
-                            <button type="button" onclick="openExcelModal('{{ route('bda.excel.stream', $work->id) }}', '{{ route('bda.excel.download', $work->id) }}', '{{ addslashes($work->title) }}', '{{ addslashes($work->file_name) }}')" class="btn btn-secondary btn-sm" title="Open Excel Sheet in Browser" style="border-radius: 6px; padding: 5px 10px; font-size: 0.78rem; font-weight: 600; color: #10b981;">
+                            <button type="button" onclick="openExcelModal('{{ url('/bda-excel/' . $work->id . '/stream') }}', '{{ route('bda.excel.download', $work->id) }}', '{{ addslashes($work->title) }}', '{{ addslashes($work->file_name) }}')" class="btn btn-secondary btn-sm" title="Open Excel Sheet in Browser" style="border-radius: 6px; padding: 5px 10px; font-size: 0.78rem; font-weight: 600; color: #10b981;">
                                 <i class="fa-solid fa-table-cells"></i> Open Sheet
                             </button>
 
