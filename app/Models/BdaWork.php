@@ -14,6 +14,7 @@ class BdaWork extends Model
     protected $fillable = [
         'title',
         'description',
+        'file_url',
         'file_path',
         'file_name',
         'uploaded_by',

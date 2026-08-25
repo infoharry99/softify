@@ -76,28 +76,39 @@ class BdaWorkExcelController extends Controller
     }
 
     /**
-     * Store newly uploaded BDA Work Excel file.
+     * Store newly uploaded BDA Work Excel file or Google Sheet URL.
      */
     public function store(Request $request)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string|max:2000',
-            'excel_file' => 'required|file|mimes:xlsx,xls,csv|max:10240',
+            'file_url' => 'nullable|url|max:2000',
+            'excel_file' => 'nullable|file|mimes:xlsx,xls,csv|max:10240',
         ], [
-            'excel_file.required' => 'Please select an Excel (.xlsx, .xls) or CSV file to upload.',
+            'file_url.url' => 'Please enter a valid Google Sheets or external URL (e.g. https://docs.google.com/spreadsheets/d/...).',
             'excel_file.mimes' => 'Only Excel (.xlsx, .xls) and CSV (.csv) files are allowed.',
             'excel_file.max' => 'The uploaded file size must not exceed 10 MB.',
         ]);
 
-        $file = $request->file('excel_file');
-        $originalName = $file->getClientOriginalName();
-        $storedName = 'bda_work_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-        $filePath = $file->storeAs('bda_work_excels', $storedName, 'public');
+        if (empty($request->file_url) && !$request->hasFile('excel_file')) {
+            return back()->withInput()->withErrors(['excel_file' => 'Please either upload an Excel file or provide a Google Sheets URL (or both).']);
+        }
+
+        $filePath = null;
+        $originalName = null;
+
+        if ($request->hasFile('excel_file')) {
+            $file = $request->file('excel_file');
+            $originalName = $file->getClientOriginalName();
+            $storedName = 'bda_work_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $filePath = $file->storeAs('bda_work_excels', $storedName, 'public');
+        }
 
         $bdaWork = BdaWork::create([
             'title' => trim($validated['title']),
             'description' => isset($validated['description']) ? trim($validated['description']) : null,
+            'file_url' => isset($validated['file_url']) ? trim($validated['file_url']) : null,
             'file_path' => $filePath,
             'file_name' => $originalName,
             'uploaded_by' => auth()->id(),
@@ -105,13 +116,13 @@ class BdaWorkExcelController extends Controller
 
         ActivityLogger::log(
             'BDA Work Excel Uploaded',
-            "Uploaded BDA work Excel file '{$originalName}' with title '{$bdaWork->title}'",
+            "Uploaded BDA work file/link for title '{$bdaWork->title}'",
             BdaWork::class,
             $bdaWork->id
         );
 
         return redirect()->route('bda.excel.index')
-            ->with('success', "BDA Work Excel file '{$originalName}' uploaded successfully.");
+            ->with('success', "BDA Work '{$bdaWork->title}' saved successfully.");
     }
 
     /**
@@ -136,7 +147,7 @@ class BdaWorkExcelController extends Controller
     }
 
     /**
-     * Update an uploaded BDA Work record (Title, Description, or replacement Excel file).
+     * Update an uploaded BDA Work record (Title, Description, Google Sheet URL, or replacement Excel file).
      */
     public function update(Request $request, BdaWork $bdaWork)
     {
@@ -145,8 +156,10 @@ class BdaWorkExcelController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string|max:2000',
+            'file_url' => 'nullable|url|max:2000',
             'excel_file' => 'nullable|file|mimes:xlsx,xls,csv|max:10240',
         ], [
+            'file_url.url' => 'Please enter a valid Google Sheets or external URL (e.g. https://docs.google.com/spreadsheets/d/...).',
             'excel_file.mimes' => 'Only Excel (.xlsx, .xls) and CSV (.csv) files are allowed.',
             'excel_file.max' => 'The uploaded file size must not exceed 10 MB.',
         ]);
@@ -154,6 +167,7 @@ class BdaWorkExcelController extends Controller
         $updateData = [
             'title' => trim($validated['title']),
             'description' => isset($validated['description']) ? trim($validated['description']) : null,
+            'file_url' => isset($validated['file_url']) ? trim($validated['file_url']) : null,
         ];
 
         // Handle replacement Excel file if uploaded

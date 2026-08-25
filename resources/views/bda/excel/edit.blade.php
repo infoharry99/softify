@@ -4,11 +4,11 @@
 @section('page_title', 'Edit BDA Work Upload')
 
 @section('content')
-<div style="max-width: 750px; margin: 0 auto;">
+<div style="max-width: 780px; margin: 0 auto;">
     <div class="card">
         <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
             <h3 class="card-title" style="display: flex; align-items: center; gap: 10px;">
-                <i class="fa-solid fa-pen-to-square" style="color: #0284c7;"></i> Edit BDA Work Upload
+                <i class="fa-solid fa-pen-to-square" style="color: #0284c7;"></i> Edit BDA Work Record
             </h3>
 
             <a href="{{ route('bda.excel.index') }}" class="btn btn-secondary btn-sm" style="border-radius: 8px;">
@@ -33,19 +33,37 @@
                 <!-- Description -->
                 <div class="form-group" style="margin-bottom: 20px;">
                     <label class="form-label" style="font-weight: 700; color: #0f172a;">Description / Work Notes</label>
-                    <textarea name="description" class="form-control @error('description') is-invalid @enderror" rows="4" placeholder="Enter key details or work notes...">{{ old('description', $bdaWork->description) }}</textarea>
+                    <textarea name="description" class="form-control @error('description') is-invalid @enderror" rows="3" placeholder="Enter key details or work notes...">{{ old('description', $bdaWork->description) }}</textarea>
                     @error('description')
                         <span class="text-danger" style="font-size: 0.8rem; margin-top: 4px; display: block;">{{ $message }}</span>
                     @enderror
                 </div>
 
+                <!-- Google Sheets / External URL -->
+                <div class="form-group" style="margin-bottom: 22px; background: #f0fdf4; border: 1px solid #a7f3d0; padding: 16px 18px; border-radius: 12px;">
+                    <label class="form-label" style="font-weight: 700; color: #065f46; display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px;">
+                        <span><i class="fa-solid fa-link" style="color: #10b981;"></i> Google Sheet / External Excel URL <span style="font-weight: 400; color: #047857; font-size: 0.78rem;">(Optional)</span></span>
+                        @if($bdaWork->file_url)
+                            <a href="{{ $bdaWork->file_url }}" target="_blank" rel="noopener noreferrer" style="font-size: 0.78rem; color: #0284c7; font-weight: 700; text-decoration: none;">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i> Test Link
+                            </a>
+                        @endif
+                    </label>
+                    <input type="url" name="file_url" class="form-control @error('file_url') is-invalid @enderror" value="{{ old('file_url', $bdaWork->file_url) }}" placeholder="https://docs.google.com/spreadsheets/d/your-sheet-id/edit">
+                    <span style="font-size: 0.76rem; color: #047857; margin-top: 5px; display: block;">Paste any public or shareable Google Sheets URL. Clicking it will open directly in a new browser tab.</span>
+                    @error('file_url')
+                        <span class="text-danger" style="font-size: 0.8rem; margin-top: 4px; display: block;">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                @if($bdaWork->file_name)
                 <!-- Current Excel File Box -->
-                <div style="background: #f0fdf4; border: 1px solid #a7f3d0; border-radius: 10px; padding: 14px 18px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;">
+                <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px 18px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;">
                     <div style="display: flex; align-items: center; gap: 10px;">
                         <i class="fa-solid fa-file-excel" style="font-size: 1.5rem; color: #10b981;"></i>
                         <div>
-                            <div style="font-size: 0.88rem; font-weight: 700; color: #065f46;">Current File: {{ $bdaWork->file_name }}</div>
-                            <div style="font-size: 0.76rem; color: #047857;">Leave replacement field empty to keep this existing file.</div>
+                            <div style="font-size: 0.88rem; font-weight: 700; color: #0f172a;">Current File: {{ $bdaWork->file_name }}</div>
+                            <div style="font-size: 0.76rem; color: #64748b;">Leave replacement field empty to keep this existing file.</div>
                         </div>
                     </div>
 
@@ -53,12 +71,13 @@
                         <i class="fa-solid fa-download"></i> Download
                     </a>
                 </div>
+                @endif
 
                 <!-- Replace Excel File (Optional) -->
                 <div class="form-group" style="margin-bottom: 25px;">
-                    <label class="form-label" style="font-weight: 700; color: #0f172a;">Replace Excel File (Optional)</label>
+                    <label class="form-label" style="font-weight: 700; color: #0f172a;">Replace / Upload Excel File (Optional)</label>
                     <div style="border: 2px dashed #cbd5e1; background: #f8fafc; border-radius: 12px; padding: 20px; text-align: center;">
-                        <div style="font-size: 0.88rem; font-weight: 600; color: #334155; margin-bottom: 4px;">Upload New Excel File to Replace Current File</div>
+                        <div style="font-size: 0.88rem; font-weight: 600; color: #334155; margin-bottom: 4px;">Upload New Excel File to Replace or Attach</div>
                         <div style="font-size: 0.78rem; color: #64748b; margin-bottom: 12px;">Accepted formats: .xlsx, .xls, .csv (Max 10 MB)</div>
                         
                         <input type="file" name="excel_file" id="excel_file" class="form-control @error('excel_file') is-invalid @enderror" accept=".xlsx,.xls,.csv" style="max-width: 380px; margin: 0 auto;">

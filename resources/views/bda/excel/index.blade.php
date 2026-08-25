@@ -10,11 +10,11 @@
             <h3 class="card-title" style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
                 <i class="fa-solid fa-file-excel" style="color: #10b981;"></i> BDA Work Excel Directory
             </h3>
-            <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0;">Upload, view, and open Excel work reports directly in system.</p>
+            <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0;">Upload, view, and open Excel files or Google Sheets directly.</p>
         </div>
 
         <a href="{{ route('bda.excel.create') }}" class="btn btn-primary" style="border-radius: 8px; font-weight: 700;">
-            <i class="fa-solid fa-cloud-arrow-up"></i> + Upload New BDA Work
+            <i class="fa-solid fa-cloud-arrow-up"></i> + Upload BDA Work / Link
         </a>
     </div>
 
@@ -61,7 +61,7 @@
                     <th>Description</th>
                     <th>Uploaded By</th>
                     <th>User Role</th>
-                    <th>Excel File Name</th>
+                    <th>Excel / Google Sheet</th>
                     <th>Upload Date</th>
                     <th>Last Updated</th>
                     <th style="text-align: right;">Actions</th>
@@ -78,7 +78,7 @@
                         </strong>
                     </td>
                     <td>
-                        <div style="max-width: 200px; font-size: 0.82rem; color: #475569; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ $work->description }}">
+                        <div style="max-width: 180px; font-size: 0.82rem; color: #475569; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ $work->description }}">
                             {{ $work->description ?? 'N/A' }}
                         </div>
                     </td>
@@ -99,14 +99,28 @@
                         <span class="badge {{ $badgeClass }}" style="font-size: 0.72rem;">{{ $roleName }}</span>
                     </td>
                     <td>
-                        <button type="button" onclick="openExcelModal('{{ url('/bda-excel/' . $work->id . '/stream') }}', '{{ route('bda.excel.download', $work->id) }}', '{{ addslashes($work->title) }}', '{{ addslashes($work->file_name) }}')" style="background: none; border: none; padding: 0; cursor: pointer; text-align: left;">
-                            <div style="display: flex; align-items: center; gap: 6px; font-size: 0.82rem; color: #0284c7; font-weight: 600;">
-                                <i class="fa-solid fa-file-excel" style="color: #10b981; font-size: 1.1rem;"></i>
-                                <span style="max-width: 170px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ $work->file_name }}">
-                                    {{ $work->file_name }}
-                                </span>
-                            </div>
-                        </button>
+                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                            @if($work->file_url)
+                            <a href="{{ $work->file_url }}" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 5px; font-size: 0.8rem; color: #059669; font-weight: 700; text-decoration: none;" title="{{ $work->file_url }}">
+                                <i class="fa-solid fa-link" style="color: #10b981;"></i> Google Sheet ↗
+                            </a>
+                            @endif
+
+                            @if($work->file_name)
+                            <button type="button" onclick="openExcelModal('{{ url('/bda-excel/' . $work->id . '/stream') }}', '{{ route('bda.excel.download', $work->id) }}', '{{ addslashes($work->title) }}', '{{ addslashes($work->file_name) }}')" style="background: none; border: none; padding: 0; cursor: pointer; text-align: left;">
+                                <div style="display: flex; align-items: center; gap: 5px; font-size: 0.8rem; color: #0284c7; font-weight: 600;">
+                                    <i class="fa-solid fa-file-excel" style="color: #10b981;"></i>
+                                    <span style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ $work->file_name }}">
+                                        {{ $work->file_name }}
+                                    </span>
+                                </div>
+                            </button>
+                            @endif
+
+                            @if(!$work->file_url && !$work->file_name)
+                            <span style="font-size: 0.8rem; color: #94a3b8;">No File/URL</span>
+                            @endif
+                        </div>
                     </td>
                     <td>
                         <div style="font-size: 0.82rem; color: #334155;">{{ $work->created_at->format('M d, Y') }}</div>
@@ -117,32 +131,41 @@
                         <div style="font-size: 0.74rem; color: var(--text-muted);">{{ $work->updated_at->format('h:i A') }}</div>
                     </td>
                     <td style="text-align: right;">
-                        <div style="display: flex; gap: 6px; justify-content: flex-end;">
+                        <div style="display: flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap;">
+                            @if($work->file_url)
+                            <!-- Open Google Sheet in New Tab -->
+                            <a href="{{ $work->file_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" title="Open Google Sheet in new tab" style="border-radius: 6px; padding: 5px 9px; font-size: 0.78rem; font-weight: 700; color: #059669; background: #ecfdf5; border-color: #a7f3d0;">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Sheet ↗
+                            </a>
+                            @endif
+
+                            @if($work->file_name)
                             <!-- Open Excel Viewer Action -->
-                            <button type="button" onclick="openExcelModal('{{ url('/bda-excel/' . $work->id . '/stream') }}', '{{ route('bda.excel.download', $work->id) }}', '{{ addslashes($work->title) }}', '{{ addslashes($work->file_name) }}')" class="btn btn-secondary btn-sm" title="Open Excel Sheet in Browser" style="border-radius: 6px; padding: 5px 10px; font-size: 0.78rem; font-weight: 600; color: #10b981;">
-                                <i class="fa-solid fa-table-cells"></i> Open Sheet
+                            <button type="button" onclick="openExcelModal('{{ url('/bda-excel/' . $work->id . '/stream') }}', '{{ route('bda.excel.download', $work->id) }}', '{{ addslashes($work->title) }}', '{{ addslashes($work->file_name) }}')" class="btn btn-secondary btn-sm" title="Open Excel Sheet in Browser" style="border-radius: 6px; padding: 5px 9px; font-size: 0.78rem; font-weight: 600; color: #10b981;">
+                                <i class="fa-solid fa-table-cells"></i> View File
                             </button>
 
+                            <!-- Download Action -->
+                            <a href="{{ route('bda.excel.download', $work->id) }}" class="btn btn-secondary btn-sm" title="Download Excel File" style="border-radius: 6px; padding: 5px 8px; font-size: 0.78rem; font-weight: 600; color: #64748b;">
+                                <i class="fa-solid fa-download"></i>
+                            </a>
+                            @endif
+
                             <!-- View Details Page Action -->
-                            <a href="{{ route('bda.excel.show', $work->id) }}" class="btn btn-secondary btn-sm" title="View Details" style="border-radius: 6px; padding: 5px 10px; font-size: 0.78rem; font-weight: 600;">
-                                <i class="fa-solid fa-eye" style="color: #00a884;"></i> View
+                            <a href="{{ route('bda.excel.show', $work->id) }}" class="btn btn-secondary btn-sm" title="View Details" style="border-radius: 6px; padding: 5px 9px; font-size: 0.78rem; font-weight: 600;">
+                                <i class="fa-solid fa-eye" style="color: #00a884;"></i> Details
                             </a>
 
                             <!-- Edit Action -->
-                            <a href="{{ route('bda.excel.edit', $work->id) }}" class="btn btn-secondary btn-sm" title="Edit Upload" style="border-radius: 6px; padding: 5px 10px; font-size: 0.78rem; font-weight: 600; color: #475569;">
-                                <i class="fa-solid fa-pen-to-square" style="color: #0284c7;"></i> Edit
-                            </a>
-
-                            <!-- Download Action -->
-                            <a href="{{ route('bda.excel.download', $work->id) }}" class="btn btn-secondary btn-sm" title="Download Excel File" style="border-radius: 6px; padding: 5px 10px; font-size: 0.78rem; font-weight: 600; color: #64748b;">
-                                <i class="fa-solid fa-download"></i>
+                            <a href="{{ route('bda.excel.edit', $work->id) }}" class="btn btn-secondary btn-sm" title="Edit Upload" style="border-radius: 6px; padding: 5px 8px; font-size: 0.78rem; font-weight: 600; color: #475569;">
+                                <i class="fa-solid fa-pen-to-square" style="color: #0284c7;"></i>
                             </a>
 
                             <!-- Delete Action -->
                             <form id="delete-bda-work-{{ $work->id }}" action="{{ route('bda.excel.destroy', $work->id) }}" method="POST" style="display: inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="button" class="btn btn-secondary btn-sm" onclick="confirmDeleteWork({{ $work->id }}, '{{ addslashes($work->title) }}')" title="Delete Upload" style="border-radius: 6px; padding: 5px 10px; font-size: 0.78rem; color: #ef4444;">
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="confirmDeleteWork({{ $work->id }}, '{{ addslashes($work->title) }}')" title="Delete Upload" style="border-radius: 6px; padding: 5px 8px; font-size: 0.78rem; color: #ef4444;">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
                             </form>
@@ -155,8 +178,8 @@
                         <div style="font-size: 2.5rem; color: #cbd5e1; margin-bottom: 10px;">
                             <i class="fa-solid fa-file-excel"></i>
                         </div>
-                        <div style="font-size: 0.98rem; font-weight: 700; color: #475569;">No BDA Work Excel Files Found</div>
-                        <div style="font-size: 0.82rem; color: #94a3b8; margin-top: 4px;">Click the button above to upload a new BDA Work Excel file.</div>
+                        <div style="font-size: 0.98rem; font-weight: 700; color: #475569;">No BDA Work Files Found</div>
+                        <div style="font-size: 0.82rem; color: #94a3b8; margin-top: 4px;">Click the button above to upload a new BDA Work Excel file or Google Sheet link.</div>
                     </td>
                 </tr>
                 @endforelse
@@ -370,12 +393,12 @@ function filterModalSheetData() {
 function confirmDeleteWork(id, title) {
     Swal.fire({
         title: 'Delete BDA Work Upload?',
-        text: "Are you sure you want to delete '" + title + "'? The Excel file will be permanently removed.",
+        text: "Are you sure you want to delete '" + title + "'? The record will be permanently removed.",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#ef4444',
         cancelButtonColor: '#64748b',
-        confirmButtonText: 'Yes, Delete Upload'
+        confirmButtonText: 'Yes, Delete Work'
     }).then((result) => {
         if (result.isConfirmed) {
             document.getElementById('delete-bda-work-' + id).submit();

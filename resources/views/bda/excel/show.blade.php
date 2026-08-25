@@ -64,6 +64,28 @@
                 </div>
             </div>
 
+            @if($bdaWork->file_url)
+            <!-- Google Sheet / External Link Banner -->
+            <div style="background: #ecfdf5; border: 1.5px solid #6ee7b7; border-radius: 12px; padding: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; margin-bottom: 25px;">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div style="width: 50px; height: 50px; background: #059669; color: #ffffff; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem;">
+                        <i class="fa-solid fa-link"></i>
+                    </div>
+                    <div>
+                        <div style="font-size: 1rem; font-weight: 700; color: #064e3b;">Google Sheet / External Spreadsheet URL</div>
+                        <div style="font-size: 0.8rem; color: #047857; margin-top: 2px; max-width: 500px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ $bdaWork->file_url }}">
+                            {{ $bdaWork->file_url }}
+                        </div>
+                    </div>
+                </div>
+
+                <a href="{{ $bdaWork->file_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="background-color: #059669; border-color: #059669; border-radius: 8px; font-weight: 700; padding: 10px 22px; font-size: 0.92rem;">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Google Sheet ↗
+                </a>
+            </div>
+            @endif
+
+            @if($bdaWork->file_name && $bdaWork->file_path)
             <!-- Excel File Header Action Card -->
             <div style="background: #f0fdf4; border: 1.5px solid #a7f3d0; border-radius: 12px; padding: 18px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; margin-bottom: 25px;">
                 <div style="display: flex; align-items: center; gap: 15px;">
@@ -127,10 +149,12 @@
                     <div>Softify In-Browser Excel Viewer</div>
                 </div>
             </div>
+            @endif
         </div>
     </div>
 </div>
 
+@if($bdaWork->file_name && $bdaWork->file_path)
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 let currentWorkbook = null;
@@ -264,4 +288,5 @@ function filterSheetData() {
     });
 }
 </script>
+@endif
 @endsection
