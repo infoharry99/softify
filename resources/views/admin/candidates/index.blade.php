@@ -266,7 +266,7 @@
 
     @php
         $activeFilterCount = 0;
-        foreach(['search', 'job_title', 'skill', 'job_type', 'notice_period', 'current_ctc', 'location'] as $key) {
+        foreach(['search', 'job_title', 'skill', 'job_type', 'notice_period', 'current_ctc', 'location', 'experience'] as $key) {
             if(request()->filled($key)) $activeFilterCount++;
         }
         $isFilterActive = $activeFilterCount > 0;
@@ -298,7 +298,7 @@
                 </div>
             </div>
 
-            <!-- Expandable Advanced Multi-Filter Grid (6 Allowed Filters) -->
+            <!-- Expandable Advanced Multi-Filter Grid -->
             <div class="filter-panel-card" id="filterPanel" style="{{ $isFilterActive ? 'display: block;' : 'display: none;' }}">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; padding-bottom: 10px; border-bottom: 1.5px solid #e6f7f3;">
                     <div style="font-size: 0.98rem; font-weight: 700; color: #00a884; display: flex; align-items: center; gap: 8px;">
@@ -311,7 +311,7 @@
                     </div>
                 </div>
 
-                <!-- 6 Clean Filter Fields in Grid -->
+                <!-- Clean Filter Fields in Grid -->
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 18px;">
                     <!-- 1. Job Title -->
                     <div class="filter-field-group">
@@ -378,6 +378,15 @@
                         <div class="filter-field-input-wrap">
                             <i class="fa-solid fa-location-dot"></i>
                             <input type="text" name="location" placeholder="e.g. Mumbai, Delhi, Remote..." value="{{ request('location') }}">
+                        </div>
+                    </div>
+
+                    <!-- 7. Experience (Min Years) -->
+                    <div class="filter-field-group">
+                        <label class="filter-field-label"><i class="fa-solid fa-graduation-cap" style="color: #00a884;"></i> Experience (Min Yrs)</label>
+                        <div class="filter-field-input-wrap">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                            <input type="number" step="0.5" min="0" max="50" name="experience" placeholder="e.g. 2, 5, 8 Yrs..." value="{{ request('experience') }}">
                         </div>
                     </div>
                 </div>

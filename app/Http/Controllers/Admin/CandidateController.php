@@ -16,7 +16,7 @@ class CandidateController extends Controller
      */
     public function index(Request $request)
     {
-        $filterKeys = ['search', 'job_title', 'skill', 'job_type', 'notice_period', 'current_ctc', 'location', 'page'];
+        $filterKeys = ['search', 'job_title', 'skill', 'job_type', 'notice_period', 'current_ctc', 'location', 'experience', 'page'];
 
         // Reset Filters if explicitly requested via reset=1
         if ($request->has('reset') || $request->query('reset') == 1) {
@@ -26,7 +26,7 @@ class CandidateController extends Controller
             }
         } 
         // Save Filters if request has active filter params
-        elseif ($request->anyFilled(['search', 'job_title', 'skill', 'job_type', 'notice_period', 'current_ctc', 'location'])) {
+        elseif ($request->anyFilled(['search', 'job_title', 'skill', 'job_type', 'notice_period', 'current_ctc', 'location', 'experience'])) {
             $activeFilters = array_filter($request->only($filterKeys), fn($val) => !is_null($val) && $val !== '');
             session(['candidate_filters' => $activeFilters]);
             session(['candidate_directory_url' => $request->fullUrl()]);
@@ -82,6 +82,11 @@ class CandidateController extends Controller
         // 7. Filter by Location
         if ($request->filled('location')) {
             $query->where('location', 'like', "%{$request->location}%");
+        }
+
+        // 8. Filter by Min Experience (Years)
+        if ($request->filled('experience')) {
+            $query->where('experience', '>=', (float) $request->experience);
         }
 
         $candidates = $query->latest()->paginate(10)->withQueryString();
