@@ -121,7 +121,8 @@ class AttendanceService
         }
 
         $now = Carbon::now('Asia/Kolkata');
-        $durationMins = (int) $now->diffInMinutes($activeBreak->started_at);
+        $startedAt = Carbon::parse($activeBreak->started_at)->timezone('Asia/Kolkata');
+        $durationMins = (int) round($now->diffInSeconds($startedAt) / 60);
         $isExceeded = $durationMins > self::ALLOWED_BREAK_MINUTES;
         $exceededMins = $isExceeded ? ($durationMins - self::ALLOWED_BREAK_MINUTES) : 0;
 
@@ -186,7 +187,8 @@ class AttendanceService
             ->first();
 
         if ($activeSession) {
-            $sessDuration = (int) $now->diffInMinutes($activeSession->login_at);
+            $loginAt = Carbon::parse($activeSession->login_at)->timezone('Asia/Kolkata');
+            $sessDuration = (int) round($now->diffInSeconds($loginAt) / 60);
             $activeSession->update([
                 'logout_at' => $now,
                 'duration_minutes' => $sessDuration,
