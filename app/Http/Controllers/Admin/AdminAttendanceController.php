@@ -19,15 +19,29 @@ class AdminAttendanceController extends Controller
     {
         $date = $request->get('date', Carbon::today()->toDateString());
 
-        $totalEmployees = Employee::count();
-        $todayAttendances = Attendance::where('date', $date)->get();
+        // Count only valid employees with active user accounts
+        $employeeQuery = Employee::has('user');
+        if (!auth()->user()->hasRole('super-admin')) {
+            $employeeQuery->whereHas('user', function ($q) {
+                $q->whereDoesntHave('roles', function ($rq) {
+                    $rq->where('slug', 'super-admin');
+                });
+            });
+        }
+        $totalEmployees = $employeeQuery->count();
+
+        // Fetch attendance for valid employees on selected date
+        $todayAttendances = Attendance::whereHas('employee.user')
+            ->where('date', $date)
+            ->get();
 
         $presentCount = $todayAttendances->whereIn('status', ['Present', 'Late', 'Half Day'])->count();
         $lateCount = $todayAttendances->where('status', 'Late')->count();
         $leaveCount = $todayAttendances->where('status', 'Leave')->count();
         $absentCount = max(0, $totalEmployees - ($presentCount + $leaveCount));
 
-        $query = Attendance::with(['employee.user', 'sessions', 'breaks'])
+        $query = Attendance::whereHas('employee.user')
+            ->with(['employee.user', 'sessions', 'breaks'])
             ->where('date', $date);
 
         if (!auth()->user()->hasRole('super-admin')) {

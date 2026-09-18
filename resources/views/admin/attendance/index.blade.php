@@ -80,8 +80,8 @@
                 @forelse($attendances as $att)
                 <tr>
                     <td>
-                        <strong>{{ $att->employee->user->name }}</strong>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">{{ $att->employee->employee_code }}</div>
+                        <strong>{{ optional(optional($att->employee)->user)->name ?? 'Unknown Employee' }}</strong>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">{{ optional($att->employee)->employee_code ?? '' }}</div>
                     </td>
                     <td>{{ $att->first_login_at ? $att->first_login_at->format('h:i A') : '--:--' }}</td>
                     <td>{{ $att->last_logout_at ? $att->last_logout_at->format('h:i A') : '--:--' }}</td>
@@ -93,7 +93,7 @@
                         </span>
                     </td>
                     <td style="text-align: right;">
-                        <button type="button" class="btn btn-secondary btn-sm" onclick="openAdjustModal({{ $att->id }}, '{{ $att->status }}', '{{ $att->admin_remarks }}')">
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="openAdjustModal({{ $att->id }}, '{{ $att->status }}', '{{ addslashes($att->admin_remarks ?? '') }}')">
                             ✏️ Adjust
                         </button>
                     </td>

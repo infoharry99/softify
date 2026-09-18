@@ -28,8 +28,8 @@
                 <tr>
                     <td><strong>{{ $v->started_at->format('M d, Y') }}</strong></td>
                     <td>
-                        <strong>{{ $v->employee->user->name }}</strong>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">{{ $v->employee->employee_code }}</div>
+                        <strong>{{ optional(optional($v->employee)->user)->name ?? 'Unknown Employee' }}</strong>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">{{ optional($v->employee)->employee_code ?? '' }}</div>
                     </td>
                     <td>{{ $v->started_at->format('h:i A') }}</td>
                     <td>{{ $v->ended_at ? $v->ended_at->format('h:i A') : 'Running' }}</td>
