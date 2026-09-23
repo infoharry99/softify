@@ -48,10 +48,13 @@
     <!-- Left Column: Job Description Specification (Matching Screenshot Format) -->
     <div>
         <div class="card" style="margin-bottom: 25px;">
-            <div class="card-header" style="background: #1e293b; color: #ffffff; border-radius: 12px 12px 0 0;">
-                <h3 class="card-title" style="color: #ffffff; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+            <div class="card-header" style="background: #1e293b; color: #ffffff; border-radius: 12px 12px 0 0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                <h3 class="card-title" style="color: #ffffff; font-weight: 800; display: flex; align-items: center; gap: 8px; margin: 0;">
                     <i class="fa-solid fa-file-lines" style="color:#00a884;"></i> Job Description & Requisition Specification
                 </h3>
+                <button type="button" id="copyJdBtn" onclick="copyJdContent()" class="btn btn-sm" style="background: #00a884; color: #ffffff; border: none; font-weight: 700; border-radius: 8px; padding: 7px 16px; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 6px rgba(0, 168, 132, 0.3);">
+                    <i class="fa-solid fa-copy"></i> Copy JD & Spec
+                </button>
             </div>
             <div class="card-body" style="background: #0f172a; color: #f8fafc; padding: 25px; border-radius: 0 0 12px 12px; font-family: sans-serif; line-height: 1.6;">
                 <div style="font-size: 1.05rem; font-weight: 700; color: #ffffff; margin-bottom: 4px;">
@@ -214,6 +217,62 @@ function openEditTaModal() {
 }
 function closeEditTaModal() {
     document.getElementById('editTaModal').style.display = 'none';
+}
+
+function copyJdContent() {
+    const jobTitle = @json($task->job_title);
+    const location = @json($task->location);
+    const experience = @json($task->experience ?? 'N/A');
+    const budget = @json($task->budget ?? 'N/A');
+    const duration = @json($task->duration ?? 'Full Time');
+    const jobDescription = @json($task->job_description);
+
+    const fullText = `Job title: ${jobTitle}\nLocation: ${location}\nExperience: ${experience}\nBudget: ${budget}\nDuration: ${duration}\n\nJob Description:\n${jobDescription}`;
+
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(fullText).then(onCopySuccess).catch(() => fallbackCopy(fullText));
+    } else {
+        fallbackCopy(fullText);
+    }
+}
+
+function fallbackCopy(text) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.left = "-999999px";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+        document.execCommand('copy');
+        onCopySuccess();
+    } catch (err) {
+        alert("Failed to copy JD specification.");
+    }
+    document.body.removeChild(textArea);
+}
+
+function onCopySuccess() {
+    const btn = document.getElementById('copyJdBtn');
+    if (btn) {
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+        btn.style.background = '#10b981';
+        setTimeout(() => {
+            btn.innerHTML = '<i class="fa-solid fa-copy"></i> Copy JD & Spec';
+            btn.style.background = '#00a884';
+        }, 2000);
+    }
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'success',
+            title: 'Job Specification copied to clipboard!',
+            showConfirmButton: false,
+            timer: 2000
+        });
+    }
 }
 </script>
 
