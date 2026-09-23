@@ -16,7 +16,7 @@ class CandidateController extends Controller
      */
     public function index(Request $request)
     {
-        $filterKeys = ['search', 'job_title', 'skill', 'job_type', 'notice_period', 'current_ctc', 'location', 'experience', 'page'];
+        $filterKeys = ['search', 'job_title', 'skill', 'skill_match_type', 'job_type', 'notice_period', 'current_ctc', 'location', 'experience', 'page'];
 
         // Reset Filters if explicitly requested via reset=1
         if ($request->has('reset') || $request->query('reset') == 1) {
@@ -41,7 +41,7 @@ class CandidateController extends Controller
 
         $query = Candidate::with(['hr', 'updatedBy']);
 
-        // 1. Text Search (Name, Email, Phone, Location, Job Title, Company Name)
+        // 1. Text Search (Name, Email, Phone, Location, Job Title, Company Name, Skills)
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -50,7 +50,8 @@ class CandidateController extends Controller
                   ->orWhere('phone', 'like', "%{$search}%")
                   ->orWhere('location', 'like', "%{$search}%")
                   ->orWhere('job_title', 'like', "%{$search}%")
-                  ->orWhere('company_name', 'like', "%{$search}%");
+                  ->orWhere('company_name', 'like', "%{$search}%")
+                  ->orWhere('skills', 'like', "%{$search}%");
             });
         }
 
@@ -59,9 +60,32 @@ class CandidateController extends Controller
             $query->where('job_title', 'like', "%{$request->job_title}%");
         }
 
-        // 3. Filter by Skills
+        // 3. Filter by Skills (Supports Multi-Skill Search e.g. "React, PHP, Laravel" or "Node.js, Express")
         if ($request->filled('skill')) {
-            $query->where('skills', 'like', "%{$request->skill}%");
+            $skillsInput = $request->skill;
+            // Split input string by comma, semicolon, slash, or pipe
+            $skillTerms = array_filter(array_map('trim', preg_split('/[,;|]+/', $skillsInput)));
+            $matchType = $request->get('skill_match_type', 'any'); // 'any' (OR logic) or 'all' (AND logic)
+
+            if (!empty($skillTerms)) {
+                $query->where(function ($q) use ($skillTerms, $matchType) {
+                    foreach ($skillTerms as $index => $term) {
+                        if (empty($term)) continue;
+
+                        if ($matchType === 'all') {
+                            // Candidate MUST have ALL of the specified skills
+                            $q->where('skills', 'like', "%{$term}%");
+                        } else {
+                            // Candidate can have ANY of the specified skills
+                            if ($index === 0) {
+                                $q->where('skills', 'like', "%{$term}%");
+                            } else {
+                                $q->orWhere('skills', 'like', "%{$term}%");
+                            }
+                        }
+                    }
+                });
+            }
         }
 
         // 4. Filter by Job Type

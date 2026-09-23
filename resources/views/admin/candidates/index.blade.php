@@ -322,12 +322,20 @@
                         </div>
                     </div>
 
-                    <!-- 2. Skills & Tech Stack -->
+                    <!-- 2. Skills & Tech Stack (Multi-Skill Search) -->
                     <div class="filter-field-group">
-                        <label class="filter-field-label"><i class="fa-solid fa-code" style="color: #00a884;"></i> Skills & Tech Stack</label>
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                            <label class="filter-field-label" style="margin-bottom: 0;">
+                                <i class="fa-solid fa-code" style="color: #00a884;"></i> Skills & Tech Stack
+                            </label>
+                            <select name="skill_match_type" style="padding: 2px 6px; font-size: 0.72rem; border-radius: 6px; border: 1px solid #cbd5e1; background: #f8fafc; font-weight: 600; color: #00a884; cursor: pointer;" title="Select how multiple skills should be matched">
+                                <option value="any" {{ request('skill_match_type', 'any') === 'any' ? 'selected' : '' }}>Any (OR)</option>
+                                <option value="all" {{ request('skill_match_type') === 'all' ? 'selected' : '' }}>All (AND)</option>
+                            </select>
+                        </div>
                         <div class="filter-field-input-wrap">
                             <i class="fa-solid fa-code"></i>
-                            <input type="text" name="skill" placeholder="e.g. React, PHP, Laravel..." value="{{ request('skill') }}">
+                            <input type="text" name="skill" placeholder="e.g. React, PHP, Laravel (comma separated)..." value="{{ request('skill') }}">
                         </div>
                     </div>
 
