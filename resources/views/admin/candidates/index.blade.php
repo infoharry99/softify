@@ -249,6 +249,19 @@
 @endsection
 
 @section('content')
+<!-- Navigation Tabs Bar: Classic ATS vs Resdex Search Pro -->
+<div style="display: flex; gap: 12px; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 2px;">
+    <a href="{{ route('admin.candidates.index') }}" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 22px; font-size: 0.95rem; font-weight: 700; color: #00a884; text-decoration: none; border-bottom: 3px solid #00a884; margin-bottom: -4px;">
+        <i class="fa-solid fa-table-list"></i>
+        <span>Candidate Directory (ATS Grid)</span>
+    </a>
+    <a href="{{ route('admin.candidate_search.index') }}" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 22px; font-size: 0.95rem; font-weight: 700; color: #64748b; text-decoration: none; border-bottom: 3px solid transparent; margin-bottom: -4px;">
+        <i class="fa-solid fa-magnifying-glass-chart"></i>
+        <span>⭐ Resdex Candidate Search (Naukri Style)</span>
+        <span style="font-size: 0.7rem; padding: 2px 7px; border-radius: 999px; background: #00a884; color: #ffffff;">PRO</span>
+    </a>
+</div>
+
 <div class="card">
     <div class="card-header">
         <h3 class="card-title">Candidate Directory (ATS)</h3>

@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\AdminPayrollController;
 use App\Http\Controllers\Admin\AdminDocumentController;
 use App\Http\Controllers\Admin\AdminAnnouncementController;
 use App\Http\Controllers\Admin\CandidateController;
+use App\Http\Controllers\Admin\CandidateSearchController;
 use App\Http\Controllers\Employee\EmployeeDashboardController;
 use App\Http\Controllers\Employee\EmployeeAttendanceController;
 use App\Http\Controllers\Employee\EmployeeLeaveController;
@@ -197,6 +198,15 @@ Route::middleware('auth')->group(function () {
 
         Route::middleware('permission:candidates.delete')->group(function () {
             Route::delete('/candidates/{candidate}', [CandidateController::class, 'destroy'])->name('candidates.destroy');
+        });
+
+        // Dedicated Premium Resdex Candidate Search (Naukri-Style Boolean Search Pro)
+        Route::middleware('permission:candidates.view,candidates.create')->group(function () {
+            Route::get('/candidate-search', [CandidateSearchController::class, 'index'])->name('candidate_search.index');
+            Route::post('/candidate-search/validate', [CandidateSearchController::class, 'validateExpression'])->name('candidate_search.validate');
+            Route::post('/candidate-search/toggle-shortlist/{candidate}', [CandidateSearchController::class, 'toggleShortlist'])->name('candidate_search.toggle_shortlist');
+            Route::post('/candidate-search/saved-searches', [CandidateSearchController::class, 'storeSavedSearch'])->name('candidate_search.save_search');
+            Route::delete('/candidate-search/saved-searches/{savedSearch}', [CandidateSearchController::class, 'destroySavedSearch'])->name('candidate_search.delete_saved_search');
         });
 
         // Finance Management (Requirements & Leads)
