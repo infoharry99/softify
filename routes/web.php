@@ -203,6 +203,8 @@ Route::middleware('auth')->group(function () {
         // Dedicated Premium Resdex Candidate Search (Naukri-Style Boolean Search Pro)
         Route::middleware('permission:candidates.view,candidates.create')->group(function () {
             Route::get('/candidate-search', [CandidateSearchController::class, 'index'])->name('candidate_search.index');
+            Route::get('/candidate-search/form', [CandidateSearchController::class, 'form'])->name('candidate_search.form');
+            Route::get('/candidate-search/suggestions', [CandidateSearchController::class, 'suggestions'])->name('candidate_search.suggestions');
             Route::post('/candidate-search/validate', [CandidateSearchController::class, 'validateExpression'])->name('candidate_search.validate');
             Route::post('/candidate-search/toggle-shortlist/{candidate}', [CandidateSearchController::class, 'toggleShortlist'])->name('candidate_search.toggle_shortlist');
             Route::post('/candidate-search/saved-searches', [CandidateSearchController::class, 'storeSavedSearch'])->name('candidate_search.save_search');

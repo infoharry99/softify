@@ -20,14 +20,129 @@ class CandidateSearchController extends Controller
     }
 
     /**
-     * Display the Naukri Resdex style candidate search interface.
+     * Display the Naukri Resdex Advance Search Form Page (Full details fill page).
+     */
+    public function form(Request $request)
+    {
+        $totalCandidatesCount = Candidate::count();
+
+        // AI / Suggested skills based on database
+        $suggestedSkills = [
+            'Python', 'Java Developer', 'AWS', 'J2EE', 'Javascript', 'SQL', 'Kafka',
+            'Java Full Stack Developer', 'Java Architect', 'Architect', 'React.js',
+            'Node.js', 'PHP', 'Laravel', 'Docker', 'DevOps', 'Microservices', 'Spring Boot'
+        ];
+
+        // Popular locations in database
+        $popularLocations = Candidate::whereNotNull('location')
+            ->select('location', DB::raw('count(*) as count'))
+            ->groupBy('location')
+            ->orderByDesc('count')
+            ->limit(10)
+            ->pluck('location')
+            ->toArray();
+
+        // Saved searches for current user
+        $savedSearches = CandidateSavedSearch::where('user_id', auth()->id())->latest()->get();
+
+        // Recent searches from session
+        $recentSearches = session('recent_candidate_searches', []);
+
+        return view('admin.candidate_search.form', compact(
+            'totalCandidatesCount',
+            'suggestedSkills',
+            'popularLocations',
+            'savedSearches',
+            'recentSearches'
+        ));
+    }
+
+    /**
+     * Live database autocomplete suggestions as user types (e.g. typing 'java').
+     */
+    public function suggestions(Request $request)
+    {
+        $q = trim($request->input('q', ''));
+        if (strlen($q) < 1) {
+            return response()->json([]);
+        }
+
+        $suggestions = collect();
+
+        // 1. Job Titles matching $q
+        $jobTitles = Candidate::whereNotNull('job_title')
+            ->where('job_title', 'like', "%{$q}%")
+            ->select('job_title')
+            ->distinct()
+            ->limit(8)
+            ->pluck('job_title');
+        foreach ($jobTitles as $title) {
+            $clean = trim($title);
+            if ($clean && strlen($clean) <= 45 && !in_array(strtolower($clean), ['n/a', 'null', '`skills`', '`job_title`'])) {
+                $suggestions->push(['text' => $clean, 'type' => 'Job Title']);
+            }
+        }
+
+        // 2. Candidate Skills parsed tokens from DB
+        $skillsRaw = Candidate::whereNotNull('skills')
+            ->where('skills', 'like', "%{$q}%")
+            ->limit(60)
+            ->pluck('skills');
+
+        foreach ($skillsRaw as $raw) {
+            $clean = preg_replace('/(Golang:|PHP:|Python:|iOS:|Databases:|Web Technologies:|Cloud & DevOps:|CI\/CD:|Others:|Microservices:|Framework and Libraries:|Frameworks:|Scripting Languages:|Unix Programming:|Tools:)/i', '', $raw);
+            $tokens = preg_split('/[,\|\;\n\r\t\/\•\·\>\<\:\*\&]+/', $clean);
+            foreach ($tokens as $token) {
+                $trimmed = trim(preg_replace('/^[\:\s\¦\.\-\(\)\[\]]+|[\:\s\¦\.\-\(\)\[\]]+$/u', '', $token));
+                if (strlen($trimmed) >= 2 && strlen($trimmed) <= 35 && stripos($trimmed, $q) !== false) {
+                    if (!preg_match('/(such as|version|experience|knowledge of|proficient in)/i', $trimmed)) {
+                        if (!$suggestions->contains(fn($item) => strtolower($item['text']) === strtolower($trimmed))) {
+                            $suggestions->push(['text' => $trimmed, 'type' => 'Skill']);
+                        }
+                    }
+                }
+            }
+        }
+
+        // 3. Known Tech Dictionary
+        $techDictionary = [
+            'Java', 'Core Java', 'JavaScript', 'J2EE', 'JavaFX', 'Java Developer', 'Java Full Stack Developer', 'Java Architect',
+            'Python', 'Python Developer', 'Django', 'Flask', 'React', 'React.js', 'React Native', 'Node.js', 'Express.js',
+            'PHP', 'Laravel', 'CodeIgniter', 'Symfony', 'WordPress', 'Angular', 'AngularJS', 'Vue.js',
+            'C#', '.NET', '.NET Core', 'ASP.NET', 'Entity Framework', 'AWS', 'Amazon Web Services', 'Azure', 'GCP',
+            'Docker', 'Kubernetes', 'DevOps', 'CI/CD', 'Jenkins', 'Git', 'GitHub', 'SQL', 'MySQL', 'PostgreSQL',
+            'MongoDB', 'Oracle', 'Redis', 'Kafka', 'Microservices', 'REST API', 'GraphQL', 'HTML', 'CSS', 'Bootstrap',
+            'Tailwind CSS', 'TypeScript', 'Next.js', 'Spring Boot', 'Hibernate', 'Selenium', 'Flutter'
+        ];
+        foreach ($techDictionary as $tech) {
+            if (stripos($tech, $q) !== false) {
+                if (!$suggestions->contains(fn($item) => strtolower($item['text']) === strtolower($tech))) {
+                    $suggestions->push(['text' => $tech, 'type' => 'Skill']);
+                }
+            }
+        }
+
+        // Sort: exact match first, then starts with, then contains
+        $sorted = $suggestions->sortBy(function($item) use ($q) {
+            $text = strtolower($item['text']);
+            $qLower = strtolower($q);
+            if ($text === $qLower) return 0;
+            if (str_starts_with($text, $qLower)) return 1;
+            return 2;
+        })->values()->take(10);
+
+        return response()->json($sorted);
+    }
+
+    /**
+     * Display the Naukri Resdex style candidate search interface & results.
      */
     public function index(Request $request)
     {
         $booleanMode = $request->boolean('boolean_mode', false);
         $booleanQuery = $request->input('boolean_query', '');
         $keyword = $request->input('q', '');
-        $keywordMode = $request->input('keyword_mode', 'any'); // 'any' or 'all'
+        $keywordMode = $request->boolean('mandatory_keywords', false) ? 'all' : $request->input('keyword_mode', 'any');
 
         $query = Candidate::with(['hr', 'updatedBy']);
 
@@ -52,7 +167,21 @@ class CandidateSearchController extends Controller
             $highlightTerms = $result['positive_terms'];
         }
 
-        // 2. Advanced Filters Sidebar Integration
+        // 2. Exclude Keywords (NOT logic)
+        if ($request->filled('exclude_keywords')) {
+            $excludes = array_filter(array_map('trim', preg_split('/[,;|]+/', $request->input('exclude_keywords'))));
+            foreach ($excludes as $exTerm) {
+                $query->where(function ($sub) use ($exTerm) {
+                    $sub->where('skills', 'not like', "%{$exTerm}%")
+                        ->where('job_title', 'not like', "%{$exTerm}%")
+                        ->where('name', 'not like', "%{$exTerm}%")
+                        ->where('company_name', 'not like', "%{$exTerm}%")
+                        ->where('note', 'not like', "%{$exTerm}%");
+                });
+            }
+        }
+
+        // 3. Advanced Filters Sidebar Integration
         // Experience Filter
         if ($request->filled('min_experience')) {
             $query->where('experience', '>=', (float) $request->input('min_experience'));
@@ -69,12 +198,26 @@ class CandidateSearchController extends Controller
             $query->where('current_ctc', '<=', (float) $request->input('max_current_ctc'));
         }
 
-        // Expected CTC Filter
-        if ($request->filled('min_expected_ctc')) {
-            $query->where('expected_ctc', '>=', (float) $request->input('min_expected_ctc'));
+        // Expected CTC / Annual Salary Filter (Support Lacs from search form)
+        $minExpected = null;
+        if ($request->filled('min_salary')) {
+            $minExpected = (float) $request->input('min_salary') * 100000;
+        } elseif ($request->filled('min_expected_ctc')) {
+            $minExpected = (float) $request->input('min_expected_ctc');
         }
-        if ($request->filled('max_expected_ctc')) {
-            $query->where('expected_ctc', '<=', (float) $request->input('max_expected_ctc'));
+
+        $maxExpected = null;
+        if ($request->filled('max_salary')) {
+            $maxExpected = (float) $request->input('max_salary') * 100000;
+        } elseif ($request->filled('max_expected_ctc')) {
+            $maxExpected = (float) $request->input('max_expected_ctc');
+        }
+
+        if ($minExpected !== null) {
+            $query->where('expected_ctc', '>=', $minExpected);
+        }
+        if ($maxExpected !== null) {
+            $query->where('expected_ctc', '<=', $maxExpected);
         }
 
         // Location Filter
@@ -125,10 +268,24 @@ class CandidateSearchController extends Controller
             $query->where('is_highlighted', true);
         }
 
-        // 3. Sorting Engine
+        // 4. Record Recent Search into Session
+        $recentKey = trim($booleanQuery ?: $keyword);
+        if (!empty($recentKey)) {
+            $recentSearches = session('recent_candidate_searches', []);
+            $newItem = [
+                'query' => $recentKey,
+                'boolean_mode' => $booleanMode,
+                'filters' => $request->except(['_token', 'page']),
+                'time' => now()->diffForHumans(),
+            ];
+            $filteredRecent = array_filter($recentSearches, fn($item) => ($item['query'] ?? '') !== $recentKey);
+            array_unshift($filteredRecent, $newItem);
+            session(['recent_candidate_searches' => array_slice($filteredRecent, 0, 5)]);
+        }
+
+        // 5. Sorting Engine
         $sortBy = $request->input('sort_by', 'relevance');
         if ($sortBy === 'relevance' && !empty($highlightTerms)) {
-            // Sort by occurrence score of matched terms in skills & job title
             $caseStatements = [];
             $bindings = [];
             foreach ($highlightTerms as $term) {
@@ -150,11 +307,11 @@ class CandidateSearchController extends Controller
             $query->orderByDesc('updated_at');
         }
 
-        // 4. Pagination
+        // 6. Pagination
         $perPage = in_array((int) $request->input('per_page'), [10, 25, 50], true) ? (int) $request->input('per_page') : 10;
         $candidates = $query->paginate($perPage)->withQueryString();
 
-        // 5. Facet Counts & Suggestions for Sidebar
+        // 7. Facet Counts & Suggestions for Sidebar
         $totalCandidatesCount = Candidate::count();
         $facets = [
             'job_types' => Candidate::select('job_type', DB::raw('count(*) as count'))->groupBy('job_type')->pluck('count', 'job_type')->toArray(),

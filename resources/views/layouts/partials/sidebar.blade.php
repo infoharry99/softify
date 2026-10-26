@@ -98,7 +98,7 @@
             </a>
         </li>
         <li class="menu-item">
-            <a href="{{ route('admin.candidate_search.index') }}" class="menu-link {{ request()->routeIs('admin.candidate_search.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.candidate_search.form') }}" class="menu-link {{ request()->routeIs('admin.candidate_search.*') ? 'active' : '' }}">
                 <i class="fa-solid fa-magnifying-glass-chart"></i>
                 <span>Candidate Resdex Search</span>
                 <span class="badge" style="font-size: 0.65rem; background: #00a884; color: #fff; padding: 2px 6px; border-radius: 6px; margin-left: auto; font-weight: 700;">PRO</span>

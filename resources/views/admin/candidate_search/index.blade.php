@@ -886,9 +886,14 @@
         <i class="fa-solid fa-table-list"></i>
         <span>Candidate Directory (ATS Grid)</span>
     </a>
-    <a href="{{ route('admin.candidate_search.index') }}" class="resdex-tab-btn active">
-        <i class="fa-solid fa-magnifying-glass-chart"></i>
-        <span>⭐ Resdex Candidate Search (Naukri Style)</span>
+    <a href="{{ route('admin.candidate_search.form', request()->all()) }}" class="resdex-tab-btn">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <span>🔍 Search Candidates (Resdex Form)</span>
+        <span class="badge-pill" style="background: #0284c7;">FORM</span>
+    </a>
+    <a href="{{ route('admin.candidate_search.index', request()->all()) }}" class="resdex-tab-btn active">
+        <i class="fa-solid fa-address-card"></i>
+        <span>⭐ Candidate Search Results (Cards)</span>
         <span class="badge-pill">PRO</span>
     </a>
 </div>
@@ -986,10 +991,13 @@
 
             <!-- Search Actions Buttons -->
             <div class="search-actions-row">
-                <div style="display: flex; gap: 10px; align-items: center;">
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                     <button type="submit" class="btn-search-primary">
                         <i class="fa-solid fa-magnifying-glass"></i> Search Candidates
                     </button>
+                    <a href="{{ route('admin.candidate_search.form', request()->all()) }}" class="btn-search-primary" style="background: #0284c7; text-decoration: none; border-color: #0284c7;">
+                        <i class="fa-solid fa-pen-to-square"></i> Modify Search Form
+                    </a>
                     <button type="button" onclick="resetAllResdexFilters()" class="btn-search-reset">
                         <i class="fa-solid fa-rotate-left"></i> Reset
                     </button>
