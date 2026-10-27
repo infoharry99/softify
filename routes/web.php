@@ -281,6 +281,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/attendance', [AdminAttendanceController::class, 'index'])->name('attendance.index');
             Route::get('/attendance/break-violations', [AdminAttendanceController::class, 'breakViolations'])->name('attendance.break_violations');
             Route::post('/attendance/{attendance}/adjust', [AdminAttendanceController::class, 'adjust'])->name('attendance.adjust');
+            Route::post('/attendance/adjust-or-create', [AdminAttendanceController::class, 'adjustOrCreate'])->name('attendance.adjust_or_create');
         });
 
         // Leave Management (Admin)
