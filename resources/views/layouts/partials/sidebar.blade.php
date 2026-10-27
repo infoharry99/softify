@@ -9,6 +9,49 @@
     </div>
 
     <ul class="sidebar-menu">
+        @if(env('PORTAL_MODE') === 'ats')
+        <!-- ==============================================
+             DEDICATED ATS CANDIDATE PORTAL MODE (PORTAL_MODE=ats)
+             ============================================== -->
+        <li class="menu-section-title">Candidate Recruitment</li>
+
+        <li class="menu-item">
+            <a href="{{ route('admin.candidate_search.form') }}" class="menu-link {{ request()->routeIs('admin.candidate_search.*') ? 'active' : '' }}">
+                <i class="fa-solid fa-magnifying-glass-chart" style="color: #00a884;"></i>
+                <span>Candidate Resdex Search</span>
+                <span class="badge" style="font-size: 0.65rem; background: #00a884; color: #fff; padding: 2px 6px; border-radius: 6px; margin-left: auto; font-weight: 700;">PRO</span>
+            </a>
+        </li>
+
+        <li class="menu-item">
+            <a href="{{ route('admin.candidates.index') }}" class="menu-link {{ request()->routeIs('admin.candidates.*') ? 'active' : '' }}">
+                <i class="fa-solid fa-user-graduate"></i>
+                <span>Candidates Directory (ATS)</span>
+            </a>
+        </li>
+
+        <li class="menu-item">
+            <a href="{{ route('careers.apply') }}" target="_blank" class="menu-link">
+                <i class="fa-solid fa-globe" style="color: #0284c7;"></i>
+                <span>Public Application Form</span>
+                <span class="badge" style="font-size: 0.65rem; background: #0284c7; color: #0284c7; background: #e0f2fe; padding: 2px 6px; border-radius: 6px; margin-left: auto; font-weight: 700;">SHARE</span>
+            </a>
+        </li>
+
+        @if(auth()->user()->hasRole('super-admin') || auth()->user()->hasRole('admin'))
+        <li class="menu-section-title">System & Access</li>
+        <li class="menu-item">
+            <a href="{{ route('admin.users.index') }}" class="menu-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
+                <i class="fa-solid fa-user-gear"></i>
+                <span>Recruiter & User Management</span>
+            </a>
+        </li>
+        @endif
+
+        @else
+        <!-- ==============================================
+             STANDARD ENTERPRISE PORTAL MODE
+             ============================================== -->
         <!-- 1. My Personal Workspace (All Employees & Admin) -->
         <li class="menu-section-title">My Workspace</li>
 
@@ -191,6 +234,7 @@
                     <span>Admin Dashboard Overview</span>
                 </a>
             </li>
+        @endif
         @endif
     </ul>
 

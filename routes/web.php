@@ -32,6 +32,12 @@ use App\Http\Controllers\TaWorkController;
 */
 
 Route::get('/', function () {
+    if (env('PORTAL_MODE') === 'ats') {
+        return Auth::check()
+            ? redirect()->route('admin.candidate_search.form')
+            : redirect()->route('login');
+    }
+
     if (Auth::check()) {
         return Auth::user()->hasRole('super-admin')
             ? redirect()->route('admin.dashboard')
@@ -41,6 +47,12 @@ Route::get('/', function () {
 });
 
 Route::get('/home', function () {
+    if (env('PORTAL_MODE') === 'ats') {
+        return Auth::check()
+            ? redirect()->route('admin.candidate_search.form')
+            : redirect()->route('login');
+    }
+
     if (Auth::check()) {
         return Auth::user()->hasRole('super-admin')
             ? redirect()->route('admin.dashboard')

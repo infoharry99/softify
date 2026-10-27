@@ -62,6 +62,10 @@ class AuthController extends Controller
      */
     protected function redirectBasedOnRole($user)
     {
+        if (env('PORTAL_MODE') === 'ats') {
+            return redirect()->route('admin.candidate_search.form');
+        }
+
         if ($user->hasRole('super-admin')) {
             return redirect()->route('admin.dashboard');
         }
