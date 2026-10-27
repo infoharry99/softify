@@ -55,6 +55,22 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
 });
 
+// ==========================================
+// PUBLIC CANDIDATE APPLICATION PORTAL
+// Shareable on LinkedIn, WhatsApp, Instagram, Bio, etc.
+// ==========================================
+Route::get('/careers/apply', [\App\Http\Controllers\PublicCandidateController::class, 'create'])->name('careers.apply');
+Route::post('/careers/apply', [\App\Http\Controllers\PublicCandidateController::class, 'store'])->name('careers.store');
+Route::get('/careers/success', [\App\Http\Controllers\PublicCandidateController::class, 'success'])->name('careers.success');
+
+// Clean short aliases for quick sharing
+Route::get('/apply', function () {
+    return redirect()->route('careers.apply', request()->all());
+});
+Route::get('/candidate-registration', function () {
+    return redirect()->route('careers.apply', request()->all());
+});
+
 // Authenticated Routes
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
