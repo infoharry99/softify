@@ -251,6 +251,25 @@ class CandidateSearchController extends Controller
             }
         }
 
+        // Location Filter
+        if ($request->filled('location')) {
+            $locations = is_array($request->input('location')) ? $request->input('location') : [$request->input('location')];
+            $query->where(function ($sub) use ($locations) {
+                foreach ($locations as $i => $loc) {
+                    if (empty($loc)) continue;
+                    if ($i === 0) {
+                        $sub->where('location', 'like', "%{$loc}%");
+                    } else {
+                        $sub->orWhere('location', 'like', "%{$loc}%");
+                    }
+                }
+            });
+        }
+
+        // Base Core Query Snapshot (Search query, Exclude keywords, and Location applied)
+        // Used to compute dynamic brackets for Experience and Expected CTC
+        $baseCoreQuery = clone $query;
+
         // 3. Advanced Filters Sidebar Integration
         // Experience Filter
         if ($request->filled('min_experience')) {
@@ -298,23 +317,8 @@ class CandidateSearchController extends Controller
             $query->where('expected_ctc', '<=', $maxExpected);
         }
 
-        // Location Filter
-        if ($request->filled('location')) {
-            $locations = is_array($request->input('location')) ? $request->input('location') : [$request->input('location')];
-            $query->where(function ($sub) use ($locations) {
-                foreach ($locations as $i => $loc) {
-                    if (empty($loc)) continue;
-                    if ($i === 0) {
-                        $sub->where('location', 'like', "%{$loc}%");
-                    } else {
-                        $sub->orWhere('location', 'like', "%{$loc}%");
-                    }
-                }
-            });
-        }
-
-        // Base search query snapshot (Search Keywords, Experience, Salary, and Location applied)
-        // Used to compute dynamic facet counts exclusively for the matching candidates
+        // Base Search Query Snapshot (Search Keywords, Location, Experience, and Expected CTC applied)
+        // Used to compute dynamic facet counts for Work Mode, Notice Period, Status, etc.
         $baseFacetQuery = clone $query;
 
         // Work Mode / Job Type Filter
@@ -464,10 +468,72 @@ class CandidateSearchController extends Controller
 
         $shortlistedCount = (clone $query)->where('is_highlighted', true)->count();
 
+        // Expected CTC (Annual) Range Facet Counts
+        $ctcFacetQuery = clone $baseCoreQuery;
+        $ctcFacetQuery->without(['hr', 'updatedBy']);
+        if ($request->filled('min_experience')) {
+            $ctcFacetQuery->where('experience', '>=', (float) $request->input('min_experience'));
+        }
+        if ($request->filled('max_experience')) {
+            $ctcFacetQuery->where('experience', '<=', (float) $request->input('max_experience'));
+        }
+        if ($request->filled('job_type')) {
+            $ctcFacetQuery->whereIn('job_type', (array) $request->input('job_type'));
+        }
+        if ($request->filled('notice_period')) {
+            $ctcFacetQuery->whereIn('notice_period', (array) $request->input('notice_period'));
+        }
+        if ($request->filled('status')) {
+            $ctcFacetQuery->whereIn('status', (array) $request->input('status'));
+        }
+        if ($request->boolean('shortlisted_only')) {
+            $ctcFacetQuery->where('is_highlighted', true);
+        }
+        $ctcRangeCounts = (array) $ctcFacetQuery->selectRaw("
+            COALESCE(SUM(CASE WHEN expected_ctc > 0 AND expected_ctc <= 100000 THEN 1 ELSE 0 END), 0) as `0-1`,
+            COALESCE(SUM(CASE WHEN expected_ctc >= 100000 AND expected_ctc <= 200000 THEN 1 ELSE 0 END), 0) as `1-2`,
+            COALESCE(SUM(CASE WHEN expected_ctc >= 200000 AND expected_ctc <= 500000 THEN 1 ELSE 0 END), 0) as `2-5`,
+            COALESCE(SUM(CASE WHEN expected_ctc >= 500000 AND expected_ctc <= 1000000 THEN 1 ELSE 0 END), 0) as `5-10`,
+            COALESCE(SUM(CASE WHEN expected_ctc >= 1000000 AND expected_ctc <= 1500000 THEN 1 ELSE 0 END), 0) as `10-15`,
+            COALESCE(SUM(CASE WHEN expected_ctc >= 1500000 AND expected_ctc <= 5000000 THEN 1 ELSE 0 END), 0) as `15-50`,
+            COALESCE(SUM(CASE WHEN expected_ctc >= 5000000 THEN 1 ELSE 0 END), 0) as `50+`
+        ")->first()?->toArray();
+
+        // Experience (Years) Range Facet Counts
+        $expFacetQuery = clone $baseCoreQuery;
+        $expFacetQuery->without(['hr', 'updatedBy']);
+        if ($minExpected !== null) {
+            $expFacetQuery->where('expected_ctc', '>=', $minExpected);
+        }
+        if ($maxExpected !== null) {
+            $expFacetQuery->where('expected_ctc', '<=', $maxExpected);
+        }
+        if ($request->filled('job_type')) {
+            $expFacetQuery->whereIn('job_type', (array) $request->input('job_type'));
+        }
+        if ($request->filled('notice_period')) {
+            $expFacetQuery->whereIn('notice_period', (array) $request->input('notice_period'));
+        }
+        if ($request->filled('status')) {
+            $expFacetQuery->whereIn('status', (array) $request->input('status'));
+        }
+        if ($request->boolean('shortlisted_only')) {
+            $expFacetQuery->where('is_highlighted', true);
+        }
+        $expRangeCounts = (array) $expFacetQuery->selectRaw("
+            COALESCE(SUM(CASE WHEN experience >= 0 AND experience <= 2 THEN 1 ELSE 0 END), 0) as `0-2`,
+            COALESCE(SUM(CASE WHEN experience > 2 AND experience <= 5 THEN 1 ELSE 0 END), 0) as `3-5`,
+            COALESCE(SUM(CASE WHEN experience > 5 AND experience <= 8 THEN 1 ELSE 0 END), 0) as `5-8`,
+            COALESCE(SUM(CASE WHEN experience > 8 AND experience <= 12 THEN 1 ELSE 0 END), 0) as `8-12`,
+            COALESCE(SUM(CASE WHEN experience > 12 THEN 1 ELSE 0 END), 0) as `12+`
+        ")->first()?->toArray();
+
         $facets = [
             'job_types' => $jobTypeCounts,
             'notice_periods' => $noticePeriodCounts,
             'statuses' => $statusCounts,
+            'ctc_ranges' => $ctcRangeCounts,
+            'exp_ranges' => $expRangeCounts,
             'shortlisted_count' => $shortlistedCount,
         ];
 

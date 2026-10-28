@@ -1154,12 +1154,12 @@
                     <div class="filter-checkbox-list">
                         @php
                             $expBrackets = [
-                                ['label' => 'Any Experience', 'min' => '', 'max' => ''],
-                                ['label' => '0 - 2 Years', 'min' => '0', 'max' => '2'],
-                                ['label' => '3 - 5 Years', 'min' => '3', 'max' => '5'],
-                                ['label' => '5 - 8 Years', 'min' => '5', 'max' => '8'],
-                                ['label' => '8 - 12 Years', 'min' => '8', 'max' => '12'],
-                                ['label' => '12+ Years', 'min' => '12', 'max' => '50'],
+                                ['key' => 'any', 'label' => 'Any Experience', 'min' => '', 'max' => ''],
+                                ['key' => '0-2', 'label' => '0 - 2 Years', 'min' => '0', 'max' => '2'],
+                                ['key' => '3-5', 'label' => '3 - 5 Years', 'min' => '3', 'max' => '5'],
+                                ['key' => '5-8', 'label' => '5 - 8 Years', 'min' => '5', 'max' => '8'],
+                                ['key' => '8-12', 'label' => '8 - 12 Years', 'min' => '8', 'max' => '12'],
+                                ['key' => '12+', 'label' => '12+ Years', 'min' => '12', 'max' => '50'],
                             ];
                         @endphp
                         @foreach($expBrackets as $bracket)
@@ -1171,6 +1171,9 @@
                                     <input type="radio" name="exp_quick" onchange="setExperienceRange('{{ $bracket['min'] }}', '{{ $bracket['max'] }}')" {{ $isSelected ? 'checked' : '' }}>
                                     {{ $bracket['label'] }}
                                 </span>
+                                @if($bracket['key'] !== 'any')
+                                    <span class="filter-count-badge">{{ $facets['exp_ranges'][$bracket['key']] ?? 0 }}</span>
+                                @endif
                             </label>
                         @endforeach
                     </div>
@@ -1185,9 +1188,49 @@
                     <div class="sidebar-section-title">
                         <span><i class="fa-solid fa-indian-rupee-sign" style="color: var(--resdex-teal);"></i> Expected CTC (Annual)</span>
                     </div>
-                    <div class="range-inputs-row">
-                        <input type="number" step="any" name="min_expected_ctc" class="range-input" placeholder="Min (Lacs or ₹)" value="{{ request('min_expected_ctc') }}">
-                        <input type="number" step="any" name="max_expected_ctc" class="range-input" placeholder="Max (Lacs or ₹)" value="{{ request('max_expected_ctc') }}">
+                    <div class="filter-checkbox-list">
+                        @php
+                            $ctcBrackets = [
+                                ['key' => 'any', 'label' => 'Any CTC', 'min' => '', 'max' => ''],
+                                ['key' => '0-1', 'label' => '0 - 1 Lac', 'min' => '0', 'max' => '1'],
+                                ['key' => '1-2', 'label' => '1 - 2 Lac', 'min' => '1', 'max' => '2'],
+                                ['key' => '2-5', 'label' => '2 - 5 Lac', 'min' => '2', 'max' => '5'],
+                                ['key' => '5-10', 'label' => '5 - 10 Lac', 'min' => '5', 'max' => '10'],
+                                ['key' => '10-15', 'label' => '10 - 15 Lac', 'min' => '10', 'max' => '15'],
+                                ['key' => '15-50', 'label' => '15 - 50 Lac', 'min' => '15', 'max' => '50'],
+                                ['key' => '50+', 'label' => '50+ Lac', 'min' => '50', 'max' => ''],
+                            ];
+                            $currMinCtc = request('min_expected_ctc', request('min_salary'));
+                            $currMaxCtc = request('max_expected_ctc', request('max_salary'));
+                        @endphp
+                        @foreach($ctcBrackets as $bracket)
+                            @php
+                                $isSelected = false;
+                                if ($bracket['min'] === '' && $bracket['max'] === '') {
+                                    $isSelected = empty($currMinCtc) && empty($currMaxCtc);
+                                } else {
+                                    $matchMin = ($currMinCtc == $bracket['min']) || ($bracket['min'] !== '' && $currMinCtc == (float)$bracket['min'] * 100000);
+                                    $matchMax = ($currMaxCtc == $bracket['max']) || ($bracket['max'] !== '' && $currMaxCtc == (float)$bracket['max'] * 100000);
+                                    $isSelected = $matchMin && $matchMax;
+                                }
+                            @endphp
+                            <label class="filter-checkbox-item">
+                                <span>
+                                    <input type="radio" 
+                                           name="ctc_quick" 
+                                           onchange="setCtcRange('{{ $bracket['min'] }}', '{{ $bracket['max'] }}')" 
+                                           {{ $isSelected ? 'checked' : '' }}>
+                                    {{ $bracket['label'] }}
+                                </span>
+                                @if($bracket['key'] !== 'any')
+                                    <span class="filter-count-badge">{{ $facets['ctc_ranges'][$bracket['key']] ?? 0 }}</span>
+                                @endif
+                            </label>
+                        @endforeach
+                    </div>
+                    <div class="range-inputs-row" style="margin-top: 8px;">
+                        <input type="number" step="any" id="min_expected_ctc" name="min_expected_ctc" class="range-input" placeholder="Min (Lacs or ₹)" value="{{ $currMinCtc }}">
+                        <input type="number" step="any" id="max_expected_ctc" name="max_expected_ctc" class="range-input" placeholder="Max (Lacs or ₹)" value="{{ $currMaxCtc }}">
                     </div>
                 </div>
 
@@ -1515,6 +1558,11 @@
     function setExperienceRange(min, max) {
         document.getElementById('min_experience').value = min;
         document.getElementById('max_experience').value = max;
+    }
+
+    function setCtcRange(min, max) {
+        document.getElementById('min_expected_ctc').value = min;
+        document.getElementById('max_expected_ctc').value = max;
     }
 
     // 6. Clear Filter Fields
