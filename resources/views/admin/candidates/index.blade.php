@@ -492,7 +492,7 @@
                 Primary Application URL
             </label>
             <div style="display: flex; gap: 10px; margin-bottom: 22px;">
-                <input type="text" id="publicCandidateUrlInput" readonly value="{{ route('careers.apply') }}" style="flex: 1; padding: 11px 14px; font-size: 0.92rem; border: 1.5px solid #cbd5e1; border-radius: 10px; background: #f8fafc; color: #0f172a; font-weight: 600;">
+                <input type="text" id="publicCandidateUrlInput" readonly value="{{ config('app.public_apply_url', 'https://apply.talentifyy.com') }}" style="flex: 1; padding: 11px 14px; font-size: 0.92rem; border: 1.5px solid #cbd5e1; border-radius: 10px; background: #f8fafc; color: #0f172a; font-weight: 600;">
                 <button type="button" onclick="copyPublicCandidateLinkModal()" id="btnModalCopy" style="background: #00a884; color: #fff; border: none; padding: 11px 22px; font-weight: 700; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
                     <i class="fa-solid fa-copy"></i> <span id="modalCopyText">Copy Link</span>
                 </button>
@@ -684,7 +684,7 @@
     });
 
     // Share Public Form Modal Functions
-    const BASE_APPLY_URL = '{{ route("careers.apply") }}';
+    const BASE_APPLY_URL = '{{ config("app.public_apply_url", "https://apply.talentifyy.com") }}';
 
     function openSharePublicModal() {
         document.getElementById('sharePublicModal').style.display = 'flex';

@@ -58,6 +58,10 @@ return [
 
     'asset_url' => env('ASSET_URL', '/'),
 
+    'public_career_domain' => env('PUBLIC_CAREER_DOMAIN', 'apply.talentifyy.com'),
+
+    'public_apply_url' => env('PUBLIC_APPLY_URL', 'https://apply.talentifyy.com'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

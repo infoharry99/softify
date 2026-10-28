@@ -139,7 +139,7 @@
         <button type="button" onclick="copyPublicCandidateLink()" id="btnCopyPublic" class="btn btn-sm" style="background: #0284c7; color: #ffffff; border: none; font-weight: 700; padding: 9px 16px; border-radius: 8px; cursor: pointer;">
             <i class="fa-solid fa-copy"></i> <span id="copyBtnText">Copy Public Link</span>
         </button>
-        <a href="{{ route('careers.apply') }}" target="_blank" class="btn btn-sm" style="background: #ffffff; color: #0369a1; border: 1px solid #bae6fd; font-weight: 700; padding: 9px 14px; border-radius: 8px; text-decoration: none;">
+        <a href="{{ config('app.public_apply_url', 'https://apply.talentifyy.com') }}" target="_blank" class="btn btn-sm" style="background: #ffffff; color: #0369a1; border: 1px solid #bae6fd; font-weight: 700; padding: 9px 14px; border-radius: 8px; text-decoration: none;">
             <i class="fa-solid fa-arrow-up-right-from-square"></i> Preview Form
         </a>
     </div>
@@ -313,7 +313,7 @@
 @section('scripts')
 <script>
     function copyPublicCandidateLink() {
-        const url = '{{ route("careers.apply") }}';
+        const url = '{{ config("app.public_apply_url", "https://apply.talentifyy.com") }}';
         navigator.clipboard.writeText(url).then(() => {
             const btnText = document.getElementById('copyBtnText');
             const originalText = btnText.innerText;

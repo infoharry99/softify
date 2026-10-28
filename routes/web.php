@@ -31,6 +31,30 @@ use App\Http\Controllers\TaWorkController;
 |--------------------------------------------------------------------------
 */
 
+// ============================================================================
+// DEDICATED PUBLIC APPLY DOMAIN GATEWAY (apply.talentifyy.com)
+// When accessed via apply.talentifyy.com, ONLY public career routes are served.
+// All internal login, admin, employee, and system routes are strictly blocked (404).
+// ============================================================================
+$publicCareerDomain = env('PUBLIC_CAREER_DOMAIN', 'apply.talentifyy.com');
+
+Route::domain($publicCareerDomain)->group(function () {
+    Route::get('/', [\App\Http\Controllers\PublicCandidateController::class, 'create'])->name('careers.apply.domain');
+    Route::post('/', [\App\Http\Controllers\PublicCandidateController::class, 'store'])->name('careers.store.domain');
+    Route::get('/apply', [\App\Http\Controllers\PublicCandidateController::class, 'create']);
+    Route::post('/apply', [\App\Http\Controllers\PublicCandidateController::class, 'store']);
+    Route::get('/careers/apply', [\App\Http\Controllers\PublicCandidateController::class, 'create']);
+    Route::post('/careers/apply', [\App\Http\Controllers\PublicCandidateController::class, 'store']);
+    Route::get('/success', [\App\Http\Controllers\PublicCandidateController::class, 'success'])->name('careers.success.domain');
+    Route::get('/careers/success', [\App\Http\Controllers\PublicCandidateController::class, 'success']);
+    Route::get('/candidate-registration', [\App\Http\Controllers\PublicCandidateController::class, 'create']);
+
+    // Air-tight Security: Block ALL internal/admin/login routes on apply.talentifyy.com
+    Route::any('{any}', function () {
+        abort(404);
+    })->where('any', '.*');
+});
+
 Route::get('/', function () {
     if (env('PORTAL_MODE') === 'ats') {
         return Auth::check()
