@@ -374,6 +374,9 @@ Route::get('/run-migrate', function () {
         Artisan::call('cache:clear');
         Artisan::call('view:clear');
         Artisan::call('config:clear');
+        if (function_exists('opcache_reset')) {
+            @opcache_reset();
+        }
         return '<div style="font-family: system-ui, sans-serif; padding: 40px; background: #e6f7f3; color: #00a884; font-size: 1.25rem; font-weight: 700; border-radius: 16px; border: 2px solid #9ee5d4; max-width: 600px; margin: 50px auto; text-align: center;">' .
                '✓ Success! Live Database Migrations executed successfully (bda_work_assignments, ta_work_assignments & all columns created).<br><br>' .
                '<a href="/admin/dashboard" style="background: #00a884; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 10px; font-size: 1rem; display: inline-block;">Go to Dashboard →</a>' .
@@ -400,6 +403,9 @@ Route::get('/run-seeder', function () {
         Artisan::call('cache:clear');
         Artisan::call('view:clear');
         Artisan::call('config:clear');
+        if (function_exists('opcache_reset')) {
+            @opcache_reset();
+        }
         return '<div style="font-family: system-ui, sans-serif; padding: 40px; background: #e6f7f3; color: #00a884; font-size: 1.25rem; font-weight: 700; border-radius: 16px; border: 2px solid #9ee5d4; max-width: 600px; margin: 50px auto; text-align: center;">' .
                '✓ Success! Database Migrations & Seeders executed successfully.<br><br>' .
                '<a href="/admin/dashboard" style="background: #00a884; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 10px; font-size: 1rem; display: inline-block;">Go to Dashboard →</a>' .

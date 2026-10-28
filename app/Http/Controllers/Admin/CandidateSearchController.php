@@ -293,9 +293,12 @@ class CandidateSearchController extends Controller
 
         // Expected CTC / Annual Salary Filter (Supports Lacs e.g. 1 to 5, or Raw Rupees e.g. 100000 to 500000)
         $minExpected = null;
-        $rawMin = $request->filled('min_expected_ctc') 
-            ? $request->input('min_expected_ctc') 
-            : ($request->filled('min_salary') ? $request->input('min_salary') : null);
+        $rawMin = null;
+        if ($request->has('min_expected_ctc') && $request->input('min_expected_ctc') !== null && $request->input('min_expected_ctc') !== '') {
+            $rawMin = $request->input('min_expected_ctc');
+        } elseif ($request->has('min_salary') && $request->input('min_salary') !== null && $request->input('min_salary') !== '') {
+            $rawMin = $request->input('min_salary');
+        }
 
         if ($rawMin !== null && $rawMin !== '') {
             $val = (float) $rawMin;
@@ -305,9 +308,12 @@ class CandidateSearchController extends Controller
         }
 
         $maxExpected = null;
-        $rawMax = $request->filled('max_expected_ctc') 
-            ? $request->input('max_expected_ctc') 
-            : ($request->filled('max_salary') ? $request->input('max_salary') : null);
+        $rawMax = null;
+        if ($request->has('max_expected_ctc') && $request->input('max_expected_ctc') !== null && $request->input('max_expected_ctc') !== '') {
+            $rawMax = $request->input('max_expected_ctc');
+        } elseif ($request->has('max_salary') && $request->input('max_salary') !== null && $request->input('max_salary') !== '') {
+            $rawMax = $request->input('max_salary');
+        }
 
         if ($rawMax !== null && $rawMax !== '') {
             $val = (float) $rawMax;

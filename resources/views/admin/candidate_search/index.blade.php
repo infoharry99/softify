@@ -1074,7 +1074,7 @@
 
         <!-- Active Filters Chips Bar -->
         @php
-            $hasActiveFilters = $booleanQuery || $keyword || request()->filled('min_experience') || request()->filled('max_experience') || request()->filled('min_expected_ctc') || request()->filled('location') || request()->filled('job_type') || request()->filled('notice_period') || request()->filled('status') || request()->boolean('shortlisted_only');
+            $hasActiveFilters = $booleanQuery || $keyword || request()->filled('min_experience') || request()->filled('max_experience') || request()->filled('min_expected_ctc') || request()->filled('max_expected_ctc') || request()->filled('min_salary') || request()->filled('max_salary') || request()->filled('location') || request()->filled('job_type') || request()->filled('notice_period') || request()->filled('status') || request()->boolean('shortlisted_only');
         @endphp
         @if($hasActiveFilters)
         <div class="active-filters-bar">
@@ -1095,7 +1095,18 @@
             @if(request()->filled('min_experience') || request()->filled('max_experience'))
                 <span class="filter-tag-chip">
                     <strong>Exp:</strong> {{ request('min_experience', 0) }} - {{ request('max_experience', 'Any') }} Yrs
-                    <span class="remove-chip" onclick="clearFilterFields(['min_experience', 'max_experience'])">&times;</span>
+                    <span class="remove-chip" onclick="clearFilterFields(['min_experience', 'max_experience', 'exp_quick'])">&times;</span>
+                </span>
+            @endif
+
+            @if(request()->filled('min_expected_ctc') || request()->filled('max_expected_ctc') || request()->filled('min_salary') || request()->filled('max_salary'))
+                @php
+                    $chipMin = request('min_expected_ctc', request('min_salary'));
+                    $chipMax = request('max_expected_ctc', request('max_salary'));
+                @endphp
+                <span class="filter-tag-chip">
+                    <strong>Expected CTC:</strong> {{ $chipMin !== null && $chipMin !== '' ? $chipMin : '0' }} - {{ $chipMax !== null && $chipMax !== '' ? $chipMax : 'Any' }} Lacs
+                    <span class="remove-chip" onclick="clearFilterFields(['min_expected_ctc', 'max_expected_ctc', 'min_salary', 'max_salary', 'ctc_quick'])">&times;</span>
                 </span>
             @endif
 
@@ -1582,9 +1593,18 @@
     }
 
     function clearFilterFields(names) {
+        const form = document.getElementById('resdexSearchForm');
         names.forEach(name => {
-            clearFilterField(name);
+            const elements = form.querySelectorAll(`[name="${name}"], [name="${name}[]"]`);
+            elements.forEach(el => {
+                if (el.type === 'checkbox' || el.type === 'radio') {
+                    el.checked = false;
+                } else {
+                    el.value = '';
+                }
+            });
         });
+        form.submit();
     }
 
     function resetAllResdexFilters() {
