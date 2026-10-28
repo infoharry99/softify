@@ -13,13 +13,14 @@ class AuthController extends Controller
     /**
      * Display the login form.
      */
-    public function showLogin()
+    public function showLogin(Request $request = null)
     {
         if (Auth::check()) {
             return $this->redirectBasedOnRole(Auth::user());
         }
 
-        $isMobile = \App\Http\Middleware\EnsureDesktopDevice::isMobileDevice($request);
+        $req = $request ?? request();
+        $isMobile = \App\Http\Middleware\EnsureDesktopDevice::isMobileDevice($req);
         return view('auth.login', compact('isMobile'));
     }
 
