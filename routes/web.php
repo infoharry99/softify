@@ -108,7 +108,7 @@ Route::get('/candidate-registration', function () {
 });
 
 // Authenticated Routes
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'desktop.only'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // Notifications API / Bell
@@ -422,3 +422,33 @@ Route::get('/run-candidate-import', [\App\Http\Controllers\Api\CandidateImportCo
 
 // Utility Route to Migrate Old "students" Table Data & Resumes directly to "candidates"
 Route::get('/run-old-system-migration', [\App\Http\Controllers\Api\CandidateImportController::class, 'migrateFromOldStudents']);
+
+// ============================================================================
+// GLOBAL FALLBACK ROUTE (Smart 404 Redirection)
+// If url is not found (404):
+// - Logged in -> send to user's dashboard based on role
+// - Not logged in -> send to login page
+// ============================================================================
+Route::fallback(function (\Illuminate\Http\Request $request) {
+    if ($request->expectsJson() || $request->is('api/*')) {
+        return response()->json(['message' => 'Not Found'], 404);
+    }
+
+    $publicCareerDomain = env('PUBLIC_CAREER_DOMAIN', 'apply.talentifyy.com');
+    if ($request->getHost() === $publicCareerDomain) {
+        return redirect()->route('careers.apply.domain');
+    }
+
+    if (Auth::check()) {
+        $user = Auth::user();
+        if (env('PORTAL_MODE') === 'ats') {
+            return redirect()->route('admin.candidate_search.form');
+        }
+        if ($user && $user->hasRole('super-admin')) {
+            return redirect()->route('admin.dashboard');
+        }
+        return redirect()->route('employee.dashboard');
+    }
+
+    return redirect()->route('login');
+});

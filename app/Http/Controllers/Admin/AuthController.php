@@ -19,7 +19,8 @@ class AuthController extends Controller
             return $this->redirectBasedOnRole(Auth::user());
         }
 
-        return view('auth.login');
+        $isMobile = \App\Http\Middleware\EnsureDesktopDevice::isMobileDevice($request);
+        return view('auth.login', compact('isMobile'));
     }
 
     /**
@@ -40,6 +41,14 @@ class AuthController extends Controller
                 return back()->withErrors([
                     'email' => 'Your account has been deactivated. Please contact an administrator.',
                 ]);
+            }
+
+            // Desktop-Only Access Enforcement for Employees
+            if (\App\Http\Middleware\EnsureDesktopDevice::isMobileDevice($request) && !$user->hasRole('super-admin')) {
+                Auth::logout();
+                return back()->withErrors([
+                    'email' => 'Desktop Only Policy: Employees are strictly prohibited from accessing this platform from mobile phones. Please use a desktop or laptop computer.',
+                ])->onlyInput('email');
             }
 
             $user->update(['last_login_at' => now()]);

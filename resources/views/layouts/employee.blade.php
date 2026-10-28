@@ -652,5 +652,7 @@
     </script>
 
     @yield('scripts')
+
+    @include('partials.desktop_only_shield')
 </body>
 </html>

@@ -205,6 +205,16 @@
             <p class="brand-subtitle">Enter your credentials to access your portal</p>
         </div>
 
+        @if(!empty($isMobile))
+            <div style="background: #fffbeb; border: 1.5px solid #fde68a; border-radius: 12px; padding: 12px 14px; margin-bottom: 20px; font-size: 0.82rem; color: #92400e; display: flex; align-items: flex-start; gap: 10px;">
+                <i class="fa-solid fa-desktop" style="font-size: 1.1rem; color: #d97706; margin-top: 2px;"></i>
+                <div>
+                    <strong>Desktop Access Notice:</strong><br>
+                    Employees must log in from a <strong>desktop or laptop computer</strong>. Mobile access is strictly prohibited for employees.
+                </div>
+            </div>
+        @endif
+
         @if($errors->any())
             <div class="alert-toast-danger">
                 <i class="fa-solid fa-circle-exclamation" style="font-size: 1.15rem; color: #ef4444;"></i>

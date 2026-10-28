@@ -799,5 +799,9 @@
     </script>
 
     @yield('scripts')
+
+    @if(auth()->check() && !auth()->user()->hasRole('super-admin'))
+        @include('partials.desktop_only_shield')
+    @endif
 </body>
 </html>
