@@ -257,6 +257,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/candidate-search', [CandidateSearchController::class, 'index'])->name('candidate_search.index');
             Route::get('/candidate-search/form', [CandidateSearchController::class, 'form'])->name('candidate_search.form');
             Route::get('/candidate-search/suggestions', [CandidateSearchController::class, 'suggestions'])->name('candidate_search.suggestions');
+            Route::get('/candidate-search/locations', [CandidateSearchController::class, 'locations'])->name('candidate_search.locations');
             Route::post('/candidate-search/validate', [CandidateSearchController::class, 'validateExpression'])->name('candidate_search.validate');
             Route::post('/candidate-search/toggle-shortlist/{candidate}', [CandidateSearchController::class, 'toggleShortlist'])->name('candidate_search.toggle_shortlist');
             Route::post('/candidate-search/saved-searches', [CandidateSearchController::class, 'storeSavedSearch'])->name('candidate_search.save_search');

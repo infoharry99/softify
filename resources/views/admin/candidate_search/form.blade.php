@@ -647,11 +647,26 @@
                     </div>
 
                     <!-- Exclude Keywords Drawer (Hidden by default unless query present) -->
-                    <div id="excludeKeywordsDrawer" style="{{ request('exclude_keywords') ? 'display: block;' : 'display: none;' }} margin-top: 12px; background: #fff5f5; border: 1px dashed #fca5a5; padding: 12px 16px; border-radius: 10px;">
+                    <div id="excludeKeywordsDrawer" style="{{ request('exclude_keywords') ? 'display: block;' : 'display: none;' }} margin-top: 12px; background: #fff5f5; border: 1px dashed #fca5a5; padding: 12px 16px; border-radius: 10px; position: relative;">
                         <label style="font-size: 0.84rem; font-weight: 700; color: #b91c1c; display: block; margin-bottom: 6px;">
                             <i class="fa-solid fa-ban"></i> Exclude Keywords (NOT in candidate profile)
                         </label>
-                        <input type="text" name="exclude_keywords" value="{{ request('exclude_keywords') }}" class="range-field-input" placeholder="e.g. Angular, PHP, Fresher (comma separated)..." style="width: 100%;">
+                        <div style="position: relative;">
+                            <input type="text" 
+                                   id="excludeKeywordsInput" 
+                                   name="exclude_keywords" 
+                                   value="{{ request('exclude_keywords') }}" 
+                                   class="range-field-input" 
+                                   placeholder="e.g. Angular, PHP, Fresher (type to search from database)..." 
+                                   style="width: 100%;"
+                                   autocomplete="off">
+
+                            <!-- Live Floating Exclude Dropdown from DB -->
+                            <div id="excludeAutocompleteDropdown" class="autocomplete-dropdown">
+                                <div class="autocomplete-header" style="color: #b91c1c;">Skills & Titles to Exclude (from Database)</div>
+                                <div id="excludeAutocompleteItemsList"></div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- AI Suggested Keywords Cloud (Matching Screenshot 4) -->
@@ -714,17 +729,20 @@
                            value="{{ request('location') }}"
                            class="range-field-input" 
                            placeholder="Add location (e.g. Bengaluru, Mumbai, Delhi, Remote...)" 
-                           style="width: 100%;">
+                           style="width: 100%;"
+                           autocomplete="off">
+
+                    <!-- Live Floating Location Dropdown from DB -->
+                    <div id="locationAutocompleteDropdown" class="autocomplete-dropdown">
+                        <div class="autocomplete-header">Candidate Locations from Database</div>
+                        <div id="locationAutocompleteItemsList"></div>
+                    </div>
                 </div>
 
                 <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 6px;">
                     <label class="custom-checkbox-label">
                         <input type="checkbox" name="include_relocation" value="1" {{ request()->has('include_relocation') ? (request('include_relocation') ? 'checked' : '') : 'checked' }}>
                         <span>Include candidates who prefer to relocate to above locations</span>
-                    </label>
-                    <label class="custom-checkbox-label">
-                        <input type="checkbox" name="exclude_anywhere" value="1" {{ request('exclude_anywhere') ? 'checked' : '' }}>
-                        <span>Exclude candidates who have mentioned Anywhere in India/Overseas</span>
                     </label>
                 </div>
             </div>
@@ -737,17 +755,10 @@
                         <option value="INR" {{ request('currency', 'INR') === 'INR' ? 'selected' : '' }}>INR</option>
                         <option value="USD" {{ request('currency') === 'USD' ? 'selected' : '' }}>USD</option>
                     </select>
-                    <input type="number" step="0.5" name="min_salary" value="{{ request('min_salary', (request('min_expected_ctc') ? request('min_expected_ctc') / 100000 : '')) }}" class="range-field-input" placeholder="Min salary">
+                    <input type="number" step="any" name="min_salary" value="{{ request('min_salary', (request('min_expected_ctc') ? request('min_expected_ctc') / 100000 : '')) }}" class="range-field-input" placeholder="e.g. 1 Lacs or 100000">
                     <span class="range-divider-text">to</span>
-                    <input type="number" step="0.5" name="max_salary" value="{{ request('max_salary', (request('max_expected_ctc') ? request('max_expected_ctc') / 100000 : '')) }}" class="range-field-input" placeholder="Max salary">
-                    <span class="range-divider-text" style="font-weight: 700; color: #334155;">Lacs</span>
-                </div>
-
-                <div style="margin-top: 10px;">
-                    <label class="custom-checkbox-label">
-                        <input type="checkbox" name="include_unspecified_salary" value="1" {{ request()->has('include_unspecified_salary') ? (request('include_unspecified_salary') ? 'checked' : '') : 'checked' }}>
-                        <span>Include candidates who did not mention their current salary</span>
-                    </label>
+                    <input type="number" step="any" name="max_salary" value="{{ request('max_salary', (request('max_expected_ctc') ? request('max_expected_ctc') / 100000 : '')) }}" class="range-field-input" placeholder="e.g. 5 Lacs or 500000">
+                    <span class="range-divider-text" style="font-size: 0.82rem; font-weight: 700; color: #64748b; background: #f1f5f9; padding: 6px 12px; border-radius: 8px; border: 1px solid #e2e8f0;">Lacs or ₹</span>
                 </div>
             </div>
 
@@ -1011,10 +1022,236 @@
         selectedDropdownIndex = -1;
     }
 
-    // Close autocomplete on click outside
+    // ==========================================
+    // 2. LOCATION AUTOCOMPLETE FROM DATABASE
+    // ==========================================
+    const locationInput = document.getElementById('locationInput');
+    const locationDropdown = document.getElementById('locationAutocompleteDropdown');
+    const locationItemsList = document.getElementById('locationAutocompleteItemsList');
+    let locationTimer = null;
+    let selectedLocationIndex = -1;
+    let currentLocationSuggestions = [];
+
+    if (locationInput) {
+        locationInput.addEventListener('input', function() {
+            const query = this.value.trim();
+            clearTimeout(locationTimer);
+
+            if (query.length < 1) {
+                hideLocationAutocomplete();
+                return;
+            }
+
+            locationTimer = setTimeout(() => {
+                fetchLocationSuggestions(query);
+            }, 180);
+        });
+
+        locationInput.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                navigateLocationDropdown(1);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                navigateLocationDropdown(-1);
+            } else if (e.key === 'Enter') {
+                if (selectedLocationIndex >= 0 && currentLocationSuggestions[selectedLocationIndex]) {
+                    e.preventDefault();
+                    selectLocation(currentLocationSuggestions[selectedLocationIndex].text);
+                }
+            } else if (e.key === 'Escape') {
+                hideLocationAutocomplete();
+            }
+        });
+    }
+
+    function fetchLocationSuggestions(query) {
+        fetch(`{{ route('admin.candidate_search.locations') }}?q=${encodeURIComponent(query)}`)
+            .then(res => res.json())
+            .then(data => {
+                currentLocationSuggestions = data;
+                selectedLocationIndex = -1;
+
+                if (!data || data.length === 0) {
+                    hideLocationAutocomplete();
+                    return;
+                }
+
+                locationItemsList.innerHTML = '';
+                data.forEach((item, index) => {
+                    const el = document.createElement('div');
+                    el.className = 'autocomplete-item';
+                    el.innerHTML = `<span><i class="fa-solid fa-location-dot" style="color: var(--resdex-teal); font-size: 0.85rem; margin-right: 8px;"></i> ${escapeHtml(item.text)}</span> <span class="autocomplete-item-type">${escapeHtml(item.type)}</span>`;
+                    el.addEventListener('click', () => {
+                        selectLocation(item.text);
+                    });
+                    locationItemsList.appendChild(el);
+                });
+
+                locationDropdown.style.display = 'block';
+            })
+            .catch(err => {
+                console.error('Error fetching location suggestions:', err);
+                hideLocationAutocomplete();
+            });
+    }
+
+    function selectLocation(loc) {
+        locationInput.value = loc;
+        hideLocationAutocomplete();
+        locationInput.focus();
+    }
+
+    function navigateLocationDropdown(direction) {
+        const items = locationItemsList.querySelectorAll('.autocomplete-item');
+        if (items.length === 0) return;
+
+        selectedLocationIndex += direction;
+        if (selectedLocationIndex < 0) selectedLocationIndex = items.length - 1;
+        if (selectedLocationIndex >= items.length) selectedLocationIndex = 0;
+
+        items.forEach((item, idx) => {
+            if (idx === selectedLocationIndex) {
+                item.classList.add('active');
+                item.scrollIntoView({ block: 'nearest' });
+            } else {
+                item.classList.remove('active');
+            }
+        });
+    }
+
+    function hideLocationAutocomplete() {
+        if (locationDropdown) {
+            locationDropdown.style.display = 'none';
+        }
+        selectedLocationIndex = -1;
+    }
+
+    // ==========================================
+    // 3. EXCLUDE KEYWORDS AUTOCOMPLETE FROM DATABASE
+    // ==========================================
+    const excludeInput = document.getElementById('excludeKeywordsInput');
+    const excludeDropdown = document.getElementById('excludeAutocompleteDropdown');
+    const excludeItemsList = document.getElementById('excludeAutocompleteItemsList');
+    let excludeTimer = null;
+    let selectedExcludeIndex = -1;
+    let currentExcludeSuggestions = [];
+
+    if (excludeInput) {
+        excludeInput.addEventListener('input', function() {
+            const fullVal = this.value;
+            const parts = fullVal.split(',');
+            const currentToken = parts[parts.length - 1].trim();
+
+            clearTimeout(excludeTimer);
+
+            if (currentToken.length < 1) {
+                hideExcludeAutocomplete();
+                return;
+            }
+
+            excludeTimer = setTimeout(() => {
+                fetchExcludeSuggestions(currentToken);
+            }, 180);
+        });
+
+        excludeInput.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                navigateExcludeDropdown(1);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                navigateExcludeDropdown(-1);
+            } else if (e.key === 'Enter') {
+                if (selectedExcludeIndex >= 0 && currentExcludeSuggestions[selectedExcludeIndex]) {
+                    e.preventDefault();
+                    selectExcludeKeyword(currentExcludeSuggestions[selectedExcludeIndex].text);
+                }
+            } else if (e.key === 'Escape') {
+                hideExcludeAutocomplete();
+            }
+        });
+    }
+
+    function fetchExcludeSuggestions(query) {
+        fetch(`{{ route('admin.candidate_search.suggestions') }}?q=${encodeURIComponent(query)}`)
+            .then(res => res.json())
+            .then(data => {
+                currentExcludeSuggestions = data;
+                selectedExcludeIndex = -1;
+
+                if (!data || data.length === 0) {
+                    hideExcludeAutocomplete();
+                    return;
+                }
+
+                excludeItemsList.innerHTML = '';
+                data.forEach((item, index) => {
+                    const el = document.createElement('div');
+                    el.className = 'autocomplete-item';
+                    el.innerHTML = `<span><i class="fa-solid fa-ban" style="color: #ef4444; font-size: 0.85rem; margin-right: 8px;"></i> ${escapeHtml(item.text)}</span> <span class="autocomplete-item-type">${escapeHtml(item.type)}</span>`;
+                    el.addEventListener('click', () => {
+                        selectExcludeKeyword(item.text);
+                    });
+                    excludeItemsList.appendChild(el);
+                });
+
+                excludeDropdown.style.display = 'block';
+            })
+            .catch(err => {
+                console.error('Error fetching exclude suggestions:', err);
+                hideExcludeAutocomplete();
+            });
+    }
+
+    function selectExcludeKeyword(keyword) {
+        const fullVal = excludeInput.value;
+        const parts = fullVal.split(',').map(s => s.trim()).filter(Boolean);
+        if (parts.length > 0) {
+            parts[parts.length - 1] = keyword;
+        } else {
+            parts.push(keyword);
+        }
+        excludeInput.value = parts.join(', ') + ', ';
+        hideExcludeAutocomplete();
+        excludeInput.focus();
+    }
+
+    function navigateExcludeDropdown(direction) {
+        const items = excludeItemsList.querySelectorAll('.autocomplete-item');
+        if (items.length === 0) return;
+
+        selectedExcludeIndex += direction;
+        if (selectedExcludeIndex < 0) selectedExcludeIndex = items.length - 1;
+        if (selectedExcludeIndex >= items.length) selectedExcludeIndex = 0;
+
+        items.forEach((item, idx) => {
+            if (idx === selectedExcludeIndex) {
+                item.classList.add('active');
+                item.scrollIntoView({ block: 'nearest' });
+            } else {
+                item.classList.remove('active');
+            }
+        });
+    }
+
+    function hideExcludeAutocomplete() {
+        if (excludeDropdown) {
+            excludeDropdown.style.display = 'none';
+        }
+        selectedExcludeIndex = -1;
+    }
+
+    // Close autocompletes on click outside
     document.addEventListener('click', function(e) {
         if (!document.getElementById('keywordsTagBox').contains(e.target)) {
             hideAutocomplete();
+        }
+        if (locationInput && !locationInput.parentElement.contains(e.target)) {
+            hideLocationAutocomplete();
+        }
+        if (excludeInput && !excludeInput.parentElement.contains(e.target)) {
+            hideExcludeAutocomplete();
         }
     });
 

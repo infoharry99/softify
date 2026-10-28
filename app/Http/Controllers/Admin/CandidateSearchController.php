@@ -135,6 +135,72 @@ class CandidateSearchController extends Controller
     }
 
     /**
+     * Live database autocomplete suggestions for Candidate Locations.
+     */
+    public function locations(Request $request)
+    {
+        $q = trim($request->input('q', ''));
+        if (strlen($q) < 1) {
+            return response()->json([]);
+        }
+
+        $suggestions = collect();
+
+        // 1. Query distinct candidate locations from database matching query
+        $dbLocations = Candidate::whereNotNull('location')
+            ->where('location', 'like', "%{$q}%")
+            ->select('location')
+            ->distinct()
+            ->limit(20)
+            ->pluck('location');
+
+        foreach ($dbLocations as $loc) {
+            $tokens = preg_split('/[,|\/\;]+/', $loc);
+            foreach ($tokens as $token) {
+                $cleaned = trim($token);
+                if (strlen($cleaned) >= 2 && strlen($cleaned) <= 50 && stripos($cleaned, $q) !== false) {
+                    $formatted = ucwords(strtolower($cleaned));
+                    if (!$suggestions->contains(fn($item) => strtolower($item['text']) === strtolower($formatted))) {
+                        $suggestions->push([
+                            'text' => $formatted,
+                            'type' => 'Candidate Location'
+                        ]);
+                    }
+                }
+            }
+        }
+
+        // 2. Comprehensive Indian Tech Hubs & Major Cities
+        $majorHubs = [
+            'Bengaluru', 'Bangalore', 'Mumbai', 'Pune', 'Hyderabad', 'Chennai', 'Delhi', 'Delhi NCR',
+            'Noida', 'Gurugram', 'Gurgaon', 'Kolkata', 'Ahmedabad', 'Jaipur', 'Indore',
+            'Chandigarh', 'Kochi', 'Coimbatore', 'Bhubaneswar', 'Nagpur', 'Lucknow',
+            'Surat', 'Visakhapatnam', 'Vadodara', 'Thiruvananthapuram', 'Remote / Work from Home'
+        ];
+        foreach ($majorHubs as $hub) {
+            if (stripos($hub, $q) !== false) {
+                if (!$suggestions->contains(fn($item) => strtolower($item['text']) === strtolower($hub))) {
+                    $suggestions->push([
+                        'text' => $hub,
+                        'type' => 'Major City'
+                    ]);
+                }
+            }
+        }
+
+        // Sort exact match first, then prefix, then contains
+        $sorted = $suggestions->sortBy(function($item) use ($q) {
+            $text = strtolower($item['text']);
+            $qLower = strtolower($q);
+            if ($text === $qLower) return 0;
+            if (str_starts_with($text, $qLower)) return 1;
+            return 2;
+        })->values()->take(10);
+
+        return response()->json($sorted);
+    }
+
+    /**
      * Display the Naukri Resdex style candidate search interface & results.
      */
     public function index(Request $request)
@@ -190,27 +256,35 @@ class CandidateSearchController extends Controller
             $query->where('experience', '<=', (float) $request->input('max_experience'));
         }
 
-        // Current CTC Filter
+        // Current CTC Filter (Supports Lacs e.g. 5 or Exact Rupees e.g. 500000)
         if ($request->filled('min_current_ctc')) {
-            $query->where('current_ctc', '>=', (float) $request->input('min_current_ctc'));
+            $val = (float) $request->input('min_current_ctc');
+            $val = ($val > 0 && $val < 100) ? $val * 100000 : $val;
+            $query->where('current_ctc', '>=', $val);
         }
         if ($request->filled('max_current_ctc')) {
-            $query->where('current_ctc', '<=', (float) $request->input('max_current_ctc'));
+            $val = (float) $request->input('max_current_ctc');
+            $val = ($val > 0 && $val < 100) ? $val * 100000 : $val;
+            $query->where('current_ctc', '<=', $val);
         }
 
-        // Expected CTC / Annual Salary Filter (Support Lacs from search form)
+        // Expected CTC / Annual Salary Filter (Supports Lacs e.g. 1 to 5, or Raw Rupees e.g. 100000 to 500000)
         $minExpected = null;
-        if ($request->filled('min_salary')) {
-            $minExpected = (float) $request->input('min_salary') * 100000;
-        } elseif ($request->filled('min_expected_ctc')) {
-            $minExpected = (float) $request->input('min_expected_ctc');
+        $rawMin = $request->input('min_salary', $request->input('min_expected_ctc'));
+        if ($rawMin !== null && $rawMin !== '') {
+            $val = (float) $rawMin;
+            if ($val > 0) {
+                $minExpected = ($val < 100) ? $val * 100000 : $val;
+            }
         }
 
         $maxExpected = null;
-        if ($request->filled('max_salary')) {
-            $maxExpected = (float) $request->input('max_salary') * 100000;
-        } elseif ($request->filled('max_expected_ctc')) {
-            $maxExpected = (float) $request->input('max_expected_ctc');
+        $rawMax = $request->input('max_salary', $request->input('max_expected_ctc'));
+        if ($rawMax !== null && $rawMax !== '') {
+            $val = (float) $rawMax;
+            if ($val > 0) {
+                $maxExpected = ($val < 100) ? $val * 100000 : $val;
+            }
         }
 
         if ($minExpected !== null) {

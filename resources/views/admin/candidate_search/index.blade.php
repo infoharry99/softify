@@ -1130,8 +1130,8 @@
                         <span><i class="fa-solid fa-indian-rupee-sign" style="color: var(--resdex-teal);"></i> Expected CTC (Annual)</span>
                     </div>
                     <div class="range-inputs-row">
-                        <input type="number" name="min_expected_ctc" class="range-input" placeholder="Min ₹" value="{{ request('min_expected_ctc') }}">
-                        <input type="number" name="max_expected_ctc" class="range-input" placeholder="Max ₹" value="{{ request('max_expected_ctc') }}">
+                        <input type="number" step="any" name="min_expected_ctc" class="range-input" placeholder="Min (Lacs or ₹)" value="{{ request('min_expected_ctc') }}">
+                        <input type="number" step="any" name="max_expected_ctc" class="range-input" placeholder="Max (Lacs or ₹)" value="{{ request('max_expected_ctc') }}">
                     </div>
                 </div>
 
