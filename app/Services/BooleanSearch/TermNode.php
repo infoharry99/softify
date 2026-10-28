@@ -21,12 +21,12 @@ class TermNode extends AstNode
         }
 
         $query->where(function ($sub) use ($term) {
-            $sub->where('skills', 'like', "%{$term}%")
-                ->orWhere('job_title', 'like', "%{$term}%")
-                ->orWhere('name', 'like', "%{$term}%")
-                ->orWhere('company_name', 'like', "%{$term}%")
-                ->orWhere('location', 'like', "%{$term}%")
-                ->orWhere('note', 'like', "%{$term}%");
+            $sub->whereRaw("COALESCE(skills, '') LIKE ?", ["%{$term}%"])
+                ->orWhereRaw("COALESCE(job_title, '') LIKE ?", ["%{$term}%"])
+                ->orWhereRaw("COALESCE(name, '') LIKE ?", ["%{$term}%"])
+                ->orWhereRaw("COALESCE(company_name, '') LIKE ?", ["%{$term}%"])
+                ->orWhereRaw("COALESCE(location, '') LIKE ?", ["%{$term}%"])
+                ->orWhereRaw("COALESCE(note, '') LIKE ?", ["%{$term}%"]);
         });
     }
 

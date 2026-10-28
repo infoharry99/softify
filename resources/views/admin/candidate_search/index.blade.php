@@ -1058,6 +1058,7 @@
 
             <!-- Search Actions Buttons -->
             <div class="search-actions-row">
+                <input type="hidden" name="exclude_keywords" id="exclude_keywords_input" value="{{ request('exclude_keywords') }}">
                 <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                     <button type="submit" class="btn-search-primary">
                         <i class="fa-solid fa-magnifying-glass"></i> Search Candidates
@@ -1074,7 +1075,7 @@
 
         <!-- Active Filters Chips Bar -->
         @php
-            $hasActiveFilters = $booleanQuery || $keyword || request()->filled('min_experience') || request()->filled('max_experience') || request()->filled('min_expected_ctc') || request()->filled('max_expected_ctc') || request()->filled('min_salary') || request()->filled('max_salary') || request()->filled('location') || request()->filled('job_type') || request()->filled('notice_period') || request()->filled('status') || request()->boolean('shortlisted_only');
+            $hasActiveFilters = $booleanQuery || $keyword || request()->filled('exclude_keywords') || request()->filled('min_experience') || request()->filled('max_experience') || request()->filled('min_expected_ctc') || request()->filled('max_expected_ctc') || request()->filled('min_salary') || request()->filled('max_salary') || request()->filled('location') || request()->filled('job_type') || request()->filled('notice_period') || request()->filled('status') || request()->boolean('shortlisted_only');
         @endphp
         @if($hasActiveFilters)
         <div class="active-filters-bar">
@@ -1089,6 +1090,13 @@
                 <span class="filter-tag-chip">
                     <strong>Keyword:</strong> {{ $keyword }}
                     <span class="remove-chip" onclick="clearFilterField('q')">&times;</span>
+                </span>
+            @endif
+
+            @if(request()->filled('exclude_keywords'))
+                <span class="filter-tag-chip" style="background: #fef2f2; border-color: #fca5a5; color: #991b1b;">
+                    <strong>Exclude:</strong> {{ request('exclude_keywords') }}
+                    <span class="remove-chip" style="color: #ef4444;" onclick="clearFilterField('exclude_keywords')">&times;</span>
                 </span>
             @endif
 

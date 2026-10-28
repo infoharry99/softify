@@ -237,16 +237,15 @@ class CandidateSearchController extends Controller
             $highlightTerms = $result['positive_terms'];
         }
 
-        // 2. Exclude Keywords (NOT logic)
+        // 2. Exclude Keywords (NOT logic - excludes candidates having these skills or job titles)
         if ($request->filled('exclude_keywords')) {
             $excludes = array_filter(array_map('trim', preg_split('/[,;|]+/', $request->input('exclude_keywords'))));
             foreach ($excludes as $exTerm) {
+                if (empty($exTerm)) continue;
                 $query->where(function ($sub) use ($exTerm) {
-                    $sub->where('skills', 'not like', "%{$exTerm}%")
-                        ->where('job_title', 'not like', "%{$exTerm}%")
-                        ->where('name', 'not like', "%{$exTerm}%")
-                        ->where('company_name', 'not like', "%{$exTerm}%")
-                        ->where('note', 'not like', "%{$exTerm}%");
+                    $sub->whereNull('skills')->orWhere('skills', 'not like', "%{$exTerm}%");
+                })->where(function ($sub) use ($exTerm) {
+                    $sub->whereNull('job_title')->orWhere('job_title', 'not like', "%{$exTerm}%");
                 });
             }
         }
