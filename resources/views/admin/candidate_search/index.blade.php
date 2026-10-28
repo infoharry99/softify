@@ -277,6 +277,61 @@
         font-size: 1rem;
     }
 
+    /* Floating Autocomplete Dropdown List */
+    .autocomplete-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-radius: 12px;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+        z-index: 9999;
+        margin-top: 6px;
+        max-height: 280px;
+        overflow-y: auto;
+        display: none;
+        text-align: left;
+    }
+    .autocomplete-header {
+        padding: 8px 16px;
+        font-size: 0.72rem;
+        font-weight: 800;
+        color: #64748b;
+        text-transform: uppercase;
+        background: #f8fafc;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    .autocomplete-item {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #1e293b;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #f8fafc;
+        transition: background 0.1s ease;
+    }
+    .autocomplete-item:hover, .autocomplete-item.active {
+        background: #f0faf7;
+        color: var(--resdex-teal);
+    }
+    .autocomplete-item-type {
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 6px;
+        background: #f1f5f9;
+        color: #64748b;
+    }
+    .autocomplete-item:hover .autocomplete-item-type {
+        background: var(--resdex-teal-light);
+        color: var(--resdex-teal);
+    }
+
     /* Suggested Skills Chips */
     .suggested-skills-row {
         display: flex;
@@ -970,19 +1025,26 @@
 
             <!-- 2. When Boolean Search is OFF (Simple Keyword Search) -->
             <div id="simpleKeywordBox" style="{{ !$booleanMode ? 'display: block;' : 'display: none;' }}">
-                <div class="simple-keyword-box">
+                <div class="simple-keyword-box" style="position: relative;">
                     <i class="fa-solid fa-magnifying-glass simple-keyword-icon"></i>
                     <input type="text" 
                            id="simpleKeywordInput" 
                            name="q" 
                            class="simple-keyword-input" 
                            placeholder="Search by keywords, skills, titles e.g. React, Python, Java, DevOps..." 
-                           value="{{ $keyword }}">
+                           value="{{ $keyword }}"
+                           autocomplete="off">
                     
                     <select name="keyword_mode" class="sort-select" title="Match condition for multiple keywords">
                         <option value="any" {{ request('keyword_mode', 'any') === 'any' ? 'selected' : '' }}>Match Any (OR)</option>
                         <option value="all" {{ request('keyword_mode') === 'all' ? 'selected' : '' }}>Match All (AND)</option>
                     </select>
+
+                    <!-- Floating Autocomplete Dropdown from Database -->
+                    <div id="indexKeywordAutocompleteDropdown" class="autocomplete-dropdown" style="top: 100%; left: 0; right: 0;">
+                        <div class="autocomplete-header">Suggested Skills & Titles from Database</div>
+                        <div id="indexKeywordAutocompleteItemsList"></div>
+                    </div>
                 </div>
 
                 <!-- Suggested Skills Chips -->
@@ -1005,12 +1067,6 @@
                     </a>
                     <button type="button" onclick="resetAllResdexFilters()" class="btn-search-reset">
                         <i class="fa-solid fa-rotate-left"></i> Reset
-                    </button>
-                </div>
-
-                <div>
-                    <button type="button" onclick="openSaveSearchModal()" class="btn-save-search">
-                        <i class="fa-regular fa-bookmark"></i> Save This Search
                     </button>
                 </div>
             </div>
@@ -1203,27 +1259,23 @@
                     <div class="sidebar-section-title">
                         <span><i class="fa-solid fa-location-dot" style="color: var(--resdex-teal);"></i> Location</span>
                     </div>
-                    <input type="text" name="location" class="range-input" placeholder="e.g. Bengaluru, Delhi, Remote..." value="{{ request('location') }}" style="margin-bottom: 8px;">
-                </div>
+                    <div style="position: relative;">
+                        <input type="text" 
+                               id="sidebarLocationInput" 
+                               name="location" 
+                               class="range-input" 
+                               placeholder="e.g. Bengaluru, Delhi, Remote..." 
+                               value="{{ request('location') }}" 
+                               style="width: 100%; margin-bottom: 0;"
+                               autocomplete="off">
 
-                <!-- Saved Searches Drawer -->
-                @if($savedSearches->count() > 0)
-                <div class="sidebar-section">
-                    <div class="sidebar-section-title">
-                        <span><i class="fa-regular fa-bookmark" style="color: var(--resdex-teal);"></i> My Saved Searches</span>
-                    </div>
-                    <div style="display: flex; flex-direction: column; gap: 8px;">
-                        @foreach($savedSearches as $saved)
-                            <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.82rem; background: #f8fafc; padding: 6px 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
-                                <a href="{{ route('admin.candidate_search.index', array_merge(['boolean_mode' => $saved->boolean_enabled ? 1 : 0, 'boolean_query' => $saved->search_query, 'q' => $saved->search_query], (array) $saved->filters)) }}" style="font-weight: 700; color: #0f172a; text-decoration: none;">
-                                    {{ $saved->name }}
-                                </a>
-                                <button type="button" onclick="deleteSavedSearch({{ $saved->id }})" style="background:none; border:none; color:#ef4444; cursor:pointer;" title="Delete Saved Search">&times;</button>
-                            </div>
-                        @endforeach
+                        <!-- Floating Autocomplete Dropdown from Database -->
+                        <div id="sidebarLocationAutocompleteDropdown" class="autocomplete-dropdown" style="top: 100%; left: 0; right: 0;">
+                            <div class="autocomplete-header">Candidate Locations from Database</div>
+                            <div id="sidebarLocationAutocompleteItemsList"></div>
+                        </div>
                     </div>
                 </div>
-                @endif
 
                 <div style="margin-top: 15px;">
                     <button type="submit" class="btn-search-primary" style="width: 100%; justify-content: center;">
@@ -1332,35 +1384,7 @@
     </div>
 </div>
 
-<!-- Modal 2: Save Search Modal -->
-<div id="saveSearchModal" class="resdex-modal-overlay">
-    <div class="resdex-modal-card" style="max-width: 500px;">
-        <div class="resdex-modal-header">
-            <h4 style="margin: 0; font-weight: 800; display: flex; align-items: center; gap: 8px;">
-                <i class="fa-regular fa-bookmark" style="color: #00a884;"></i> Save Candidate Search
-            </h4>
-            <button type="button" onclick="closeSaveSearchModal()" style="background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">&times;</button>
-        </div>
-        <form id="saveSearchForm" onsubmit="submitSaveSearch(event)">
-            @csrf
-            <div style="padding: 24px;">
-                <div style="margin-bottom: 14px;">
-                    <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #0f172a; margin-bottom: 6px;">Search Name *</label>
-                    <input type="text" id="saveSearchName" name="name" class="simple-keyword-input" placeholder="e.g. Senior Java AWS Engineers" required style="padding-left: 14px;">
-                </div>
-                <p style="font-size: 0.8rem; color: #64748b; margin: 0;">
-                    Your current Boolean expression, experience, and salary filters will be saved to your dashboard for quick 1-click access.
-                </p>
-            </div>
-            <div style="padding: 16px 24px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 10px;">
-                <button type="button" onclick="closeSaveSearchModal()" class="btn-search-reset">Cancel</button>
-                <button type="submit" class="btn-search-primary" style="padding: 8px 18px; font-size: 0.88rem;">Save Search</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- Modal 3: Resume Preview Modal -->
+<!-- Modal 2: Resume Preview Modal -->
 <div id="resumePreviewModal" class="resdex-modal-overlay">
     <div class="resdex-modal-card" style="max-width: 900px; height: 85vh;">
         <div class="resdex-modal-header">
@@ -1573,87 +1597,241 @@
         }
     }
 
-    // 9. Save Search Modal
-    function openSaveSearchModal() {
-        document.getElementById('saveSearchModal').style.display = 'flex';
-        document.getElementById('saveSearchName').focus();
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.innerText = text;
+        return div.innerHTML;
     }
 
-    function closeSaveSearchModal() {
-        document.getElementById('saveSearchModal').style.display = 'none';
-    }
+    // ==========================================
+    // 9. TOP KEYWORD AUTOCOMPLETE (FROM DATABASE)
+    // ==========================================
+    const topKeywordInput = document.getElementById('simpleKeywordInput');
+    const topKeywordDropdown = document.getElementById('indexKeywordAutocompleteDropdown');
+    const topKeywordItemsList = document.getElementById('indexKeywordAutocompleteItemsList');
+    let topKeywordTimer = null;
+    let selectedTopKeywordIndex = -1;
+    let currentTopKeywordSuggestions = [];
 
-    function submitSaveSearch(e) {
-        e.preventDefault();
-        const name = document.getElementById('saveSearchName').value.trim();
-        if (!name) return;
+    if (topKeywordInput && topKeywordDropdown) {
+        topKeywordInput.addEventListener('input', function() {
+            const fullVal = this.value;
+            const parts = fullVal.split(',');
+            const currentToken = parts[parts.length - 1].trim();
 
-        const isBoolean = document.getElementById('booleanModeToggle').checked;
-        const queryVal = isBoolean ? document.getElementById('booleanQueryInput').value : document.getElementById('simpleKeywordInput').value;
+            clearTimeout(topKeywordTimer);
 
-        // Gather all current form filters
-        const form = document.getElementById('resdexSearchForm');
-        const formData = new FormData(form);
-        const filters = {};
-        for (let [k, v] of formData.entries()) {
-            if (k !== '_token' && k !== 'q' && k !== 'boolean_query' && k !== 'boolean_mode') {
-                filters[k] = v;
+            if (currentToken.length < 1) {
+                hideTopKeywordAutocomplete();
+                return;
             }
-        }
 
-        fetch('{{ route("admin.candidate_search.save_search") }}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                name: name,
-                search_query: queryVal,
-                boolean_enabled: isBoolean ? 1 : 0,
-                filters: filters
-            })
-        })
-        .then(res => res.json())
-        .then(data => {
-            closeSaveSearchModal();
-            if (data.success) {
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Search Saved!',
-                        text: data.message,
-                        timer: 2000,
-                        showConfirmButton: false
-                    }).then(() => location.reload());
-                } else {
-                    alert(data.message);
-                    location.reload();
+            topKeywordTimer = setTimeout(() => {
+                fetchTopKeywordSuggestions(currentToken);
+            }, 180);
+        });
+
+        topKeywordInput.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                navigateTopKeywordDropdown(1);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                navigateTopKeywordDropdown(-1);
+            } else if (e.key === 'Enter') {
+                if (selectedTopKeywordIndex >= 0 && currentTopKeywordSuggestions[selectedTopKeywordIndex]) {
+                    e.preventDefault();
+                    selectTopKeyword(currentTopKeywordSuggestions[selectedTopKeywordIndex].text);
                 }
+            } else if (e.key === 'Escape') {
+                hideTopKeywordAutocomplete();
             }
-        })
-        .catch(err => console.error('Save search error:', err));
+        });
     }
 
-    function deleteSavedSearch(id) {
-        if (!confirm('Are you sure you want to delete this saved search?')) return;
+    function fetchTopKeywordSuggestions(query) {
+        fetch(`{{ route('admin.candidate_search.suggestions') }}?q=${encodeURIComponent(query)}`)
+            .then(res => res.json())
+            .then(data => {
+                currentTopKeywordSuggestions = data;
+                selectedTopKeywordIndex = -1;
 
-        fetch(`{{ url('admin/candidate-search/saved-searches') }}/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Accept': 'application/json'
-            }
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                location.reload();
-            }
-        })
-        .catch(err => console.error('Delete search error:', err));
+                if (!data || data.length === 0) {
+                    hideTopKeywordAutocomplete();
+                    return;
+                }
+
+                topKeywordItemsList.innerHTML = '';
+                data.forEach((item, index) => {
+                    const el = document.createElement('div');
+                    el.className = 'autocomplete-item';
+                    el.innerHTML = `<span><i class="fa-solid fa-search" style="color: #94a3b8; font-size: 0.8rem; margin-right: 8px;"></i> ${escapeHtml(item.text)}</span> <span class="autocomplete-item-type">${escapeHtml(item.type)}</span>`;
+                    el.addEventListener('click', () => {
+                        selectTopKeyword(item.text);
+                    });
+                    topKeywordItemsList.appendChild(el);
+                });
+
+                topKeywordDropdown.style.display = 'block';
+            })
+            .catch(err => {
+                console.error('Error fetching keyword suggestions:', err);
+                hideTopKeywordAutocomplete();
+            });
     }
+
+    function selectTopKeyword(keyword) {
+        const fullVal = topKeywordInput.value;
+        const parts = fullVal.split(',').map(s => s.trim()).filter(Boolean);
+        if (parts.length > 0) {
+            parts[parts.length - 1] = keyword;
+        } else {
+            parts.push(keyword);
+        }
+        topKeywordInput.value = parts.join(', ') + ', ';
+        hideTopKeywordAutocomplete();
+        topKeywordInput.focus();
+    }
+
+    function navigateTopKeywordDropdown(direction) {
+        const items = topKeywordItemsList.querySelectorAll('.autocomplete-item');
+        if (items.length === 0) return;
+
+        selectedTopKeywordIndex += direction;
+        if (selectedTopKeywordIndex < 0) selectedTopKeywordIndex = items.length - 1;
+        if (selectedTopKeywordIndex >= items.length) selectedTopKeywordIndex = 0;
+
+        items.forEach((item, idx) => {
+            if (idx === selectedTopKeywordIndex) {
+                item.classList.add('active');
+                item.scrollIntoView({ block: 'nearest' });
+            } else {
+                item.classList.remove('active');
+            }
+        });
+    }
+
+    function hideTopKeywordAutocomplete() {
+        if (topKeywordDropdown) {
+            topKeywordDropdown.style.display = 'none';
+        }
+        selectedTopKeywordIndex = -1;
+    }
+
+    // ==========================================
+    // 10. SIDEBAR LOCATION AUTOCOMPLETE (FROM DATABASE)
+    // ==========================================
+    const sidebarLocInput = document.getElementById('sidebarLocationInput');
+    const sidebarLocDropdown = document.getElementById('sidebarLocationAutocompleteDropdown');
+    const sidebarLocItemsList = document.getElementById('sidebarLocationAutocompleteItemsList');
+    let sidebarLocTimer = null;
+    let selectedSidebarLocIndex = -1;
+    let currentSidebarLocSuggestions = [];
+
+    if (sidebarLocInput && sidebarLocDropdown) {
+        sidebarLocInput.addEventListener('input', function() {
+            const query = this.value.trim();
+            clearTimeout(sidebarLocTimer);
+
+            if (query.length < 1) {
+                hideSidebarLocAutocomplete();
+                return;
+            }
+
+            sidebarLocTimer = setTimeout(() => {
+                fetchSidebarLocSuggestions(query);
+            }, 180);
+        });
+
+        sidebarLocInput.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                navigateSidebarLocDropdown(1);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                navigateSidebarLocDropdown(-1);
+            } else if (e.key === 'Enter') {
+                if (selectedSidebarLocIndex >= 0 && currentSidebarLocSuggestions[selectedSidebarLocIndex]) {
+                    e.preventDefault();
+                    selectSidebarLoc(currentSidebarLocSuggestions[selectedSidebarLocIndex].text);
+                }
+            } else if (e.key === 'Escape') {
+                hideSidebarLocAutocomplete();
+            }
+        });
+    }
+
+    function fetchSidebarLocSuggestions(query) {
+        fetch(`{{ route('admin.candidate_search.locations') }}?q=${encodeURIComponent(query)}`)
+            .then(res => res.json())
+            .then(data => {
+                currentSidebarLocSuggestions = data;
+                selectedSidebarLocIndex = -1;
+
+                if (!data || data.length === 0) {
+                    hideSidebarLocAutocomplete();
+                    return;
+                }
+
+                sidebarLocItemsList.innerHTML = '';
+                data.forEach((item, index) => {
+                    const el = document.createElement('div');
+                    el.className = 'autocomplete-item';
+                    el.innerHTML = `<span><i class="fa-solid fa-location-dot" style="color: var(--resdex-teal); font-size: 0.85rem; margin-right: 8px;"></i> ${escapeHtml(item.text)}</span> <span class="autocomplete-item-type">${escapeHtml(item.type)}</span>`;
+                    el.addEventListener('click', () => {
+                        selectSidebarLoc(item.text);
+                    });
+                    sidebarLocItemsList.appendChild(el);
+                });
+
+                sidebarLocDropdown.style.display = 'block';
+            })
+            .catch(err => {
+                console.error('Error fetching sidebar location suggestions:', err);
+                hideSidebarLocAutocomplete();
+            });
+    }
+
+    function selectSidebarLoc(loc) {
+        sidebarLocInput.value = loc;
+        hideSidebarLocAutocomplete();
+        sidebarLocInput.focus();
+    }
+
+    function navigateSidebarLocDropdown(direction) {
+        const items = sidebarLocItemsList.querySelectorAll('.autocomplete-item');
+        if (items.length === 0) return;
+
+        selectedSidebarLocIndex += direction;
+        if (selectedSidebarLocIndex < 0) selectedSidebarLocIndex = items.length - 1;
+        if (selectedSidebarLocIndex >= items.length) selectedSidebarLocIndex = 0;
+
+        items.forEach((item, idx) => {
+            if (idx === selectedSidebarLocIndex) {
+                item.classList.add('active');
+                item.scrollIntoView({ block: 'nearest' });
+            } else {
+                item.classList.remove('active');
+            }
+        });
+    }
+
+    function hideSidebarLocAutocomplete() {
+        if (sidebarLocDropdown) {
+            sidebarLocDropdown.style.display = 'none';
+        }
+        selectedSidebarLocIndex = -1;
+    }
+
+    // Close autocompletes on outside click
+    document.addEventListener('click', function(e) {
+        if (topKeywordInput && !topKeywordInput.parentElement.contains(e.target)) {
+            hideTopKeywordAutocomplete();
+        }
+        if (sidebarLocInput && !sidebarLocInput.parentElement.contains(e.target)) {
+            hideSidebarLocAutocomplete();
+        }
+    });
 
     // 10. Syntax Help Modal
     function openSyntaxHelpModal() {

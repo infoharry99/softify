@@ -825,30 +825,6 @@
                 @endif
             </div>
 
-            <!-- Saved Searches Widget -->
-            <div class="sidebar-widget-card">
-                <h3 class="widget-title">
-                    <i class="fa-regular fa-bookmark" style="color: var(--resdex-teal);"></i> Saved Searches
-                </h3>
-
-                @if($savedSearches->count() > 0)
-                    @foreach($savedSearches as $saved)
-                        <div class="search-history-item">
-                            <span class="history-query-text">{{ $saved->name }}</span>
-                            <div style="font-size: 0.78rem; color: #64748b; margin-bottom: 4px;">{{ Str::limit($saved->search_query, 35) }}</div>
-                            <div class="history-actions-row">
-                                <a href="javascript:void(0)" onclick="fillRecentSearch('{{ addslashes($saved->search_query) }}')" class="link-blue">Fill this search</a>
-                                <a href="{{ route('admin.candidate_search.index', array_merge(['boolean_mode' => $saved->boolean_enabled ? 1 : 0, 'boolean_query' => $saved->search_query, 'q' => $saved->search_query], (array) $saved->filters)) }}" style="color: var(--resdex-teal); text-decoration: none; font-weight: 700;">
-                                    Search &rarr;
-                                </a>
-                            </div>
-                        </div>
-                    @endforeach
-                @else
-                    <div style="font-size: 0.84rem; color: #94a3b8; padding: 12px 0;">Save searches from the candidate cards page to quickly reload them here.</div>
-                @endif
-            </div>
-
             <!-- Quick Tips Widget -->
             <div class="sidebar-widget-card" style="background: #f0faf7; border-color: var(--resdex-teal-border);">
                 <div style="font-size: 0.9rem; font-weight: 700; color: #065f46; margin-bottom: 6px;">

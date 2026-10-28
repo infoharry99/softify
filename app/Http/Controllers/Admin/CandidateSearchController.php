@@ -136,6 +136,7 @@ class CandidateSearchController extends Controller
 
     /**
      * Live database autocomplete suggestions for Candidate Locations.
+     * ONLY returns locations that actually exist in the candidates database!
      */
     public function locations(Request $request)
     {
@@ -146,44 +147,47 @@ class CandidateSearchController extends Controller
 
         $suggestions = collect();
 
-        // 1. Query distinct candidate locations from database matching query
+        // Query distinct candidate locations strictly from database
         $dbLocations = Candidate::whereNotNull('location')
+            ->where('location', '!=', '')
+            ->where('location', 'not like', '%`location`%')
             ->where('location', 'like', "%{$q}%")
             ->select('location')
             ->distinct()
-            ->limit(20)
+            ->limit(50)
             ->pluck('location');
 
         foreach ($dbLocations as $loc) {
-            $tokens = preg_split('/[,|\/\;]+/', $loc);
-            foreach ($tokens as $token) {
-                $cleaned = trim($token);
-                if (strlen($cleaned) >= 2 && strlen($cleaned) <= 50 && stripos($cleaned, $q) !== false) {
-                    $formatted = ucwords(strtolower($cleaned));
-                    if (!$suggestions->contains(fn($item) => strtolower($item['text']) === strtolower($formatted))) {
-                        $suggestions->push([
-                            'text' => $formatted,
-                            'type' => 'Candidate Location'
-                        ]);
-                    }
+            $cleanLoc = trim(str_replace(['`', '"', "'"], '', $loc));
+            if (empty($cleanLoc) || strtolower($cleanLoc) === 'location' || strtolower($cleanLoc) === 'n/a') {
+                continue;
+            }
+
+            // Whole location string match
+            if (stripos($cleanLoc, $q) !== false) {
+                $formatted = ucwords(strtolower($cleanLoc));
+                if (!$suggestions->contains(fn($item) => strtolower($item['text']) === strtolower($formatted))) {
+                    $suggestions->push([
+                        'text' => $formatted,
+                        'type' => 'Candidate Location'
+                    ]);
                 }
             }
-        }
 
-        // 2. Comprehensive Indian Tech Hubs & Major Cities
-        $majorHubs = [
-            'Bengaluru', 'Bangalore', 'Mumbai', 'Pune', 'Hyderabad', 'Chennai', 'Delhi', 'Delhi NCR',
-            'Noida', 'Gurugram', 'Gurgaon', 'Kolkata', 'Ahmedabad', 'Jaipur', 'Indore',
-            'Chandigarh', 'Kochi', 'Coimbatore', 'Bhubaneswar', 'Nagpur', 'Lucknow',
-            'Surat', 'Visakhapatnam', 'Vadodara', 'Thiruvananthapuram', 'Remote / Work from Home'
-        ];
-        foreach ($majorHubs as $hub) {
-            if (stripos($hub, $q) !== false) {
-                if (!$suggestions->contains(fn($item) => strtolower($item['text']) === strtolower($hub))) {
-                    $suggestions->push([
-                        'text' => $hub,
-                        'type' => 'Major City'
-                    ]);
+            // Split comma-separated tokens (e.g. "Mumbai, Maharashtra" -> "Mumbai")
+            $tokens = preg_split('/[,|\/\;]+/', $cleanLoc);
+            if (count($tokens) > 1) {
+                foreach ($tokens as $token) {
+                    $trimmed = trim($token);
+                    if (strlen($trimmed) >= 2 && strlen($trimmed) <= 40 && stripos($trimmed, $q) !== false) {
+                        $formattedToken = ucwords(strtolower($trimmed));
+                        if (!$suggestions->contains(fn($item) => strtolower($item['text']) === strtolower($formattedToken))) {
+                            $suggestions->push([
+                                'text' => $formattedToken,
+                                'type' => 'Candidate Location'
+                            ]);
+                        }
+                    }
                 }
             }
         }
@@ -309,6 +313,10 @@ class CandidateSearchController extends Controller
             });
         }
 
+        // Base search query snapshot (Search Keywords, Experience, Salary, and Location applied)
+        // Used to compute dynamic facet counts exclusively for the matching candidates
+        $baseFacetQuery = clone $query;
+
         // Work Mode / Job Type Filter
         if ($request->filled('job_type')) {
             $jobTypes = (array) $request->input('job_type');
@@ -385,13 +393,82 @@ class CandidateSearchController extends Controller
         $perPage = in_array((int) $request->input('per_page'), [10, 25, 50], true) ? (int) $request->input('per_page') : 10;
         $candidates = $query->paginate($perPage)->withQueryString();
 
-        // 7. Facet Counts & Suggestions for Sidebar
+        // 7. Dynamic Facet Counts (Counts strictly within matching candidates)
         $totalCandidatesCount = Candidate::count();
+
+        // Work Mode facet count within matching search candidates
+        $jtFacetQuery = clone $baseFacetQuery;
+        if ($request->filled('notice_period')) {
+            $jtFacetQuery->whereIn('notice_period', (array) $request->input('notice_period'));
+        }
+        if ($request->filled('status')) {
+            $jtFacetQuery->whereIn('status', (array) $request->input('status'));
+        }
+        if ($request->filled('job_title')) {
+            $jtFacetQuery->where('job_title', 'like', "%{$request->input('job_title')}%");
+        }
+        if ($request->filled('company_name')) {
+            $jtFacetQuery->where('company_name', 'like', "%{$request->input('company_name')}%");
+        }
+        if ($request->boolean('shortlisted_only')) {
+            $jtFacetQuery->where('is_highlighted', true);
+        }
+        $jobTypeCounts = $jtFacetQuery->select('job_type', DB::raw('count(*) as count'))
+            ->groupBy('job_type')
+            ->pluck('count', 'job_type')
+            ->toArray();
+
+        // Notice Period facet count within matching search candidates
+        $npFacetQuery = clone $baseFacetQuery;
+        if ($request->filled('job_type')) {
+            $npFacetQuery->whereIn('job_type', (array) $request->input('job_type'));
+        }
+        if ($request->filled('status')) {
+            $npFacetQuery->whereIn('status', (array) $request->input('status'));
+        }
+        if ($request->filled('job_title')) {
+            $npFacetQuery->where('job_title', 'like', "%{$request->input('job_title')}%");
+        }
+        if ($request->filled('company_name')) {
+            $npFacetQuery->where('company_name', 'like', "%{$request->input('company_name')}%");
+        }
+        if ($request->boolean('shortlisted_only')) {
+            $npFacetQuery->where('is_highlighted', true);
+        }
+        $noticePeriodCounts = $npFacetQuery->select('notice_period', DB::raw('count(*) as count'))
+            ->groupBy('notice_period')
+            ->pluck('count', 'notice_period')
+            ->toArray();
+
+        // Pipeline Stage / Status facet count within matching search candidates
+        $stFacetQuery = clone $baseFacetQuery;
+        if ($request->filled('job_type')) {
+            $stFacetQuery->whereIn('job_type', (array) $request->input('job_type'));
+        }
+        if ($request->filled('notice_period')) {
+            $stFacetQuery->whereIn('notice_period', (array) $request->input('notice_period'));
+        }
+        if ($request->filled('job_title')) {
+            $stFacetQuery->where('job_title', 'like', "%{$request->input('job_title')}%");
+        }
+        if ($request->filled('company_name')) {
+            $stFacetQuery->where('company_name', 'like', "%{$request->input('company_name')}%");
+        }
+        if ($request->boolean('shortlisted_only')) {
+            $stFacetQuery->where('is_highlighted', true);
+        }
+        $statusCounts = $stFacetQuery->select('status', DB::raw('count(*) as count'))
+            ->groupBy('status')
+            ->pluck('count', 'status')
+            ->toArray();
+
+        $shortlistedCount = (clone $query)->where('is_highlighted', true)->count();
+
         $facets = [
-            'job_types' => Candidate::select('job_type', DB::raw('count(*) as count'))->groupBy('job_type')->pluck('count', 'job_type')->toArray(),
-            'notice_periods' => Candidate::select('notice_period', DB::raw('count(*) as count'))->groupBy('notice_period')->pluck('count', 'notice_period')->toArray(),
-            'statuses' => Candidate::select('status', DB::raw('count(*) as count'))->groupBy('status')->pluck('count', 'status')->toArray(),
-            'shortlisted_count' => Candidate::where('is_highlighted', true)->count(),
+            'job_types' => $jobTypeCounts,
+            'notice_periods' => $noticePeriodCounts,
+            'statuses' => $statusCounts,
+            'shortlisted_count' => $shortlistedCount,
         ];
 
         // Popular skills suggestions for quick chips
