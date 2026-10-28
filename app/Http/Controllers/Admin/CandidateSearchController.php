@@ -283,12 +283,12 @@ class CandidateSearchController extends Controller
         if ($request->filled('min_current_ctc')) {
             $val = (float) $request->input('min_current_ctc');
             $val = ($val > 0 && $val < 100) ? $val * 100000 : $val;
-            $query->where('current_ctc', '>=', $val);
+            $query->whereRaw("CAST(REPLACE(REPLACE(COALESCE(current_ctc, '0'), ',', ''), ' ', '') AS DECIMAL(14,2)) >= ?", [$val]);
         }
         if ($request->filled('max_current_ctc')) {
             $val = (float) $request->input('max_current_ctc');
             $val = ($val > 0 && $val < 100) ? $val * 100000 : $val;
-            $query->where('current_ctc', '<=', $val);
+            $query->whereRaw("CAST(REPLACE(REPLACE(COALESCE(current_ctc, '0'), ',', ''), ' ', '') AS DECIMAL(14,2)) <= ?", [$val]);
         }
 
         // Expected CTC / Annual Salary Filter (Supports Lacs e.g. 1 to 5, or Raw Rupees e.g. 100000 to 500000)
@@ -323,10 +323,11 @@ class CandidateSearchController extends Controller
         }
 
         if ($minExpected !== null) {
-            $query->where('expected_ctc', '>=', $minExpected);
+            $query->whereRaw("CAST(REPLACE(REPLACE(COALESCE(expected_ctc, '0'), ',', ''), ' ', '') AS DECIMAL(14,2)) >= ?", [$minExpected]);
         }
         if ($maxExpected !== null) {
-            $query->where('expected_ctc', '<=', $maxExpected);
+            $query->whereRaw("CAST(REPLACE(REPLACE(COALESCE(expected_ctc, '0'), ',', ''), ' ', '') AS DECIMAL(14,2)) <= ?", [$maxExpected])
+                  ->whereRaw("CAST(REPLACE(REPLACE(COALESCE(expected_ctc, '0'), ',', ''), ' ', '') AS DECIMAL(14,2)) > 0");
         }
 
         // Base Search Query Snapshot (Search Keywords, Location, Experience, and Expected CTC applied)
@@ -398,9 +399,9 @@ class CandidateSearchController extends Controller
         } elseif ($sortBy === 'experience_asc') {
             $query->orderBy('experience');
         } elseif ($sortBy === 'ctc_asc') {
-            $query->orderBy('expected_ctc');
+            $query->orderByRaw("CAST(REPLACE(REPLACE(COALESCE(expected_ctc, '0'), ',', ''), ' ', '') AS DECIMAL(14,2)) ASC");
         } elseif ($sortBy === 'ctc_desc') {
-            $query->orderByDesc('expected_ctc');
+            $query->orderByRaw("CAST(REPLACE(REPLACE(COALESCE(expected_ctc, '0'), ',', ''), ' ', '') AS DECIMAL(14,2)) DESC");
         } else {
             $query->orderByDesc('updated_at');
         }
@@ -502,23 +503,24 @@ class CandidateSearchController extends Controller
             $ctcFacetQuery->where('is_highlighted', true);
         }
         $ctcRangeCounts = (array) $ctcFacetQuery->selectRaw("
-            COALESCE(SUM(CASE WHEN expected_ctc > 0 AND expected_ctc <= 100000 THEN 1 ELSE 0 END), 0) as `0-1`,
-            COALESCE(SUM(CASE WHEN expected_ctc >= 100000 AND expected_ctc <= 200000 THEN 1 ELSE 0 END), 0) as `1-2`,
-            COALESCE(SUM(CASE WHEN expected_ctc >= 200000 AND expected_ctc <= 500000 THEN 1 ELSE 0 END), 0) as `2-5`,
-            COALESCE(SUM(CASE WHEN expected_ctc >= 500000 AND expected_ctc <= 1000000 THEN 1 ELSE 0 END), 0) as `5-10`,
-            COALESCE(SUM(CASE WHEN expected_ctc >= 1000000 AND expected_ctc <= 1500000 THEN 1 ELSE 0 END), 0) as `10-15`,
-            COALESCE(SUM(CASE WHEN expected_ctc >= 1500000 AND expected_ctc <= 5000000 THEN 1 ELSE 0 END), 0) as `15-50`,
-            COALESCE(SUM(CASE WHEN expected_ctc >= 5000000 THEN 1 ELSE 0 END), 0) as `50+`
+            COALESCE(SUM(CASE WHEN CAST(REPLACE(REPLACE(COALESCE(expected_ctc, '0'), ',', ''), ' ', '') AS DECIMAL(14,2)) > 0 AND CAST(REPLACE(REPLACE(COALESCE(expected_ctc, '0'), ',', ''), ' ', '') AS DECIMAL(14,2)) <= 100000 THEN 1 ELSE 0 END), 0) as `0-1`,
+            COALESCE(SUM(CASE WHEN CAST(REPLACE(REPLACE(COALESCE(expected_ctc, '0'), ',', ''), ' ', '') AS DECIMAL(14,2)) >= 100000 AND CAST(REPLACE(REPLACE(COALESCE(expected_ctc, '0'), ',', ''), ' ', '') AS DECIMAL(14,2)) <= 200000 THEN 1 ELSE 0 END), 0) as `1-2`,
+            COALESCE(SUM(CASE WHEN CAST(REPLACE(REPLACE(COALESCE(expected_ctc, '0'), ',', ''), ' ', '') AS DECIMAL(14,2)) >= 200000 AND CAST(REPLACE(REPLACE(COALESCE(expected_ctc, '0'), ',', ''), ' ', '') AS DECIMAL(14,2)) <= 500000 THEN 1 ELSE 0 END), 0) as `2-5`,
+            COALESCE(SUM(CASE WHEN CAST(REPLACE(REPLACE(COALESCE(expected_ctc, '0'), ',', ''), ' ', '') AS DECIMAL(14,2)) >= 500000 AND CAST(REPLACE(REPLACE(COALESCE(expected_ctc, '0'), ',', ''), ' ', '') AS DECIMAL(14,2)) <= 1000000 THEN 1 ELSE 0 END), 0) as `5-10`,
+            COALESCE(SUM(CASE WHEN CAST(REPLACE(REPLACE(COALESCE(expected_ctc, '0'), ',', ''), ' ', '') AS DECIMAL(14,2)) >= 1000000 AND CAST(REPLACE(REPLACE(COALESCE(expected_ctc, '0'), ',', ''), ' ', '') AS DECIMAL(14,2)) <= 1500000 THEN 1 ELSE 0 END), 0) as `10-15`,
+            COALESCE(SUM(CASE WHEN CAST(REPLACE(REPLACE(COALESCE(expected_ctc, '0'), ',', ''), ' ', '') AS DECIMAL(14,2)) >= 1500000 AND CAST(REPLACE(REPLACE(COALESCE(expected_ctc, '0'), ',', ''), ' ', '') AS DECIMAL(14,2)) <= 5000000 THEN 1 ELSE 0 END), 0) as `15-50`,
+            COALESCE(SUM(CASE WHEN CAST(REPLACE(REPLACE(COALESCE(expected_ctc, '0'), ',', ''), ' ', '') AS DECIMAL(14,2)) >= 5000000 THEN 1 ELSE 0 END), 0) as `50+`
         ")->first()?->toArray();
 
         // Experience (Years) Range Facet Counts
         $expFacetQuery = clone $baseCoreQuery;
         $expFacetQuery->without(['hr', 'updatedBy']);
         if ($minExpected !== null) {
-            $expFacetQuery->where('expected_ctc', '>=', $minExpected);
+            $expFacetQuery->whereRaw("CAST(REPLACE(REPLACE(COALESCE(expected_ctc, '0'), ',', ''), ' ', '') AS DECIMAL(14,2)) >= ?", [$minExpected]);
         }
         if ($maxExpected !== null) {
-            $expFacetQuery->where('expected_ctc', '<=', $maxExpected);
+            $expFacetQuery->whereRaw("CAST(REPLACE(REPLACE(COALESCE(expected_ctc, '0'), ',', ''), ' ', '') AS DECIMAL(14,2)) <= ?", [$maxExpected])
+                          ->whereRaw("CAST(REPLACE(REPLACE(COALESCE(expected_ctc, '0'), ',', ''), ' ', '') AS DECIMAL(14,2)) > 0");
         }
         if ($request->filled('job_type')) {
             $expFacetQuery->whereIn('job_type', (array) $request->input('job_type'));
