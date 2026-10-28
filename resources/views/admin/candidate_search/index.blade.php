@@ -1558,11 +1558,13 @@
     function setExperienceRange(min, max) {
         document.getElementById('min_experience').value = min;
         document.getElementById('max_experience').value = max;
+        document.getElementById('resdexSearchForm').submit();
     }
 
     function setCtcRange(min, max) {
         document.getElementById('min_expected_ctc').value = min;
         document.getElementById('max_expected_ctc').value = max;
+        document.getElementById('resdexSearchForm').submit();
     }
 
     // 6. Clear Filter Fields

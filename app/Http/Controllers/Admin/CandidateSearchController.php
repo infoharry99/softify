@@ -293,16 +293,22 @@ class CandidateSearchController extends Controller
 
         // Expected CTC / Annual Salary Filter (Supports Lacs e.g. 1 to 5, or Raw Rupees e.g. 100000 to 500000)
         $minExpected = null;
-        $rawMin = $request->input('min_salary', $request->input('min_expected_ctc'));
+        $rawMin = $request->filled('min_expected_ctc') 
+            ? $request->input('min_expected_ctc') 
+            : ($request->filled('min_salary') ? $request->input('min_salary') : null);
+
         if ($rawMin !== null && $rawMin !== '') {
             $val = (float) $rawMin;
-            if ($val > 0) {
+            if ($val >= 0) {
                 $minExpected = ($val < 100) ? $val * 100000 : $val;
             }
         }
 
         $maxExpected = null;
-        $rawMax = $request->input('max_salary', $request->input('max_expected_ctc'));
+        $rawMax = $request->filled('max_expected_ctc') 
+            ? $request->input('max_expected_ctc') 
+            : ($request->filled('max_salary') ? $request->input('max_salary') : null);
+
         if ($rawMax !== null && $rawMax !== '') {
             $val = (float) $rawMax;
             if ($val > 0) {
