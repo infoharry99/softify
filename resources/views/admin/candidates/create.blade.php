@@ -215,7 +215,13 @@
 
             <div class="form-group">
                 <label class="form-label">Key Skills *</label>
-                <input type="text" name="skills" class="form-control @error('skills') is-invalid-input @enderror" value="{{ old('skills') }}" required minlength="2" placeholder="e.g. PHP, React, Laravel, MySQL">
+                @include('partials.skills_chips_input', [
+                    'id' => 'create_candidate_skills',
+                    'name' => 'skills',
+                    'value' => old('skills'),
+                    'required' => true,
+                    'placeholder' => 'Type skill (e.g. PHP, Python) & press Enter'
+                ])
                 @error('skills')
                     <span class="field-error-msg"><i class="fa-solid fa-circle-exclamation"></i> {{ $message }}</span>
                 @enderror

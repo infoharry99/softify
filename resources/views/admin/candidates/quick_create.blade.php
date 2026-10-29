@@ -256,7 +256,13 @@
             <!-- Key Skills -->
             <div class="form-group-compact">
                 <label for="inputSkills">Key Skills <span class="required">*</span></label>
-                <input type="text" id="inputSkills" name="skills" tabindex="5" placeholder="e.g. PHP, Laravel, MySQL, React" required autocomplete="off">
+                @include('partials.skills_chips_input', [
+                    'id' => 'quick_create_candidate_skills',
+                    'name' => 'skills',
+                    'value' => old('skills'),
+                    'required' => true,
+                    'placeholder' => 'Type skill (e.g. PHP, Python) & press Enter'
+                ])
                 <div class="inline-error" id="error_skills"></div>
             </div>
 

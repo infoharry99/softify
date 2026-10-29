@@ -477,14 +477,13 @@
 
                 <div class="form-group">
                     <label class="form-label" for="candidate_skills">Key Skills <span class="req">*</span></label>
-                    <input type="text" 
-                           id="candidate_skills" 
-                           name="skills" 
-                           class="form-control @error('skills') is-invalid @enderror" 
-                           value="{{ old('skills') }}" 
-                           required 
-                           minlength="2" 
-                           placeholder="e.g. Java, Spring Boot, Microservices, MySQL">
+                    @include('partials.skills_chips_input', [
+                        'id' => 'public_candidate_skills',
+                        'name' => 'skills',
+                        'value' => old('skills'),
+                        'required' => true,
+                        'placeholder' => 'Type skills (e.g. PHP, Python, React) & press Enter'
+                    ])
                     @error('skills')
                         <span class="field-error"><i class="fa-solid fa-circle-exclamation"></i> {{ $message }}</span>
                     @enderror
