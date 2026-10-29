@@ -472,6 +472,68 @@
         cursor: pointer;
     }
 
+    /* Sidebar Location Tag Container & Star Chips */
+    .sidebar-location-tag-container {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 5px;
+        padding: 6px 10px;
+        min-height: 42px;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 8px;
+        background: #ffffff;
+        transition: all 0.2s ease;
+        cursor: text;
+    }
+    .sidebar-location-tag-container:focus-within {
+        border-color: var(--resdex-teal);
+        box-shadow: 0 0 0 3px rgba(0, 168, 132, 0.12);
+    }
+    .sidebar-location-text-input {
+        flex: 1;
+        min-width: 100px;
+        border: none !important;
+        outline: none !important;
+        box-shadow: none !important;
+        font-size: 0.85rem;
+        padding: 3px 0;
+        color: #1e293b;
+        background: transparent;
+    }
+    .sidebar-location-text-input::placeholder {
+        color: #94a3b8;
+        font-size: 0.82rem;
+    }
+    .sidebar-location-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: #eff6ff;
+        color: #0284c7;
+        border: 1px solid #bfdbfe;
+        padding: 3px 8px;
+        border-radius: 16px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        user-select: none;
+    }
+    .sidebar-location-chip .star-icon {
+        color: #f59e0b;
+        font-size: 0.72rem;
+    }
+    .sidebar-location-chip .remove-btn {
+        color: #94a3b8;
+        font-size: 0.95rem;
+        line-height: 1;
+        cursor: pointer;
+        font-weight: bold;
+        margin-left: 2px;
+    }
+    .sidebar-location-chip .remove-btn:hover {
+        color: #ef4444;
+    }
+
     /* 2-Column Responsive Workspace Grid */
     .resdex-workspace-grid {
         display: grid;
@@ -1114,10 +1176,18 @@
             @endif
 
             @if(request()->filled('location'))
-                <span class="filter-tag-chip">
-                    <strong>Location:</strong> {{ request('location') }}
-                    <span class="remove-chip" onclick="clearFilterField('location')">&times;</span>
-                </span>
+                @php
+                    $rawLoc = request('location');
+                    $locArray = is_array($rawLoc) ? $rawLoc : preg_split('/[,;|]+/', (string) $rawLoc);
+                    $locArray = array_values(array_filter(array_map('trim', $locArray)));
+                @endphp
+                @foreach($locArray as $locItem)
+                    <span class="filter-tag-chip" style="background: #eff6ff; border-color: #bfdbfe; color: #0284c7;">
+                        <i class="fa-solid fa-star" style="color: #f59e0b; font-size: 0.72rem;"></i>
+                        <strong>Location:</strong> {{ $locItem }}
+                        <span class="remove-chip" title="Remove {{ $locItem }}" onclick="removeSingleLocationFilter('{{ addslashes($locItem) }}')">&times;</span>
+                    </span>
+                @endforeach
             @endif
 
             @if(request()->filled('job_type'))
@@ -1311,20 +1381,21 @@
                     </div>
                 </div>
 
-                <!-- Location -->
+                <!-- Location Filter with Star Chips -->
                 <div class="sidebar-section">
                     <div class="sidebar-section-title">
                         <span><i class="fa-solid fa-location-dot" style="color: var(--resdex-teal);"></i> Location</span>
                     </div>
                     <div style="position: relative;">
-                        <input type="text" 
-                               id="sidebarLocationInput" 
-                               name="location" 
-                               class="range-input" 
-                               placeholder="e.g. Bengaluru, Delhi, Remote..." 
-                               value="{{ request('location') }}" 
-                               style="width: 100%; margin-bottom: 0;"
-                               autocomplete="off">
+                        <div class="sidebar-location-tag-container" id="sidebarLocationTagBox" onclick="focusSidebarLocationInput()">
+                            <div id="sidebarLocationChipsWrapper" style="display: contents;"></div>
+                            <input type="text" 
+                                   id="sidebarLocationInput" 
+                                   class="sidebar-location-text-input" 
+                                   placeholder="e.g. Bengaluru, Delhi, Remote..." 
+                                   autocomplete="off">
+                            <input type="hidden" name="location" id="hiddenSidebarLocation" value="{{ is_array(request('location')) ? implode(', ', request('location')) : request('location') }}">
+                        </div>
 
                         <!-- Floating Autocomplete Dropdown from Database -->
                         <div id="sidebarLocationAutocompleteDropdown" class="autocomplete-dropdown" style="top: 100%; left: 0; right: 0;">
@@ -1792,14 +1863,75 @@
     }
 
     // ==========================================
-    // 10. SIDEBAR LOCATION AUTOCOMPLETE (FROM DATABASE)
+    // 10. SIDEBAR MULTI-LOCATION STAR CHIPS & AUTOCOMPLETE
     // ==========================================
+    let sidebarLocationChips = [];
     const sidebarLocInput = document.getElementById('sidebarLocationInput');
+    const sidebarLocChipsWrapper = document.getElementById('sidebarLocationChipsWrapper');
+    const hiddenSidebarLocation = document.getElementById('hiddenSidebarLocation');
     const sidebarLocDropdown = document.getElementById('sidebarLocationAutocompleteDropdown');
     const sidebarLocItemsList = document.getElementById('sidebarLocationAutocompleteItemsList');
     let sidebarLocTimer = null;
     let selectedSidebarLocIndex = -1;
     let currentSidebarLocSuggestions = [];
+
+    function focusSidebarLocationInput() {
+        if (sidebarLocInput) sidebarLocInput.focus();
+    }
+
+    function addSidebarLocationChip(loc) {
+        if (!loc) return;
+        loc = loc.trim();
+        if (!loc) return;
+
+        if (!sidebarLocationChips.some(l => l.toLowerCase() === loc.toLowerCase())) {
+            sidebarLocationChips.push(loc);
+            renderSidebarLocationChips();
+        }
+
+        if (sidebarLocInput) {
+            sidebarLocInput.value = '';
+            sidebarLocInput.placeholder = 'Add another...';
+            sidebarLocInput.focus();
+        }
+        hideSidebarLocAutocomplete();
+    }
+
+    function removeSidebarLocationChip(index) {
+        sidebarLocationChips.splice(index, 1);
+        renderSidebarLocationChips();
+        if (sidebarLocationChips.length === 0 && sidebarLocInput) {
+            sidebarLocInput.placeholder = 'e.g. Bengaluru, Delhi, Remote...';
+        }
+    }
+
+    function renderSidebarLocationChips() {
+        if (!sidebarLocChipsWrapper || !hiddenSidebarLocation) return;
+        sidebarLocChipsWrapper.innerHTML = '';
+        sidebarLocationChips.forEach((loc, index) => {
+            const chip = document.createElement('span');
+            chip.className = 'sidebar-location-chip';
+            chip.innerHTML = `<i class="fa-solid fa-star star-icon"></i> <span>${escapeHtml(loc)}</span> <span class="remove-btn" onclick="removeSidebarLocationChip(${index}); event.stopPropagation();">&times;</span>`;
+            sidebarLocChipsWrapper.appendChild(chip);
+        });
+
+        hiddenSidebarLocation.value = sidebarLocationChips.join(', ');
+    }
+
+    function removeSingleLocationFilter(locToRemove) {
+        const form = document.getElementById('resdexSearchForm');
+        const hiddenLoc = document.getElementById('hiddenSidebarLocation');
+        if (!form) return;
+
+        let curVal = hiddenLoc ? hiddenLoc.value : '';
+        let locs = curVal.split(/[,;|]+/).map(s => s.trim()).filter(Boolean);
+        locs = locs.filter(l => l.toLowerCase() !== locToRemove.toLowerCase());
+
+        if (hiddenLoc) {
+            hiddenLoc.value = locs.join(', ');
+        }
+        form.submit();
+    }
 
     if (sidebarLocInput && sidebarLocDropdown) {
         sidebarLocInput.addEventListener('input', function() {
@@ -1817,17 +1949,21 @@
         });
 
         sidebarLocInput.addEventListener('keydown', function(e) {
-            if (e.key === 'ArrowDown') {
+            if (e.key === 'Enter' || e.key === ',') {
+                e.preventDefault();
+                if (selectedSidebarLocIndex >= 0 && currentSidebarLocSuggestions[selectedSidebarLocIndex]) {
+                    addSidebarLocationChip(currentSidebarLocSuggestions[selectedSidebarLocIndex].text);
+                } else if (this.value.trim()) {
+                    addSidebarLocationChip(this.value.trim());
+                }
+            } else if (e.key === 'Backspace' && this.value === '' && sidebarLocationChips.length > 0) {
+                removeSidebarLocationChip(sidebarLocationChips.length - 1);
+            } else if (e.key === 'ArrowDown') {
                 e.preventDefault();
                 navigateSidebarLocDropdown(1);
             } else if (e.key === 'ArrowUp') {
                 e.preventDefault();
                 navigateSidebarLocDropdown(-1);
-            } else if (e.key === 'Enter') {
-                if (selectedSidebarLocIndex >= 0 && currentSidebarLocSuggestions[selectedSidebarLocIndex]) {
-                    e.preventDefault();
-                    selectSidebarLoc(currentSidebarLocSuggestions[selectedSidebarLocIndex].text);
-                }
             } else if (e.key === 'Escape') {
                 hideSidebarLocAutocomplete();
             }
@@ -1852,7 +1988,7 @@
                     el.className = 'autocomplete-item';
                     el.innerHTML = `<span><i class="fa-solid fa-location-dot" style="color: var(--resdex-teal); font-size: 0.85rem; margin-right: 8px;"></i> ${escapeHtml(item.text)}</span> <span class="autocomplete-item-type">${escapeHtml(item.type)}</span>`;
                     el.addEventListener('click', () => {
-                        selectSidebarLoc(item.text);
+                        addSidebarLocationChip(item.text);
                     });
                     sidebarLocItemsList.appendChild(el);
                 });
@@ -1863,12 +1999,6 @@
                 console.error('Error fetching sidebar location suggestions:', err);
                 hideSidebarLocAutocomplete();
             });
-    }
-
-    function selectSidebarLoc(loc) {
-        sidebarLocInput.value = loc;
-        hideSidebarLocAutocomplete();
-        sidebarLocInput.focus();
     }
 
     function navigateSidebarLocDropdown(direction) {
@@ -1901,9 +2031,34 @@
         if (topKeywordInput && !topKeywordInput.parentElement.contains(e.target)) {
             hideTopKeywordAutocomplete();
         }
-        if (sidebarLocInput && !sidebarLocInput.parentElement.contains(e.target)) {
+        if (document.getElementById('sidebarLocationTagBox') && !document.getElementById('sidebarLocationTagBox').contains(e.target)) {
             hideSidebarLocAutocomplete();
         }
+    });
+
+    // Safety on search form submit: flush any un-entered text into chips
+    const resdexForm = document.getElementById('resdexSearchForm');
+    if (resdexForm) {
+        resdexForm.addEventListener('submit', function() {
+            if (sidebarLocInput && sidebarLocInput.value.trim()) {
+                addSidebarLocationChip(sidebarLocInput.value.trim());
+            }
+        });
+    }
+
+    // Auto-populate location chips from query string on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        @if(request('location'))
+            @php
+                $rawInitLoc = request('location');
+                $initLocArray = is_array($rawInitLoc) ? $rawInitLoc : preg_split('/[,;|]+/', (string) $rawInitLoc);
+                $initLocArray = array_values(array_filter(array_map('trim', $initLocArray)));
+            @endphp
+            const rawSidebarLocs = {!! json_encode($initLocArray) !!};
+            if (Array.isArray(rawSidebarLocs)) {
+                rawSidebarLocs.forEach(tok => addSidebarLocationChip(tok));
+            }
+        @endif
     });
 
     // 10. Syntax Help Modal

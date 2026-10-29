@@ -250,19 +250,22 @@ class CandidateSearchController extends Controller
             }
         }
 
-        // Location Filter
+        // Location Filter (supports multi-location star chips: array or comma/pipe-separated)
         if ($request->filled('location')) {
-            $locations = is_array($request->input('location')) ? $request->input('location') : [$request->input('location')];
-            $query->where(function ($sub) use ($locations) {
-                foreach ($locations as $i => $loc) {
-                    if (empty($loc)) continue;
-                    if ($i === 0) {
-                        $sub->where('location', 'like', "%{$loc}%");
-                    } else {
-                        $sub->orWhere('location', 'like', "%{$loc}%");
+            $rawLoc = $request->input('location');
+            $locations = is_array($rawLoc) ? $rawLoc : preg_split('/[,;|]+/', (string) $rawLoc);
+            $locations = array_values(array_filter(array_map('trim', $locations), fn($l) => $l !== ''));
+            if (!empty($locations)) {
+                $query->where(function ($sub) use ($locations) {
+                    foreach ($locations as $i => $loc) {
+                        if ($i === 0) {
+                            $sub->where('location', 'like', "%{$loc}%");
+                        } else {
+                            $sub->orWhere('location', 'like', "%{$loc}%");
+                        }
                     }
-                }
-            });
+                });
+            }
         }
 
         // Base Core Query Snapshot (Search query, Exclude keywords, and Location applied)

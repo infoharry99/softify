@@ -195,6 +195,35 @@
         color: #ef4444;
     }
 
+    .location-tag-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #eff6ff;
+        color: #0284c7;
+        border: 1px solid #bfdbfe;
+        border-radius: 999px;
+        padding: 5px 12px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        animation: fadeIn 0.15s ease-in-out;
+    }
+    .location-tag-chip .star-icon {
+        color: #f59e0b;
+        font-size: 0.8rem;
+    }
+    .location-tag-chip .remove-btn {
+        color: #94a3b8;
+        cursor: pointer;
+        font-size: 0.95rem;
+        line-height: 1;
+        border-radius: 50%;
+        margin-left: 2px;
+    }
+    .location-tag-chip .remove-btn:hover {
+        color: #ef4444;
+    }
+
     .keyword-text-input {
         flex: 1;
         min-width: 220px;
@@ -716,23 +745,39 @@
 
             <!-- 3. Current Location Section -->
             <div class="form-group-block">
-                <label class="form-field-label" style="display: block; margin-bottom: 8px;">Current location of candidate</label>
+                <label class="form-field-label" style="display: block; margin-bottom: 8px;">
+                    <i class="fa-solid fa-location-dot" style="color: var(--resdex-teal); margin-right: 4px;"></i> Current location of candidate
+                </label>
                 <div style="position: relative;">
-                    <input type="text" 
-                           id="locationInput" 
-                           name="location" 
-                           value="{{ request('location') }}"
-                           class="range-field-input" 
-                           placeholder="Add location (e.g. Bengaluru, Mumbai, Delhi, Remote...)" 
-                           style="width: 100%;"
-                           autocomplete="off">
+                    <div class="keywords-tag-container" id="locationsTagBox" onclick="focusLocationInput()">
+                        <!-- Location Chips will be injected here dynamically -->
+                        <div id="locationChipsWrapper" style="display: contents;"></div>
 
-                    <!-- Live Floating Location Dropdown from DB -->
-                    <div id="locationAutocompleteDropdown" class="autocomplete-dropdown">
-                        <div class="autocomplete-header">Candidate Locations from Database</div>
-                        <div id="locationAutocompleteItemsList"></div>
+                        <input type="text" 
+                               id="locationMainInput" 
+                               class="keyword-text-input" 
+                               placeholder="Add location (e.g. Bengaluru, Mumbai, Delhi, Remote...)" 
+                               autocomplete="off">
+
+                        <!-- Hidden input to submit all location chips as comma-separated -->
+                        <input type="hidden" name="location" id="hiddenLocationsQuery" value="{{ is_array(request('location')) ? implode(', ', request('location')) : request('location') }}">
+
+                        <!-- Live Floating Location Dropdown from DB -->
+                        <div id="locationAutocompleteDropdown" class="autocomplete-dropdown" style="top: 100%; left: 0; right: 0;">
+                            <div class="autocomplete-header">Candidate Locations from Database</div>
+                            <div id="locationAutocompleteItemsList"></div>
+                        </div>
                     </div>
                 </div>
+
+                @if(!empty($popularLocations))
+                    <div style="margin-top: 8px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                        <span style="font-size: 0.75rem; color: #64748b; font-weight: 600;"><i class="fa-solid fa-fire" style="color: #f59e0b;"></i> Popular:</span>
+                        @foreach(array_slice($popularLocations, 0, 8) as $popLoc)
+                            <span class="ai-chip" style="font-size: 0.76rem; padding: 3px 8px; cursor: pointer;" onclick="addLocationChip('{{ addslashes($popLoc) }}')">+ {{ $popLoc }}</span>
+                        @endforeach
+                    </div>
+                @endif
 
                 <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 6px;">
                     <label class="custom-checkbox-label">
@@ -994,17 +1039,64 @@
     }
 
     // ==========================================
-    // 2. LOCATION AUTOCOMPLETE FROM DATABASE
+    // 2. MULTI-LOCATION STAR CHIPS & AUTOCOMPLETE
     // ==========================================
-    const locationInput = document.getElementById('locationInput');
+    let locationChips = [];
+    const locationMainInput = document.getElementById('locationMainInput');
+    const locationChipsWrapper = document.getElementById('locationChipsWrapper');
+    const hiddenLocationsQuery = document.getElementById('hiddenLocationsQuery');
     const locationDropdown = document.getElementById('locationAutocompleteDropdown');
     const locationItemsList = document.getElementById('locationAutocompleteItemsList');
     let locationTimer = null;
     let selectedLocationIndex = -1;
     let currentLocationSuggestions = [];
 
-    if (locationInput) {
-        locationInput.addEventListener('input', function() {
+    function focusLocationInput() {
+        if (locationMainInput) locationMainInput.focus();
+    }
+
+    function addLocationChip(loc) {
+        if (!loc) return;
+        loc = loc.trim();
+        if (!loc) return;
+
+        // Prevent duplicate case-insensitive
+        if (!locationChips.some(l => l.toLowerCase() === loc.toLowerCase())) {
+            locationChips.push(loc);
+            renderLocationChips();
+        }
+
+        if (locationMainInput) {
+            locationMainInput.value = '';
+            locationMainInput.placeholder = 'Type another location...';
+            locationMainInput.focus();
+        }
+        hideLocationAutocomplete();
+    }
+
+    function removeLocationChip(index) {
+        locationChips.splice(index, 1);
+        renderLocationChips();
+        if (locationChips.length === 0 && locationMainInput) {
+            locationMainInput.placeholder = 'Add location (e.g. Bengaluru, Mumbai, Delhi, Remote...)';
+        }
+    }
+
+    function renderLocationChips() {
+        if (!locationChipsWrapper || !hiddenLocationsQuery) return;
+        locationChipsWrapper.innerHTML = '';
+        locationChips.forEach((loc, index) => {
+            const chip = document.createElement('span');
+            chip.className = 'location-tag-chip';
+            chip.innerHTML = `<i class="fa-solid fa-star star-icon"></i> <span>${escapeHtml(loc)}</span> <span class="remove-btn" onclick="removeLocationChip(${index}); event.stopPropagation();">&times;</span>`;
+            locationChipsWrapper.appendChild(chip);
+        });
+
+        hiddenLocationsQuery.value = locationChips.join(', ');
+    }
+
+    if (locationMainInput) {
+        locationMainInput.addEventListener('input', function() {
             const query = this.value.trim();
             clearTimeout(locationTimer);
 
@@ -1018,18 +1110,22 @@
             }, 180);
         });
 
-        locationInput.addEventListener('keydown', function(e) {
-            if (e.key === 'ArrowDown') {
+        locationMainInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ',') {
+                e.preventDefault();
+                if (selectedLocationIndex >= 0 && currentLocationSuggestions[selectedLocationIndex]) {
+                    addLocationChip(currentLocationSuggestions[selectedLocationIndex].text);
+                } else if (this.value.trim()) {
+                    addLocationChip(this.value.trim());
+                }
+            } else if (e.key === 'Backspace' && this.value === '' && locationChips.length > 0) {
+                removeLocationChip(locationChips.length - 1);
+            } else if (e.key === 'ArrowDown') {
                 e.preventDefault();
                 navigateLocationDropdown(1);
             } else if (e.key === 'ArrowUp') {
                 e.preventDefault();
                 navigateLocationDropdown(-1);
-            } else if (e.key === 'Enter') {
-                if (selectedLocationIndex >= 0 && currentLocationSuggestions[selectedLocationIndex]) {
-                    e.preventDefault();
-                    selectLocation(currentLocationSuggestions[selectedLocationIndex].text);
-                }
             } else if (e.key === 'Escape') {
                 hideLocationAutocomplete();
             }
@@ -1054,7 +1150,7 @@
                     el.className = 'autocomplete-item';
                     el.innerHTML = `<span><i class="fa-solid fa-location-dot" style="color: var(--resdex-teal); font-size: 0.85rem; margin-right: 8px;"></i> ${escapeHtml(item.text)}</span> <span class="autocomplete-item-type">${escapeHtml(item.type)}</span>`;
                     el.addEventListener('click', () => {
-                        selectLocation(item.text);
+                        addLocationChip(item.text);
                     });
                     locationItemsList.appendChild(el);
                 });
@@ -1065,12 +1161,6 @@
                 console.error('Error fetching location suggestions:', err);
                 hideLocationAutocomplete();
             });
-    }
-
-    function selectLocation(loc) {
-        locationInput.value = loc;
-        hideLocationAutocomplete();
-        locationInput.focus();
     }
 
     function navigateLocationDropdown(direction) {
@@ -1218,7 +1308,7 @@
         if (!document.getElementById('keywordsTagBox').contains(e.target)) {
             hideAutocomplete();
         }
-        if (locationInput && !locationInput.parentElement.contains(e.target)) {
+        if (document.getElementById('locationsTagBox') && !document.getElementById('locationsTagBox').contains(e.target)) {
             hideLocationAutocomplete();
         }
         if (excludeInput && !excludeInput.parentElement.contains(e.target)) {
@@ -1305,10 +1395,27 @@
         document.getElementById('advanceSearchForm').reset();
         keywordChips = [];
         renderKeywordChips();
-        keywordMainInput.placeholder = 'Enter keywords like skills, designation and company';
+        if (keywordMainInput) {
+            keywordMainInput.placeholder = 'Enter keywords like skills, designation and company';
+        }
+        locationChips = [];
+        renderLocationChips();
+        if (locationMainInput) {
+            locationMainInput.placeholder = 'Add location (e.g. Bengaluru, Mumbai, Delhi, Remote...)';
+        }
         document.getElementById('booleanModeCheckbox').checked = false;
         toggleBooleanForm();
     }
+
+    // Safety on form submit: flush any un-entered text into chips
+    document.getElementById('advanceSearchForm').addEventListener('submit', function() {
+        if (keywordMainInput && keywordMainInput.value.trim()) {
+            addKeywordChip(keywordMainInput.value.trim());
+        }
+        if (locationMainInput && locationMainInput.value.trim()) {
+            addLocationChip(locationMainInput.value.trim());
+        }
+    });
 
     // Auto-initialize query parameters if loaded with existing search (e.g. from Modify Search)
     document.addEventListener('DOMContentLoaded', function() {
@@ -1322,6 +1429,18 @@
             const rawTokens = {!! json_encode(array_values(array_filter(array_map('trim', explode(',', request('q')))))) !!};
             if (Array.isArray(rawTokens)) {
                 rawTokens.forEach(tok => addKeywordChip(tok));
+            }
+        @endif
+
+        @if(request('location'))
+            @php
+                $rawInitLoc = request('location');
+                $initLocArray = is_array($rawInitLoc) ? $rawInitLoc : preg_split('/[,;|]+/', (string) $rawInitLoc);
+                $initLocArray = array_values(array_filter(array_map('trim', $initLocArray)));
+            @endphp
+            const rawLocTokens = {!! json_encode($initLocArray) !!};
+            if (Array.isArray(rawLocTokens)) {
+                rawLocTokens.forEach(tok => addLocationChip(tok));
             }
         @endif
     });
