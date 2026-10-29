@@ -30,14 +30,6 @@
             </a>
         </li>
 
-        <li class="menu-item">
-            <a href="{{ route('careers.apply') }}" target="_blank" class="menu-link">
-                <i class="fa-solid fa-globe" style="color: #0284c7;"></i>
-                <span>Public Application Form</span>
-                <span class="badge" style="font-size: 0.65rem; background: #0284c7; color: #0284c7; background: #e0f2fe; padding: 2px 6px; border-radius: 6px; margin-left: auto; font-weight: 700;">SHARE</span>
-            </a>
-        </li>
-
         @if(auth()->user()->hasRole('super-admin') || auth()->user()->hasRole('admin'))
         <li class="menu-section-title">System & Access</li>
         <li class="menu-item">

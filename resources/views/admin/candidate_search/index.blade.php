@@ -951,11 +951,6 @@
         <span>⭐ Candidate Search Results (Cards)</span>
         <span class="badge-pill">PRO</span>
     </a>
-    <a href="{{ config('app.public_apply_url', 'https://apply.talentifyy.com') }}" target="_blank" class="resdex-tab-btn" style="margin-left: auto; color: #0284c7;">
-        <i class="fa-solid fa-globe"></i>
-        <span>🔗 Public Application Form</span>
-        <span class="badge-pill" style="background: #0284c7;">SHARE</span>
-    </a>
 </div>
 
 <!-- Main Search Form -->
