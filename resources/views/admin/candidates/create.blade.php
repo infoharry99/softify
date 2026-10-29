@@ -120,31 +120,6 @@
     </div>
 </div>
 
-<!-- Public Link Share Alert Card -->
-<div style="background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 14px; padding: 16px 20px; margin-bottom: 22px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
-    <div style="display: flex; align-items: center; gap: 14px;">
-        <div style="width: 44px; height: 44px; border-radius: 10px; background: #0284c7; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0;">
-            <i class="fa-solid fa-globe"></i>
-        </div>
-        <div>
-            <div style="font-weight: 800; color: #0369a1; font-size: 0.95rem;">
-                Want candidates to register themselves online?
-            </div>
-            <div style="font-size: 0.84rem; color: #0284c7; margin-top: 2px;">
-                Share your public candidate registration link on LinkedIn, WhatsApp, or Instagram. All submissions automatically save directly to this ATS!
-            </div>
-        </div>
-    </div>
-    <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-        <button type="button" onclick="copyPublicCandidateLink()" id="btnCopyPublic" class="btn btn-sm" style="background: #0284c7; color: #ffffff; border: none; font-weight: 700; padding: 9px 16px; border-radius: 8px; cursor: pointer;">
-            <i class="fa-solid fa-copy"></i> <span id="copyBtnText">Copy Public Link</span>
-        </button>
-        <a href="{{ config('app.public_apply_url', 'https://apply.talentifyy.com') }}" target="_blank" class="btn btn-sm" style="background: #ffffff; color: #0369a1; border: 1px solid #bae6fd; font-weight: 700; padding: 9px 14px; border-radius: 8px; text-decoration: none;">
-            <i class="fa-solid fa-arrow-up-right-from-square"></i> Preview Form
-        </a>
-    </div>
-</div>
-
 @if($errors->any())
     <div class="alert alert-danger" style="margin-bottom: 20px; background-color: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 14px 18px; border-radius: 12px;">
         <div style="font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
@@ -314,24 +289,4 @@
         </div>
     </form>
 </div>
-@endsection
-
-@section('scripts')
-<script>
-    function copyPublicCandidateLink() {
-        const url = '{{ config("app.public_apply_url", "https://apply.talentifyy.com") }}';
-        navigator.clipboard.writeText(url).then(() => {
-            const btnText = document.getElementById('copyBtnText');
-            const originalText = btnText.innerText;
-            btnText.innerText = '✓ Copied!';
-            document.getElementById('btnCopyPublic').style.backgroundColor = '#059669';
-            setTimeout(() => {
-                btnText.innerText = originalText;
-                document.getElementById('btnCopyPublic').style.backgroundColor = '#0284c7';
-            }, 2500);
-        }).catch(err => {
-            prompt('Copy this public application URL:', url);
-        });
-    }
-</script>
 @endsection

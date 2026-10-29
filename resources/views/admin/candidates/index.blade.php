@@ -266,9 +266,6 @@
     <div class="card-header">
         <h3 class="card-title">Candidate Directory (ATS)</h3>
         <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-            <button type="button" onclick="openSharePublicModal()" class="btn btn-secondary btn-sm" style="border: 1.5px solid #38bdf8; color: #0284c7; font-weight: 700; padding: 9px 16px; border-radius: 10px; background: #f0f9ff; cursor: pointer;">
-                <i class="fa-solid fa-share-nodes"></i> 🔗 Share Public Form
-            </button>
             @if((auth()->user()->hasPermission('hr.create') || auth()->user()->hasRole('super-admin') || auth()->user()->hasRole('data-entry')) && !auth()->user()->hasRole('talent-acquisition'))
             <a href="{{ route('admin.candidates.quick_create') }}" class="btn btn-secondary btn-sm" style="border: 1.5px solid #9ee5d4; color: #00a884; font-weight: 700; padding: 9px 16px; border-radius: 10px; background: #e6f7f3;">
                 <i class="fa-solid fa-bolt"></i> ⚡ Quick Add Candidate
@@ -470,64 +467,6 @@
     </div>
 </div>
 
-<!-- Modal: Share Public Candidate Application Form -->
-<div class="resume-modal-overlay" id="sharePublicModal" style="display: none;">
-    <div class="resume-modal-card" style="max-width: 640px; height: auto; border-radius: 20px;">
-        <div class="resume-modal-header" style="background: linear-gradient(135deg, #00a884 0%, #008f70 100%);">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <i class="fa-solid fa-share-nodes" style="color: #ffffff; font-size: 1.25rem;"></i>
-                <span style="font-weight: 800; font-size: 1.1rem;">Share Public Candidate Application Form</span>
-            </div>
-            <button type="button" onclick="closeSharePublicModal()" style="background: transparent; border: none; color: #ffffff; font-size: 1.4rem; cursor: pointer;">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-        <div style="padding: 26px 28px; background: #ffffff;">
-            <p style="font-size: 0.92rem; color: #475569; margin-bottom: 20px; line-height: 1.5;">
-                Copy and share this public application link anywhere (LinkedIn, WhatsApp, Instagram Bio, Telegram, Job Portals). Candidates can open the link on mobile or desktop to submit their profile and resume directly into your ATS database.
-            </p>
-
-            <!-- Link Box -->
-            <label style="font-size: 0.82rem; font-weight: 700; color: #1e293b; display: block; margin-bottom: 8px;">
-                Primary Application URL
-            </label>
-            <div style="display: flex; gap: 10px; margin-bottom: 22px;">
-                <input type="text" id="publicCandidateUrlInput" readonly value="{{ config('app.public_apply_url', 'https://apply.talentifyy.com') }}" style="flex: 1; padding: 11px 14px; font-size: 0.92rem; border: 1.5px solid #cbd5e1; border-radius: 10px; background: #f8fafc; color: #0f172a; font-weight: 600;">
-                <button type="button" onclick="copyPublicCandidateLinkModal()" id="btnModalCopy" style="background: #00a884; color: #fff; border: none; padding: 11px 22px; font-weight: 700; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
-                    <i class="fa-solid fa-copy"></i> <span id="modalCopyText">Copy Link</span>
-                </button>
-            </div>
-
-            <!-- Social 1-Click Sharing Grid -->
-            <label style="font-size: 0.82rem; font-weight: 700; color: #1e293b; display: block; margin-bottom: 10px;">
-                Instant 1-Click Social Sharing (Tracked Source Links)
-            </label>
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px;">
-                <!-- WhatsApp Share -->
-                <button type="button" onclick="shareOnWhatsApp()" style="background: #25d366; color: #ffffff; border: none; padding: 12px 14px; border-radius: 12px; font-weight: 700; font-size: 0.88rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                    <i class="fa-brands fa-whatsapp" style="font-size: 1.1rem;"></i> WhatsApp
-                </button>
-
-                <!-- LinkedIn Share -->
-                <button type="button" onclick="copyLinkedInLink()" id="btnLinkedInCopy" style="background: #0077b5; color: #ffffff; border: none; padding: 12px 14px; border-radius: 12px; font-weight: 700; font-size: 0.88rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                    <i class="fa-brands fa-linkedin" style="font-size: 1.1rem;"></i> <span id="linkedInBtnText">LinkedIn</span>
-                </button>
-
-                <!-- Instagram Bio Link -->
-                <button type="button" onclick="copyInstagramLink()" id="btnInstaCopy" style="background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color: #ffffff; border: none; padding: 12px 14px; border-radius: 12px; font-weight: 700; font-size: 0.88rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                    <i class="fa-brands fa-instagram" style="font-size: 1.1rem;"></i> <span id="instaBtnText">Instagram</span>
-                </button>
-            </div>
-
-            <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 12px; padding: 12px 16px; font-size: 0.84rem; color: #065f46; display: flex; align-items: flex-start; gap: 10px;">
-                <i class="fa-solid fa-circle-check" style="color: #059669; margin-top: 3px;"></i>
-                <div>
-                    <strong>Direct System Integration:</strong> Candidates who complete this form will immediately appear on this directory under <strong>"Applied"</strong> pipeline stage with full contact details and attached resumes.
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 @endsection
 
 @section('scripts')
@@ -679,66 +618,7 @@
     document.addEventListener('keydown', function(event) {
         if (event.key === 'Escape') {
             closeResumeModal();
-            closeSharePublicModal();
         }
     });
-
-    // Share Public Form Modal Functions
-    const BASE_APPLY_URL = '{{ config("app.public_apply_url", "https://apply.talentifyy.com") }}';
-
-    function openSharePublicModal() {
-        document.getElementById('sharePublicModal').style.display = 'flex';
-    }
-
-    function closeSharePublicModal() {
-        document.getElementById('sharePublicModal').style.display = 'none';
-    }
-
-    function copyPublicCandidateLinkModal() {
-        const input = document.getElementById('publicCandidateUrlInput');
-        navigator.clipboard.writeText(input.value).then(() => {
-            const btnText = document.getElementById('modalCopyText');
-            const original = btnText.innerText;
-            btnText.innerText = '✓ Copied!';
-            document.getElementById('btnModalCopy').style.backgroundColor = '#059669';
-            setTimeout(() => {
-                btnText.innerText = original;
-                document.getElementById('btnModalCopy').style.backgroundColor = '#00a884';
-            }, 2500);
-        }).catch(() => {
-            input.select();
-            document.execCommand('copy');
-            alert('URL copied to clipboard!');
-        });
-    }
-
-    function shareOnWhatsApp() {
-        const url = BASE_APPLY_URL + '?source=whatsapp';
-        const message = "Hello! Talentifyy Enterprise is hiring. Please fill in your profile and attach your resume here: " + url;
-        const waUrl = "https://api.whatsapp.com/send?text=" + encodeURIComponent(message);
-        window.open(waUrl, '_blank');
-    }
-
-    function copyLinkedInLink() {
-        const url = BASE_APPLY_URL + '?source=linkedin';
-        navigator.clipboard.writeText(url).then(() => {
-            const btnText = document.getElementById('linkedInBtnText');
-            btnText.innerText = '✓ Copied!';
-            setTimeout(() => { btnText.innerText = 'LinkedIn'; }, 2000);
-        }).catch(() => {
-            prompt('Copy LinkedIn Application Link:', url);
-        });
-    }
-
-    function copyInstagramLink() {
-        const url = BASE_APPLY_URL + '?source=instagram';
-        navigator.clipboard.writeText(url).then(() => {
-            const btnText = document.getElementById('instaBtnText');
-            btnText.innerText = '✓ Copied!';
-            setTimeout(() => { btnText.innerText = 'Instagram'; }, 2000);
-        }).catch(() => {
-            prompt('Copy Instagram Bio / Story Link:', url);
-        });
-    }
 </script>
 @endsection
