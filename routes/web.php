@@ -48,6 +48,8 @@ Route::domain($publicCareerDomain)->group(function () {
     Route::get('/success', [\App\Http\Controllers\PublicCandidateController::class, 'success'])->name('careers.success.domain');
     Route::get('/careers/success', [\App\Http\Controllers\PublicCandidateController::class, 'success']);
     Route::get('/candidate-registration', [\App\Http\Controllers\PublicCandidateController::class, 'create']);
+    // Internal secure resume sync endpoint across subdomains
+    Route::get('/internal/sync-resume', [\App\Http\Controllers\Admin\CandidateController::class, 'internalSyncResume']);
 
     // Air-tight Security: Block ALL internal/admin/login routes on apply.talentifyy.com
     Route::any('{any}', function () {
@@ -106,6 +108,9 @@ Route::get('/apply', function () {
 Route::get('/candidate-registration', function () {
     return redirect()->route('careers.apply', request()->all());
 });
+
+// Internal secure resume sync endpoint across subdomains
+Route::get('/internal/sync-resume', [\App\Http\Controllers\Admin\CandidateController::class, 'internalSyncResume']);
 
 // Authenticated Routes
 Route::middleware(['auth', 'desktop.only'])->group(function () {

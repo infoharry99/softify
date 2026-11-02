@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Candidate;
+use App\Models\User;
 use App\Services\ActivityLogger;
+use App\Services\ResumeStorageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -84,6 +86,8 @@ class PublicCandidateController extends Controller
         $resumePath = null;
         if ($request->hasFile('resume_file')) {
             $resumePath = $request->file('resume_file')->store('candidate_resumes', 'public');
+            // Auto-sync uploaded resume to sibling subdomains (app.talentifyy.com, resdex.talentifyy.com)
+            ResumeStorageService::syncUploadedResume($resumePath);
         }
 
         // 4. Check for existing candidate profile by email or phone
@@ -154,6 +158,9 @@ class PublicCandidateController extends Controller
         }
 
         // 5. Create new Candidate record
+        // Default HR / Admin user fallback to avoid NOT NULL DB constraint errors across different environments
+        $defaultHrId = User::first()?->id ?? 1;
+
         $candidateData = [
             'name' => $validated['name'],
             'email' => $validated['email'],
@@ -170,8 +177,8 @@ class PublicCandidateController extends Controller
             'status' => 'Applied',
             'resume' => $resumePath,
             'note' => $formattedNote,
-            'hr_id' => null,
-            'last_updated_by' => null,
+            'hr_id' => $defaultHrId,
+            'last_updated_by' => $defaultHrId,
         ];
 
         $candidate = Candidate::create($candidateData);

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Candidate;
 use App\Services\ActivityLogger;
+use App\Services\ResumeStorageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
@@ -211,6 +212,7 @@ class CandidateController extends Controller
 
         if ($request->hasFile('resume_file')) {
             $validated['resume'] = $request->file('resume_file')->store('candidate_resumes', 'public');
+            ResumeStorageService::syncUploadedResume($validated['resume']);
         }
 
         $validated['hr_id'] = auth()->id();
@@ -283,6 +285,7 @@ class CandidateController extends Controller
                 Storage::disk('public')->delete($candidate->resume);
             }
             $validated['resume'] = $request->file('resume_file')->store('candidate_resumes', 'public');
+            ResumeStorageService::syncUploadedResume($validated['resume']);
         }
 
         if ($request->hasFile('edited_resume_file')) {
@@ -290,6 +293,7 @@ class CandidateController extends Controller
                 Storage::disk('public')->delete($candidate->edited_resume);
             }
             $validated['edited_resume'] = $request->file('edited_resume_file')->store('candidate_edited_resumes', 'public');
+            ResumeStorageService::syncUploadedResume($validated['edited_resume']);
         }
 
         $validated['last_updated_by'] = auth()->id();
@@ -329,13 +333,15 @@ class CandidateController extends Controller
         $type = $request->get('type', 'original');
         $fileKey = ($type === 'edited' && $candidate->edited_resume) ? $candidate->edited_resume : $candidate->resume;
 
-        if (!$fileKey || !Storage::disk('public')->exists($fileKey)) {
+        $resolvedPath = ResumeStorageService::resolveResumeFilePath($fileKey);
+
+        if (!$resolvedPath || !file_exists($resolvedPath)) {
             $typeName = ($type === 'edited') ? 'Edited Copy' : 'Original';
             return back()->with('error', "{$typeName} resume file for '{$candidate->name}' is not available on server.");
         }
 
         $suffix = ($type === 'edited') ? '_Edited_Copy' : '_Original';
-        return Storage::disk('public')->download($fileKey, "Resume_{$candidate->name}{$suffix}.pdf");
+        return response()->download($resolvedPath, "Resume_{$candidate->name}{$suffix}.pdf");
     }
 
     /**
@@ -346,7 +352,9 @@ class CandidateController extends Controller
         $type = $request->get('type', 'original');
         $fileKey = ($type === 'edited' && $candidate->edited_resume) ? $candidate->edited_resume : $candidate->resume;
 
-        if (!$fileKey || !Storage::disk('public')->exists($fileKey)) {
+        $resolvedPath = ResumeStorageService::resolveResumeFilePath($fileKey);
+
+        if (!$resolvedPath || !file_exists($resolvedPath)) {
             $typeName = ($type === 'edited') ? 'Edited Copy Resume' : 'Original Candidate Resume';
             $editUrl = route('admin.candidates.edit', $candidate->id);
             $canEdit = auth()->user() && auth()->user()->hasPermission('candidates.edit');
@@ -386,10 +394,9 @@ class CandidateController extends Controller
             );
         }
 
-        $filePath = Storage::disk('public')->path($fileKey);
-        $mimeType = Storage::disk('public')->mimeType($fileKey) ?? 'application/pdf';
+        $mimeType = @mime_content_type($resolvedPath) ?: 'application/pdf';
 
-        return response()->file($filePath, [
+        return response()->file($resolvedPath, [
             'Content-Type' => $mimeType,
             'Content-Disposition' => 'inline; filename="Resume_' . $candidate->name . '_' . $type . '.pdf"',
         ]);
@@ -421,6 +428,7 @@ class CandidateController extends Controller
             $filename = 'edited_resume_' . $candidate->id . '_' . time() . '.pdf';
             $path = 'candidate_edited_resumes/' . $filename;
             Storage::disk('public')->put($path, $pdfContent);
+            ResumeStorageService::syncUploadedResume($path);
 
             $candidate->update([
                 'edited_resume' => $path,
@@ -450,6 +458,7 @@ class CandidateController extends Controller
         }
 
         $path = $request->file('edited_resume_file')->store('candidate_edited_resumes', 'public');
+        ResumeStorageService::syncUploadedResume($path);
         $candidate->update([
             'edited_resume' => $path,
             'last_updated_by' => auth()->id(),
@@ -458,6 +467,37 @@ class CandidateController extends Controller
         ActivityLogger::log('Candidate Edited Resume Uploaded', "Uploaded edited copy resume for candidate '{$candidate->name}'", Candidate::class, $candidate->id);
 
         return back()->with('success', "Edited copy resume updated successfully for {$candidate->name}. Original resume remains safe and untouched.");
+    }
+
+    /**
+     * Internal secure endpoint to synchronize resume files across subdomains.
+     */
+    public function internalSyncResume(Request $request)
+    {
+        $file = $request->query('file');
+        $token = $request->query('token');
+
+        if (empty($file) || !ResumeStorageService::validateSyncToken($file, $token)) {
+            abort(403, 'Unauthorized resume sync token');
+        }
+
+        $file = ltrim(str_replace(['../', '..\\', "\0"], '', $file), '/\\');
+
+        if (!str_starts_with($file, 'candidate_resumes/') && !str_starts_with($file, 'candidate_edited_resumes/')) {
+            abort(403, 'Invalid file category');
+        }
+
+        if (!Storage::disk('public')->exists($file)) {
+            abort(404, 'File not found on this domain storage');
+        }
+
+        $path = Storage::disk('public')->path($file);
+        $mime = @mime_content_type($path) ?: 'application/pdf';
+
+        return response()->file($path, [
+            'Content-Type' => $mime,
+            'Cache-Control' => 'no-cache, private',
+        ]);
     }
 
     /**
