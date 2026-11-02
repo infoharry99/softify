@@ -1132,7 +1132,7 @@
 
         <!-- Active Filters Chips Bar -->
         @php
-            $hasActiveFilters = $booleanQuery || $keyword || request()->filled('exclude_keywords') || request()->filled('min_experience') || request()->filled('max_experience') || request()->filled('min_expected_ctc') || request()->filled('max_expected_ctc') || request()->filled('min_salary') || request()->filled('max_salary') || request()->filled('location') || request()->filled('job_type') || request()->filled('notice_period') || request()->filled('status') || request()->boolean('shortlisted_only');
+            $hasActiveFilters = $booleanQuery || $keyword || request()->filled('exclude_keywords') || request()->filled('min_experience') || request()->filled('max_experience') || request()->filled('min_expected_ctc') || request()->filled('max_expected_ctc') || request()->filled('min_salary') || request()->filled('max_salary') || request()->filled('location') || request()->filled('job_type') || request()->filled('notice_period') || request()->boolean('shortlisted_only');
         @endphp
         @if($hasActiveFilters)
         <div class="active-filters-bar">
@@ -1355,27 +1355,6 @@
                                     {{ $np }}
                                 </span>
                                 <span class="filter-count-badge">{{ $facets['notice_periods'][$np] ?? 0 }}</span>
-                            </label>
-                        @endforeach
-                    </div>
-                </div>
-
-                <!-- Candidate Stage -->
-                <div class="sidebar-section">
-                    <div class="sidebar-section-title">
-                        <span><i class="fa-solid fa-user-tag" style="color: var(--resdex-teal);"></i> Pipeline Stage</span>
-                    </div>
-                    <div class="filter-checkbox-list">
-                        @php
-                            $selectedStatus = (array) request('status', []);
-                        @endphp
-                        @foreach(['Applied', 'Screening', 'Interview Scheduled', 'Offered', 'Hired', 'Rejected'] as $st)
-                            <label class="filter-checkbox-item">
-                                <span>
-                                    <input type="checkbox" name="status[]" value="{{ $st }}" {{ in_array($st, $selectedStatus) ? 'checked' : '' }}>
-                                    {{ $st }}
-                                </span>
-                                <span class="filter-count-badge">{{ $facets['statuses'][$st] ?? 0 }}</span>
                             </label>
                         @endforeach
                     </div>
