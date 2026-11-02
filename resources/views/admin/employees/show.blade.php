@@ -386,9 +386,16 @@
                         <a href="{{ route('admin.payroll.slip', $p->id) }}" class="btn btn-secondary btn-sm" target="_blank" style="padding: 6px 10px; border-radius: 6px; margin-right: 2px;" title="View Payslip">
                             <i class="fa-solid fa-eye"></i>
                         </a>
-                        <a href="{{ route('admin.payroll.download', $p->id) }}" class="btn btn-primary btn-sm" target="_blank" style="padding: 6px 10px; border-radius: 6px;" title="Download PDF Payslip">
+                        <a href="{{ route('admin.payroll.download', $p->id) }}" class="btn btn-primary btn-sm" target="_blank" style="padding: 6px 10px; border-radius: 6px; margin-right: 2px;" title="Download PDF Payslip">
                             <i class="fa-solid fa-download"></i>
                         </a>
+                        <form action="{{ route('admin.payroll.destroy', $p->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete and reset this payroll slip? It will revert back to un-processed Pending status.');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm" style="padding: 6px 10px; border-radius: 6px; background-color: #ef4444; border-color: #ef4444; color: #fff;" title="Delete / Reset Slip">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </form>
                     </td>
                 </tr>
                 @empty
@@ -472,16 +479,29 @@
                 </div>
             </div>
 
-            <div style="display:flex; justify-content:flex-end; gap:10px;">
-                <button type="button" onclick="closeEditPayrollModal()" class="btn btn-secondary btn-sm" style="border-radius:8px;">Cancel</button>
-                <button type="submit" class="btn btn-primary btn-sm" style="border-radius:8px; font-weight:700;">Save & Update Salary</button>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <button type="button" onclick="deletePayrollFromEmpModal()" class="btn btn-danger btn-sm" style="border-radius:8px; background-color:#ef4444; border-color:#ef4444; color:#fff;" title="Delete this payroll and revert to Pending">
+                    <i class="fa-solid fa-trash-can"></i> Delete / Reset Payroll
+                </button>
+                <div style="display:flex; gap:10px;">
+                    <button type="button" onclick="closeEditPayrollModal()" class="btn btn-secondary btn-sm" style="border-radius:8px;">Cancel</button>
+                    <button type="submit" class="btn btn-primary btn-sm" style="border-radius:8px; font-weight:700;">Save & Update Salary</button>
+                </div>
             </div>
+        </form>
+
+        <form id="deletePayrollEmpHiddenForm" method="POST" action="" style="display:none;">
+            @csrf
+            @method('DELETE')
         </form>
     </div>
 </div>
 
 <script>
+let currentEditPayrollEmpId = null;
+
 function openEditPayrollModal(payroll) {
+    currentEditPayrollEmpId = payroll.id;
     var modal = document.getElementById('editPayrollModal');
     var form = document.getElementById('editPayrollForm');
     form.action = '/admin/payroll/' + payroll.id;
@@ -521,6 +541,15 @@ function recalculateSalaryModal() {
     document.getElementById('edit_calc_lop').innerText = '₹' + lopDeduction.toFixed(2);
     document.getElementById('edit_calc_total_days').innerText = (presentDays + paidLeaves + unpaidLeaves) + ' / ' + workingDays + ' Days';
     document.getElementById('edit_calc_net').innerText = '₹' + netSalary.toFixed(2);
+}
+
+function deletePayrollFromEmpModal() {
+    if (!currentEditPayrollEmpId) return;
+    if (confirm('Are you sure you want to delete and reset this payroll slip? It will revert back to un-processed Pending status.')) {
+        var delForm = document.getElementById('deletePayrollEmpHiddenForm');
+        delForm.action = '/admin/payroll/' + currentEditPayrollEmpId;
+        delForm.submit();
+    }
 }
 </script>
 @endif

@@ -150,6 +150,21 @@ class AdminPayrollController extends Controller
     }
 
     /**
+     * Delete / Reset a processed monthly payroll record.
+     */
+    public function destroy(MonthlyPayroll $payroll)
+    {
+        $employeeName = $payroll->employee->user->name ?? 'Employee';
+        $month = $payroll->month;
+
+        $payroll->delete();
+
+        ActivityLogger::log('Payroll Deleted', "Deleted / reset payroll record for {$employeeName} for month {$month}", Employee::class, $payroll->employee_id);
+
+        return back()->with('success', "Payroll record for {$employeeName} ({$month}) has been deleted / reset successfully.");
+    }
+
+    /**
      * Download printable salary slip (PDF Print Trigger).
      */
     public function download(MonthlyPayroll $payroll)

@@ -332,6 +332,7 @@ Route::middleware(['auth', 'desktop.only'])->group(function () {
             Route::get('/payroll', [AdminPayrollController::class, 'index'])->name('payroll.index');
             Route::post('/payroll/process/{employee}', [AdminPayrollController::class, 'process'])->name('payroll.process');
             Route::put('/payroll/{payroll}', [AdminPayrollController::class, 'updatePayroll'])->name('payroll.update');
+            Route::delete('/payroll/{payroll}', [AdminPayrollController::class, 'destroy'])->name('payroll.destroy');
             Route::post('/payroll/structure/{employee}', [AdminPayrollController::class, 'updateStructure'])->name('payroll.structure');
             Route::get('/payroll/slip/{payroll}', [AdminPayrollController::class, 'slip'])->name('payroll.slip');
             Route::get('/payroll/download/{payroll}', [AdminPayrollController::class, 'download'])->name('payroll.download');
