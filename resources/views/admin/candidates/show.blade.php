@@ -17,8 +17,17 @@
                         Job Title: <strong style="color: #00a884;">💼 {{ $candidate->job_title ?? 'N/A' }}</strong> | Recruited for Client Company: <strong>🏢 {{ $candidate->company_name ?? 'General Talent Pool' }}</strong>
                     </div>
                 </div>
-                <div>
+                <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
                     <a href="{{ route('admin.candidates.edit', $candidate->id) }}" class="btn btn-secondary btn-sm" style="border-radius: 8px; font-weight: 600;">✏️ Edit Profile</a>
+                    @if(auth()->check() && (auth()->user()->hasRole('super-admin') || auth()->user()->hasRole('admin')))
+                        <form action="{{ route('admin.candidates.destroy', $candidate->id) }}" method="POST" style="display: inline-block; margin: 0;" onsubmit="return confirm('Are you sure you want to permanently delete candidate {{ addslashes($candidate->name) }}? This action cannot be undone.');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm" style="border-radius: 8px; font-weight: 600;">
+                                🗑️ Delete Candidate
+                            </button>
+                        </form>
+                    @endif
                     <a href="{{ session('candidate_directory_url', route('admin.candidates.index')) }}" class="btn btn-secondary btn-sm" style="border-radius: 8px;">⬅️ Back to Directory</a>
                 </div>
             </div>

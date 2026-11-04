@@ -503,10 +503,22 @@ class CandidateController extends Controller
     /**
      * Delete candidate record.
      */
-    public function destroy(Candidate $candidate)
+    public function destroy(Candidate $candidate, Request $request)
     {
+        if (!auth()->user()->hasRole('super-admin') && !auth()->user()->hasRole('admin')) {
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'Unauthorized. Only administrators can delete candidate records.'], 403);
+            }
+            return back()->with('error', 'Unauthorized. Only administrators can delete candidate records.');
+        }
+
+        // Clean up uploaded resume files
         if ($candidate->resume && Storage::disk('public')->exists($candidate->resume)) {
             Storage::disk('public')->delete($candidate->resume);
+        }
+
+        if ($candidate->edited_resume && Storage::disk('public')->exists($candidate->edited_resume)) {
+            Storage::disk('public')->delete($candidate->edited_resume);
         }
 
         $name = $candidate->name;
@@ -514,8 +526,17 @@ class CandidateController extends Controller
 
         ActivityLogger::log('Candidate Deleted', "Deleted candidate '{$name}'");
 
-        return redirect()->route('admin.candidates.index')
-            ->with('success', "Candidate '{$name}' removed from system.");
+        if ($request->ajax()) {
+            return response()->json(['success' => true, 'message' => "Candidate '{$name}' removed from system."]);
+        }
+
+        $previousUrl = url()->previous();
+        if (str_contains($previousUrl, '/admin/candidates/' . $candidate->id)) {
+            return redirect()->route('admin.candidates.index')
+                ->with('success', "Candidate '{$name}' removed from system.");
+        }
+
+        return back()->with('success', "Candidate '{$name}' removed from system.");
     }
 
     /**

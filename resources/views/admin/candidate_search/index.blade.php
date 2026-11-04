@@ -930,6 +930,15 @@
     .btn-action-edited:hover {
         background: #e0f2fe;
     }
+    .btn-action-danger {
+        background: #fef2f2;
+        color: #dc2626;
+        border: 1px solid #fecaca;
+    }
+    .btn-action-danger:hover {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
 
     /* Empty state */
     .no-results-card {

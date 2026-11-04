@@ -102,6 +102,15 @@
                         <a href="{{ route('admin.candidates.edit', $cand->id) }}" class="btn btn-secondary btn-sm" title="Edit Record" style="border-radius: 8px; font-weight: 600; color: #475569;">
                             <i class="fa-solid fa-pen-to-square" style="color: #0284c7;"></i> Edit
                         </a>
+                        @if(auth()->check() && (auth()->user()->hasRole('super-admin') || auth()->user()->hasRole('admin')))
+                            <form action="{{ route('admin.candidates.destroy', $cand->id) }}" method="POST" style="display: inline-block; margin: 0;" onsubmit="return confirm('Are you sure you want to permanently delete candidate {{ addslashes($cand->name) }}? This action cannot be undone.');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-secondary btn-sm" title="Delete Candidate" style="border-radius: 8px; font-weight: 600; color: #dc2626; border-color: #fecaca; background: #fef2f2;">
+                                    <i class="fa-solid fa-trash-can" style="color: #dc2626;"></i> Delete
+                                </button>
+                            </form>
+                        @endif
                     </div>
                 </td>
             </tr>
