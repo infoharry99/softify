@@ -506,7 +506,7 @@ class CandidateController extends Controller
     public function destroy(Candidate $candidate, Request $request)
     {
         if (!auth()->user()->hasRole('super-admin') && !auth()->user()->hasRole('admin')) {
-            if ($request->ajax()) {
+            if ($request->ajax() || $request->expectsJson() || $request->wantsJson()) {
                 return response()->json(['success' => false, 'message' => 'Unauthorized. Only administrators can delete candidate records.'], 403);
             }
             return back()->with('error', 'Unauthorized. Only administrators can delete candidate records.');
@@ -526,7 +526,7 @@ class CandidateController extends Controller
 
         ActivityLogger::log('Candidate Deleted', "Deleted candidate '{$name}'");
 
-        if ($request->ajax()) {
+        if ($request->ajax() || $request->expectsJson() || $request->wantsJson()) {
             return response()->json(['success' => true, 'message' => "Candidate '{$name}' removed from system."]);
         }
 

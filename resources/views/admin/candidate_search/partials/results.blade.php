@@ -169,13 +169,12 @@
                     </a>
 
                     @if(auth()->check() && (auth()->user()->hasRole('super-admin') || auth()->user()->hasRole('admin')))
-                        <form action="{{ route('admin.candidates.destroy', $cand->id) }}" method="POST" style="display: inline-block; margin: 0;" onsubmit="return confirm('Are you sure you want to permanently delete candidate {{ addslashes($cand->name) }}? This action cannot be undone.');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn-action btn-action-danger" title="Delete Candidate">
-                                <i class="fa-solid fa-trash-can"></i> Delete
-                            </button>
-                        </form>
+                        <button type="button" 
+                                class="btn-action btn-action-danger" 
+                                title="Delete Candidate" 
+                                onclick="deleteResdexCandidate({{ $cand->id }}, '{{ addslashes($cand->name) }}', '{{ route('admin.candidates.destroy', $cand->id) }}')">
+                            <i class="fa-solid fa-trash-can"></i> Delete
+                        </button>
                     @endif
 
                     <a href="{{ route('admin.candidates.show', $cand->id) }}" class="btn-action btn-action-primary" target="_blank">

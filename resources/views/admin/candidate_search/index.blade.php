@@ -1729,6 +1729,80 @@
         }
     }
 
+    // 8.1 Delete Candidate (Admin Only)
+    window.deleteResdexCandidate = function(candidateId, candidateName, deleteUrl) {
+        if (!confirm('Are you sure you want to permanently delete candidate "' + candidateName + '"? This action cannot be undone.')) {
+            return;
+        }
+
+        const csrfToken = '{{ csrf_token() }}';
+
+        fetch(deleteUrl, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            }
+        })
+        .then(async response => {
+            const data = await response.json().catch(() => ({}));
+            if (response.ok && data.success) {
+                const card = document.getElementById('candidate-card-' + candidateId);
+                if (card) {
+                    card.style.transition = 'all 0.35s ease';
+                    card.style.opacity = '0';
+                    card.style.transform = 'scale(0.92)';
+                    setTimeout(() => card.remove(), 350);
+                }
+
+                const countEl = document.querySelector('.results-count-text strong');
+                if (countEl) {
+                    let cur = parseInt(countEl.textContent.replace(/[^0-9]/g, '')) || 0;
+                    if (cur > 0) countEl.textContent = (cur - 1).toLocaleString();
+                }
+
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: data.message || `Candidate "${candidateName}" removed from system.`,
+                        showConfirmButton: false,
+                        timer: 2500
+                    });
+                } else {
+                    alert(data.message || `Candidate "${candidateName}" removed from system.`);
+                }
+            } else {
+                alert(data.message || 'Error: Could not delete candidate. Only administrators are authorized.');
+            }
+        })
+        .catch(err => {
+            console.error('Delete request failed, falling back to form submit:', err);
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = deleteUrl;
+            form.style.display = 'none';
+
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = '_token';
+            csrfInput.value = csrfToken;
+            form.appendChild(csrfInput);
+
+            const methodInput = document.createElement('input');
+            methodInput.type = 'hidden';
+            methodInput.name = '_method';
+            methodInput.value = 'DELETE';
+            form.appendChild(methodInput);
+
+            document.body.appendChild(form);
+            form.submit();
+        });
+    };
+
     function escapeHtml(text) {
         const div = document.createElement('div');
         div.innerText = text;
