@@ -64,11 +64,18 @@
         </div>
 
         @php
-            $lopDeduction = round($payroll->leave_deductions);
-            $otherDeduction = round($salary ? $salary->other_deductions : 0);
-            $calculatedTotalDeductions = round($lopDeduction + $otherDeduction);
             $calculatedGross = round($payroll->gross_salary);
-            $calculatedNetSalary = max(0, round($calculatedGross - $calculatedTotalDeductions));
+            $lopDeduction = round($payroll->leave_deductions);
+            $lateDeduction = round($payroll->late_deductions ?? 0);
+            $calculatedTotalDeductions = round($payroll->total_deductions);
+            
+            // Other deductions is total deductions minus LOP & late deductions
+            $otherDeduction = max(0, $calculatedTotalDeductions - $lopDeduction - $lateDeduction);
+            
+            // Net salary directly from payroll record
+            $calculatedNetSalary = $payroll->net_salary > 0 
+                ? round($payroll->net_salary) 
+                : max(0, round($calculatedGross - $calculatedTotalDeductions));
         @endphp
 
         <table class="table">
@@ -96,8 +103,13 @@
                 <tr>
                     <td>Conveyance & Allowances</td>
                     <td>₹{{ number_format(round($salary ? $salary->allowances : 0)) }}</td>
-                    <td>-</td>
-                    <td>-</td>
+                    @if($lateDeduction > 0)
+                        <td>Late Deductions</td>
+                        <td>₹{{ number_format($lateDeduction) }}</td>
+                    @else
+                        <td>-</td>
+                        <td>-</td>
+                    @endif
                 </tr>
                 <tr>
                     <td>Bonus / Incentives</td>

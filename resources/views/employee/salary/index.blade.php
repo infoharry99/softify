@@ -98,10 +98,10 @@
                         @forelse($payrolls as $pay)
                         @php
                             $payLopDed = round($pay->leave_deductions);
-                            $payOtherDed = round($structure ? $structure->other_deductions : 0);
-                            $payTotalDed = round($payLopDed + $payOtherDed);
+                            $payTotalDed = round($pay->total_deductions);
+                            $payOtherDed = max(0, $payTotalDed - $payLopDed);
                             $payGross = round($pay->gross_salary);
-                            $payNet = max(0, round($payGross - $payTotalDed));
+                            $payNet = $pay->net_salary > 0 ? round($pay->net_salary) : max(0, round($payGross - $payTotalDed));
                         @endphp
                         <tr>
                             <td>
